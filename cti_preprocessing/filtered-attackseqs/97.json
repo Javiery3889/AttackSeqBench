@@ -1,0 +1,183 @@
+{
+    "triplets": [
+        {
+            "Subject": "Talos",
+            "SubjectType": "CTI vender",
+            "Relation": "published",
+            "Object": "technical analysis",
+            "ObjectType": "artifact",
+            "tactic": "Initial Access",
+            "technique": [
+                "T1195-Supply Chain Compromise"
+            ],
+            "id": 1
+        },
+        {
+            "Subject": "backdoor",
+            "SubjectType": "Malware",
+            "Relation": "included-with",
+            "Object": "CCleaner application",
+            "ObjectType": "software",
+            "tactic": "Initial Access",
+            "technique": [
+                "T1195-Supply Chain Compromise"
+            ],
+            "id": 2
+        },
+        {
+            "Subject": "attackers",
+            "SubjectType": "threat-actor",
+            "Relation": "target",
+            "Object": "Cisco",
+            "ObjectType": "identity",
+            "tactic": "Initial Access",
+            "technique": [
+                "T1195-Supply Chain Compromise"
+            ],
+            "id": 3
+        },
+        {
+            "Subject": "C2 MySQL database",
+            "SubjectType": "tool",
+            "Relation": "contain",
+            "Object": "tables describing machines",
+            "ObjectType": "infrastructure",
+            "tactic": "Command and Control",
+            "technique": [
+                "T1105-Ingress Tool Transfer"
+            ],
+            "id": 4
+        },
+        {
+            "Subject": "attackers",
+            "SubjectType": "threat-actor",
+            "Relation": "control",
+            "Object": "C2 server",
+            "ObjectType": "infrastructure",
+            "tactic": "Command and Control",
+            "technique": [
+                "Others"
+            ],
+            "id": 5
+        },
+        {
+            "Subject": "web directory",
+            "SubjectType": "directory",
+            "Relation": "contained",
+            "Object": "PHP files",
+            "ObjectType": "file",
+            "tactic": "Execution",
+            "technique": [
+                "Others"
+            ],
+            "id": 6
+        },
+        {
+            "Subject": "PHP files",
+            "SubjectType": "file",
+            "Relation": "responsible for",
+            "Object": "controlling communications with infected systems",
+            "ObjectType": "network traffic",
+            "tactic": "Execution",
+            "technique": [
+                "Others"
+            ],
+            "id": 7
+        },
+        {
+            "Subject": "PHP script",
+            "SubjectType": "file",
+            "Relation": "contained",
+            "Object": "references to the required table for information storage",
+            "ObjectType": "artifact",
+            "tactic": "Execution",
+            "technique": [
+                "Others"
+            ],
+            "id": 8
+        },
+        {
+            "Subject": "init.php",
+            "SubjectType": "file",
+            "Relation": "defined",
+            "Object": "core variables and operations",
+            "ObjectType": "artifact",
+            "tactic": "Execution",
+            "technique": [
+                "Others"
+            ],
+            "id": 9
+        },
+        {
+            "Subject": "PHP script",
+            "SubjectType": "file",
+            "Relation": "compared",
+            "Object": "system beaconing to the C2",
+            "ObjectType": "network traffic",
+            "tactic": "Execution",
+            "technique": [
+                "Others"
+            ],
+            "id": 10
+        },
+        {
+            "Subject": "attackers",
+            "SubjectType": "threat-actor",
+            "Relation": "controlled",
+            "Object": "which infected systems were delivered a Stage 2 payload",
+            "ObjectType": "campaign",
+            "tactic": "Execution",
+            "technique": [
+                "Others"
+            ],
+            "id": 11
+        },
+        {
+            "Subject": "PHP script",
+            "SubjectType": "tool",
+            "Relation": "gather",
+            "Object": "information from infected systems",
+            "ObjectType": "artifacts",
+            "tactic": "Discovery",
+            "technique": [
+                "T1518-Software Discovery",
+                "T1049-System Network Connections Discovery"
+            ],
+            "id": 12
+        },
+        {
+            "Subject": "PHP script",
+            "SubjectType": "tool",
+            "Relation": "store",
+            "Object": "system profile information",
+            "ObjectType": "artifacts",
+            "tactic": "Discovery",
+            "technique": [
+                "T1518-Software Discovery"
+            ],
+            "id": 13
+        },
+        {
+            "Subject": "attackers",
+            "SubjectType": "threat-actor",
+            "Relation": "use",
+            "Object": "reconnaissance information",
+            "ObjectType": "artifacts",
+            "tactic": "Discovery",
+            "technique": [
+                "Others"
+            ],
+            "id": 14
+        }
+    ],
+    "file_name": "CCleaner_C2",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "Talos recently published a technical analysis of a backdoor which was included with version 5.33 of the CCleaner application. During the investigation, an archive containing files from the C2 server was provided, which included web server configuration files and a MySQL database reflecting research activity. The attackers targeted specific organizations, including Cisco, through the delivery of a second-stage loader. The C2 tracking database indicated that at least 20 victim machines were served specialized secondary payloads.",
+        "Execution": "The web directory from the C2 server contained PHP files responsible for controlling communications with infected systems. The PHP files included checks to determine whether to proceed with standard operations or redirect to the legitimate Piriform website. The PHP script contained references to the required table for information storage within the 'x.php' variables. The 'init.php' file defined core variables and operations, specifying 'PRC' as the time zone and the database configuration to use. The PHP script compared the system beaconing to the C2 to three values: $DomainList, $IPList, and $HostList, to determine if the infected system should be delivered a Stage 2 payload. The attackers controlled which infected systems were delivered a Stage 2 payload, with 20 unique hosts identified as affected.",
+        "Discovery": "The PHP script gathered information from infected systems, including OS version, architecture, administrative rights, hostname, and domain name. The system profile information was aggressive, including a list of installed software and all current running processes. The system profile information was stored in the MySQL database. The attackers used this reconnaissance information to determine which machines to target in the final stages of the campaign.",
+        "Command and Control": "The C2 MySQL database contained two tables: one describing all machines that reported to the server and one describing all machines that received the second-stage download. Over 700,000 machines reported to the C2 server, and more than 20 machines received the second-stage payload. The attackers could add or remove domains at any time, based on the environments or organizations they chose to target.",
+        "Others": "The stage 2 installer, GeeSetup_x86.dll, checked the OS version and dropped either a 32-bit or 64-bit version of a trojanized tool. The x86 version used a trojanized TSMSISrv.dll, while the x64 version dropped a trojanized EFACli64.dll. The setup put an encoded PE in the registry, which was executed by the trojanized files. The stage 3 payload reached out to additional C2 servers and executed in-memory PE files. A lightweight backdoor module in the registry retrieved an IP from data steganographically hidden in a GitHub or WordPress search, from which an additional PE module was downloaded and run. Talos reviewed claims of code overlap with malware samples known to be used by Group 72, confirming the overlap. The attack was sophisticated, targeting technology companies through a supply chain attack to compromise a large number of victims persistently, in hopes to land payloads on computers at specific target networks. Indicators of compromise associated with the attack were provided."
+    },
+    "technique_label": true
+}
