@@ -1,0 +1,242 @@
+{
+    "file_name": "asruex-malware-infecting-through-shortcut-files.html",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "JPCERT/CC has been tracking malicious shortcut files sent as email attachments targeting specific organizations since around October 2015. These shortcut files, when opened, infect the host with Asruex malware, which has remote control capabilities. The attackers, associated with the group 'DarkHotel', use this method to attempt network intrusion.",
+        "Execution": "Upon opening the malicious shortcut file, a PowerShell command is executed to download a batch file from a URL, which then executes PowerShell scripts to download a Windows executable (downloader) and a decoy document. The decoy documents are in Japanese and Chinese, indicating a broader target range.",
+        "Defense Evasion": "Asruex malware has anti-analysis features, including the ability to detect virtual machines and stop running if such an environment is detected. It also has the capability to detect anti-virus software.",
+        "Command and Control": "The downloader retrieves an image file containing encoded Asruex malware, which is then decoded and executed. Asruex communicates with a C&C server over HTTP and executes commands received. It operates based on configuration information stored within, including C&C servers, dummy hosts, version information, and a key for decoding data.",
+        "Others": "Asruex is a relatively new malware observed since October 2015, likely to be used in continued targeted attacks. The malware downloads and executes AdvProv.dll, a plug-in that expands Asruex's functions, including file manipulation and registry operations. Hash values of artifacts and destination URLs used by Asruex are provided for security measures."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "JPCERT/CC",
+                    "SubjectType": "CTI vender",
+                    "Relation": "track",
+                    "Object": "malicious shortcut files",
+                    "ObjectType": "artifact",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "shortcut files",
+                    "SubjectType": "artifact",
+                    "Relation": "infect",
+                    "Object": "host",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 2
+                }
+            ]
+        },
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "malicious shortcut file",
+                    "SubjectType": "file",
+                    "Relation": "execute",
+                    "Object": "PowerShell command",
+                    "ObjectType": "tool",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "PowerShell command",
+                    "SubjectType": "tool",
+                    "Relation": "download",
+                    "Object": "batch file",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "batch file",
+                    "SubjectType": "file",
+                    "Relation": "execute",
+                    "Object": "PowerShell scripts",
+                    "ObjectType": "tool",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 7
+                },
+                {
+                    "Subject": "PowerShell scripts",
+                    "SubjectType": "tool",
+                    "Relation": "download",
+                    "Object": "Windows executable",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "PowerShell scripts",
+                    "SubjectType": "tool",
+                    "Relation": "download",
+                    "Object": "decoy document",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 9
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1497-Virtualization/Sandbox Evasion": [
+                {
+                    "Subject": "Asruex malware",
+                    "SubjectType": "Malware",
+                    "Relation": "have",
+                    "Object": "anti-analysis features",
+                    "ObjectType": "Technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1497-Virtualization/Sandbox Evasion"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "Asruex malware",
+                    "SubjectType": "Malware",
+                    "Relation": "detect",
+                    "Object": "virtual machines",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1497-Virtualization/Sandbox Evasion"
+                    ],
+                    "id": 11
+                }
+            ],
+            "T1562-Impair Defenses": [
+                {
+                    "Subject": "Asruex malware",
+                    "SubjectType": "Malware",
+                    "Relation": "detect",
+                    "Object": "anti-virus software",
+                    "ObjectType": "software",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1562-Impair Defenses"
+                    ],
+                    "id": 12
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "downloader",
+                    "SubjectType": "malware",
+                    "Relation": "retrieves",
+                    "Object": "image file",
+                    "ObjectType": "file",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1132-Data Encoding"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "image file",
+                    "SubjectType": "file",
+                    "Relation": "containing",
+                    "Object": "encoded Asruex malware",
+                    "ObjectType": "malware",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1132-Data Encoding"
+                    ],
+                    "id": 14
+                },
+                {
+                    "Subject": "Asruex",
+                    "SubjectType": "malware",
+                    "Relation": "communicates with",
+                    "Object": "C&C server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "Asruex",
+                    "SubjectType": "malware",
+                    "Relation": "executes",
+                    "Object": "commands received",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 16
+                },
+                {
+                    "Subject": "Asruex",
+                    "SubjectType": "malware",
+                    "Relation": "operates based on",
+                    "Object": "configuration information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 17
+                }
+            ],
+            "T1132-Data Encoding": [
+                {
+                    "Subject": "downloader",
+                    "SubjectType": "malware",
+                    "Relation": "retrieves",
+                    "Object": "image file",
+                    "ObjectType": "file",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1132-Data Encoding"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "image file",
+                    "SubjectType": "file",
+                    "Relation": "containing",
+                    "Object": "encoded Asruex malware",
+                    "ObjectType": "malware",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1132-Data Encoding"
+                    ],
+                    "id": 14
+                }
+            ]
+        }
+    }
+}

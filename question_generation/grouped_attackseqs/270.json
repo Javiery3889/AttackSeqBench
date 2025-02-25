@@ -1,0 +1,105 @@
+{
+    "file_name": "Attacks on industrial control systems using ShadowPad _ Kaspersky ICS CERT",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "In mid-October 2021, Kaspersky ICS CERT experts discovered an active ShadowPad backdoor that affected a number of industrial control systems in Pakistan, specifically engineering computers in building automation systems that are part of a telecom company's infrastructure. A further analysis of the attack revealed other organizations affected by it \n\nThe attackers exploited a known vulnerability in MS Exchange, CVE-2021-26855, as the initial attack vector in several victim organizations. We do not have evidence that CVE-2021-26855 was exploited in all cases of attack identified, but we can assume that the attackers could use this particular vector to penetrate in other cases, as well.",
+        "Execution": "From March to October 2021, the ShadowPad backdoor was downloaded to victim computers as the mscoree.dll file, which was launched by AppLaunch.exe \n\nLater the attackers launched ShadowPad using DLL hijacking in a legitimate OLE-COM object viewing application (OleView).After the initial infection the attackers first sent commands manually, then automatically.",
+        "Persistence": "The Windows Task Scheduler was also used for the new ShadowPad version to get a foothold in a system. In total, we managed to find 25 unique modifications.",
+        "Credential Access": "The artifacts found indicate that the attackers stole domain authentication credentials from at least one account in each attacked organization (probably from the same computer that was used to penetrate the network). These credentials were used to further spread the attack over the network, first manually and then in automatic mode.",
+        "Command and Control": "The attackers used domains registered with NameSilo, GoDaddy.com and ENOM to communicate with the command-and-control (C2) servers. Most of the C2 servers were hosted on dedicated servers rented from Choopa.",
+        "Others": "Additional tools used by the attackers included the CobaltStrike framework, which was downloaded to victim machines using the certutil.exe utility, compiled aspx web shells, and procdump and Mimikatz tools; the PlugX backdoor; BAT files (for stealing credentials); Web shells (for remote access to the web server); The Nextnet utility (for scanning network hosts)."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1190-Exploit Public-Facing Application": [
+                {
+                    "Subject": "ShadowPad backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "exploit",
+                    "Object": "CVE-2021-26855",
+                    "ObjectType": "vulnerablity",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1190-Exploit Public-Facing Application"
+                    ],
+                    "id": 1
+                }
+            ]
+        },
+        "Persistence": {
+            "T1053-Scheduled Task/Job": [
+                {
+                    "Subject": "Windows Task Scheduler",
+                    "SubjectType": "software",
+                    "Relation": "used-for",
+                    "Object": "ShadowPad",
+                    "ObjectType": "Malware",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1053-Scheduled Task/Job"
+                    ],
+                    "id": 2
+                }
+            ]
+        },
+        "Credential Access": {
+            "T1552-Unsecured Credentials": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "steal",
+                    "Object": "domain authentication credentials",
+                    "ObjectType": "artifact",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1552-Unsecured Credentials"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "credentials",
+                    "ObjectType": "artifact",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1552-Unsecured Credentials"
+                    ],
+                    "id": 4
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1568-Dynamic Resolution": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "domains",
+                    "ObjectType": "domain-name",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1568-Dynamic Resolution"
+                    ],
+                    "id": 7
+                }
+            ],
+            "T1573-Encrypted Channel": [
+                {
+                    "Subject": "C2 servers",
+                    "SubjectType": "infrastructure",
+                    "Relation": "host",
+                    "Object": "Choopa",
+                    "ObjectType": "CTI vender",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1573-Encrypted Channel"
+                    ],
+                    "id": 8
+                }
+            ]
+        }
+    }
+}

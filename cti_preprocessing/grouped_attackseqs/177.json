@@ -1,0 +1,209 @@
+{
+    "file_name": "Gamaredon APT Group Use Covid-19 Lure in Campaigns - TrendLabs Security Intelligence Blog",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "The Gamaredon APT group initiated their campaign by distributing targeted emails containing malicious document files. These emails leveraged the COVID-19 pandemic as a lure, with subjects such as 'Coronavirus (2019-nCoV)' to entice victims to open the attachments. The attack utilized a template injection technique to load a document template from the internet, which contained malicious macro codes.",
+        "Execution": "Upon opening the malicious document, the embedded macro code executed a VBScript (VBS) that was obfuscated. The VBS, named 'PlayList.vbs', was dropped into the '%USERPROFILE%\\Documents\\MediaPlayer' directory and then executed using 'wscript.exe'.",
+        "Persistence": "The VBS script was designed to register a RUN key in the Windows registry to ensure its execution at every system startup.",
+        "Defense Evasion": "The Gamaredon group employed obfuscation techniques within the VBS script to evade detection. Additionally, the VBS script was designed to delete itself after execution to further avoid detection.",
+        "Command and Control": "The VBS script communicated with a command and control (C&C) server located at 'hxxp://kristom[.]hopto[.]org/{computer name}_{hexadecimal volume serious number}/help_05_03[.]php'. However, during the analysis, the C&C server was not accessible, preventing the acquisition of additional payloads.",
+        "Others": "The Gamaredon APT group has been active since 2013, primarily targeting Ukrainian government institutions. The group's activities were tracked from late 2019 to February 2020, with several reports published. The group's use of COVID-19 as a lure is part of a broader trend of threat actors exploiting the pandemic. The IP addresses used for the attack infrastructure were linked to Russian hosting companies, suggesting the use of rented Virtual Private Servers (VPS) for the attacks. The article recommends vigilance against suspicious emails, careful examination of file extensions, and caution with email attachments, especially those requesting macro activation. Trend Micro provides multiple security solutions to protect against such threats."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Command and Control": {
+            "T1102-Web Service": [
+                {
+                    "Subject": "VBS script",
+                    "SubjectType": "tool",
+                    "Relation": "communicate-with",
+                    "Object": "C&C server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1102-Web Service"
+                    ],
+                    "id": 1
+                }
+            ]
+        },
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "Gamaredon APT group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "initiate",
+                    "Object": "campaign",
+                    "ObjectType": "campaign",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "targeted emails",
+                    "SubjectType": "Email Message",
+                    "Relation": "contain",
+                    "Object": "malicious document files",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "emails",
+                    "SubjectType": "Email Message",
+                    "Relation": "leverage",
+                    "Object": "COVID-19 pandemic",
+                    "ObjectType": "campaign",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 4
+                },
+                {
+                    "Subject": "attack",
+                    "SubjectType": "campaign",
+                    "Relation": "utilize",
+                    "Object": "template injection technique",
+                    "ObjectType": "technique",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 5
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1564-Hide Artifacts": [
+                {
+                    "Subject": "Gamaredon group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "employ",
+                    "Object": "obfuscation techniques",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1564-Hide Artifacts"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "VBS script",
+                    "SubjectType": "tool",
+                    "Relation": "designed to",
+                    "Object": "delete itself",
+                    "ObjectType": "course-of-action",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1564-Hide Artifacts"
+                    ],
+                    "id": 7
+                }
+            ]
+        },
+        "Persistence": {
+            "T1547-Boot or Logon Autostart Execution": [
+                {
+                    "Subject": "VBS script",
+                    "SubjectType": "Malware",
+                    "Relation": "register",
+                    "Object": "RUN key",
+                    "ObjectType": "registry",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "RUN key",
+                    "SubjectType": "registry",
+                    "Relation": "ensure",
+                    "Object": "execution at every system startup",
+                    "ObjectType": "Technique",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 9
+                }
+            ]
+        },
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "malicious document",
+                    "SubjectType": "file",
+                    "Relation": "execute",
+                    "Object": "macro code",
+                    "ObjectType": "artifacts",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter",
+                        "T1204-User Execution"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "macro code",
+                    "SubjectType": "artifacts",
+                    "Relation": "execute",
+                    "Object": "VBScript (VBS)",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter",
+                        "T1204-User Execution"
+                    ],
+                    "id": 11
+                },
+                {
+                    "Subject": "PlayList.vbs",
+                    "SubjectType": "filename",
+                    "Relation": "execute",
+                    "Object": "wscript.exe",
+                    "ObjectType": "process",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 14
+                }
+            ],
+            "T1204-User Execution": [
+                {
+                    "Subject": "malicious document",
+                    "SubjectType": "file",
+                    "Relation": "execute",
+                    "Object": "macro code",
+                    "ObjectType": "artifacts",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter",
+                        "T1204-User Execution"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "macro code",
+                    "SubjectType": "artifacts",
+                    "Relation": "execute",
+                    "Object": "VBScript (VBS)",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter",
+                        "T1204-User Execution"
+                    ],
+                    "id": 11
+                }
+            ]
+        }
+    }
+}

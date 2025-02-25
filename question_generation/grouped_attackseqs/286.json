@@ -1,0 +1,158 @@
+{
+    "file_name": "FoggyWeb_ Targeted NOBELIUM malware leads to persistent backdoor _ Microsoft Security Blog",
+    "tactic_label": true,
+    "rewrite": {
+        "Persistence": "FoggyWeb is a persistent backdoor used by NOBELIUM, which is capable of exfiltrating sensitive information from compromised AD FS servers. It can also receive and execute additional malicious components from a C2 server. NOBELIUM drops two files on the system with administrative privileges: %WinDir%\\ADFS\\version.dll and %WinDir%\\SystemResources\\Windows.Data.TimeZones\\pris\\Windows.Data.TimeZones.zh-PH.pri. The version.dll acts as a loader for the encrypted FoggyWeb backdoor, which is stored in the Windows.Data.TimeZones.zh-PH.pri file. The loader uses a custom Lightweight Encryption Algorithm (LEA) to decrypt the backdoor in memory and loads it in the execution context of the AD FS application, granting it access to the AD FS codebase and resources.",
+        "Defense Evasion": "FoggyWeb operates by leveraging the CLR hosting interfaces and APIs to load the backdoor within the same Application Domain as the legitimate AD FS managed code, allowing it to evade detection and gain programmatical access to AD FS classes, methods, properties, fields, objects, and components. This access enables FoggyWeb to interact directly with the AD FS codebase and perform its malicious operations without the need for external disk-resident tools.",
+        "Command and Control": "FoggyWeb configures HTTP listeners for actor-defined URIs that mimic the structure of legitimate URIs used by the target's AD FS deployment. It passively monitors incoming HTTP GET and POST requests and intercepts those matching the actor's custom URI patterns. The backdoor can retrieve the token signing certificate, token decryption certificate, and AD FS configuration data of the compromised server, obfuscate the data, and return it to the issuer of the request. It can also execute .NET assemblies or source code in the context of the AD FS process.",
+        "Exfiltration": "FoggyWeb exfiltrates the configuration database of compromised AD FS servers, decrypted token-signing certificates, and token-decryption certificates. It also allows for the download and execution of additional components from a C2 server.",
+        "Others": "Microsoft has notified customers targeted or compromised by FoggyWeb and recommends auditing on-premises and cloud infrastructure, removing user and app access, reviewing configurations, re-issuing new credentials, and using a hardware security module (HSM) to secure AD FS servers. Microsoft security products have implemented detections and protections against FoggyWeb, and indicators of compromise (IOCs), mitigation guidance, detection details, and hunting queries are provided for Azure Sentinel and Microsoft 365 Defender customers."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "FoggyWeb",
+                    "SubjectType": "Malware",
+                    "Relation": "configure",
+                    "Object": "HTTP listeners",
+                    "ObjectType": "network traffic",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1001-Data Obfuscation"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "FoggyWeb",
+                    "SubjectType": "Malware",
+                    "Relation": "monitor",
+                    "Object": "incoming HTTP GET and POST requests",
+                    "ObjectType": "network traffic",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 11
+                }
+            ],
+            "T1001-Data Obfuscation": [
+                {
+                    "Subject": "FoggyWeb",
+                    "SubjectType": "Malware",
+                    "Relation": "configure",
+                    "Object": "HTTP listeners",
+                    "ObjectType": "network traffic",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1001-Data Obfuscation"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "FoggyWeb",
+                    "SubjectType": "Malware",
+                    "Relation": "retrieve",
+                    "Object": "token signing certificate",
+                    "ObjectType": "X.509 Certificate",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1001-Data Obfuscation"
+                    ],
+                    "id": 12
+                },
+                {
+                    "Subject": "FoggyWeb",
+                    "SubjectType": "Malware",
+                    "Relation": "retrieve",
+                    "Object": "token decryption certificate",
+                    "ObjectType": "X.509 Certificate",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1001-Data Obfuscation"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "FoggyWeb",
+                    "SubjectType": "Malware",
+                    "Relation": "retrieve",
+                    "Object": "AD FS configuration data",
+                    "ObjectType": "artifacts",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1001-Data Obfuscation"
+                    ],
+                    "id": 14
+                }
+            ]
+        },
+        "Exfiltration": {
+            "T1041-Exfiltration Over C2 Channel": [
+                {
+                    "Subject": "FoggyWeb",
+                    "SubjectType": "Malware",
+                    "Relation": "exfiltrate-to",
+                    "Object": "configuration database",
+                    "ObjectType": "artifacts",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 16
+                },
+                {
+                    "Subject": "FoggyWeb",
+                    "SubjectType": "Malware",
+                    "Relation": "exfiltrate-to",
+                    "Object": "decrypted token-signing certificates",
+                    "ObjectType": "artifacts",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 17
+                },
+                {
+                    "Subject": "FoggyWeb",
+                    "SubjectType": "Malware",
+                    "Relation": "exfiltrate-to",
+                    "Object": "token-decryption certificates",
+                    "ObjectType": "artifacts",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 18
+                },
+                {
+                    "Subject": "FoggyWeb",
+                    "SubjectType": "Malware",
+                    "Relation": "download",
+                    "Object": "additional components",
+                    "ObjectType": "artifacts",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 19
+                },
+                {
+                    "Subject": "FoggyWeb",
+                    "SubjectType": "Malware",
+                    "Relation": "control",
+                    "Object": "C2 server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 20
+                }
+            ]
+        }
+    }
+}

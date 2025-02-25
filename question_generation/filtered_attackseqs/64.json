@@ -1,0 +1,181 @@
+{
+    "triplets": [
+        {
+            "Subject": "ZoxPNG",
+            "SubjectType": "Malware",
+            "Relation": "use",
+            "Object": "the PNG image file format",
+            "ObjectType": "artifacts",
+            "tactic": "Execution",
+            "technique": [
+                "T1106-Native API"
+            ],
+            "id": 1
+        },
+        {
+            "Subject": "ZoxPNG",
+            "SubjectType": "Malware",
+            "Relation": "execute",
+            "Object": "arbitrary code",
+            "ObjectType": "attack-pattern",
+            "tactic": "Execution",
+            "technique": [
+                "T1106-Native API"
+            ],
+            "id": 2
+        },
+        {
+            "Subject": "ZoxPNG",
+            "SubjectType": "Malware",
+            "Relation": "require",
+            "Object": "the attacker",
+            "ObjectType": "threat-actor",
+            "tactic": "Execution",
+            "technique": [
+                "T1106-Native API"
+            ],
+            "id": 3
+        },
+        {
+            "Subject": "The attacker",
+            "SubjectType": "threat-actor",
+            "Relation": "specify",
+            "Object": "the C2 server address",
+            "ObjectType": "domain-name",
+            "tactic": "Execution",
+            "technique": [
+                "T1106-Native API"
+            ],
+            "id": 4
+        },
+        {
+            "Subject": "ZoxPNG",
+            "SubjectType": "Malware",
+            "Relation": "register",
+            "Object": "command handlers",
+            "ObjectType": "tool",
+            "tactic": "Execution",
+            "technique": [
+                "T1106-Native API"
+            ],
+            "id": 5
+        },
+        {
+            "Subject": "ZoxPNG",
+            "SubjectType": "Malware",
+            "Relation": "enter",
+            "Object": "a loop for communication and command dispatch",
+            "ObjectType": "network traffic",
+            "tactic": "Execution",
+            "technique": [
+                "T1106-Native API"
+            ],
+            "id": 6
+        },
+        {
+            "Subject": "ZoxPNG",
+            "SubjectType": "Malware",
+            "Relation": "attempt",
+            "Object": "to reconnect to the C2 server",
+            "ObjectType": "domain-name",
+            "tactic": "Execution",
+            "technique": [
+                "T1106-Native API"
+            ],
+            "id": 7
+        },
+        {
+            "Subject": "ZoxPNG",
+            "SubjectType": "Malware",
+            "Relation": "communicate-with",
+            "Object": "C2 server",
+            "ObjectType": "infrastructure",
+            "tactic": "Command and Control",
+            "technique": [
+                "T1071-Application Layer Protocol"
+            ],
+            "id": 8
+        },
+        {
+            "Subject": "ZoxPNG",
+            "SubjectType": "Malware",
+            "Relation": "use",
+            "Object": "HTTP requests",
+            "ObjectType": "network traffic",
+            "tactic": "Command and Control",
+            "technique": [
+                "T1071-Application Layer Protocol"
+            ],
+            "id": 9
+        },
+        {
+            "Subject": "C2 server",
+            "SubjectType": "infrastructure",
+            "Relation": "respond-with",
+            "Object": "PNG file",
+            "ObjectType": "file",
+            "tactic": "Command and Control",
+            "technique": [
+                "T1102-Web Service"
+            ],
+            "id": 10
+        },
+        {
+            "Subject": "ZoxPNG",
+            "SubjectType": "Malware",
+            "Relation": "use",
+            "Object": "WinInet API",
+            "ObjectType": "software",
+            "tactic": "Defense Evasion",
+            "technique": [
+                "T1550-Use Alternate Authentication Material"
+            ],
+            "id": 11
+        },
+        {
+            "Subject": "ZoxPNG",
+            "SubjectType": "Malware",
+            "Relation": "send",
+            "Object": "VictimSystemData structure",
+            "ObjectType": "artifacts",
+            "tactic": "Defense Evasion",
+            "technique": [
+                "T1550-Use Alternate Authentication Material"
+            ],
+            "id": 12
+        },
+        {
+            "Subject": "ZoxPNG",
+            "SubjectType": "Malware",
+            "Relation": "include",
+            "Object": "checksum",
+            "ObjectType": "artifacts",
+            "tactic": "Defense Evasion",
+            "technique": [
+                "T1550-Use Alternate Authentication Material"
+            ],
+            "id": 13
+        },
+        {
+            "Subject": "ZoxPNG",
+            "SubjectType": "Malware",
+            "Relation": "communicate-with",
+            "Object": "victim's machine",
+            "ObjectType": "infrastrcucture",
+            "tactic": "Defense Evasion",
+            "technique": [
+                "T1205-Traffic Signaling"
+            ],
+            "id": 14
+        }
+    ],
+    "file_name": "ZoxPNG_Full_Analysis-Final",
+    "tactic_label": true,
+    "rewrite": {
+        "Execution": "ZoxPNG is a simple RAT that uses the PNG image file format for data transmission with the C2 server. It supports 13 native commands and can execute arbitrary code from the C2 server. ZoxPNG requires the attacker to specify the C2 server address as a command line argument. Upon activation, it registers command handlers and enters a loop for communication and command dispatch, attempting to reconnect to the C2 server after any communication failures.",
+        "Defense Evasion": "ZoxPNG uses the WinInet API for HTTP communication, which allows it to automatically use proxy settings configured on the victim's machine. It sends a VictimSystemData structure in the HTTP Cookie header, which includes a checksum of the victim's computer name to detect corrupt or forged requests. The communication pattern includes HTTP GET and POST requests with a PNG file containing instructions or data.",
+        "Command and Control": "ZoxPNG communicates with the C2 server using HTTP requests, with the first GET request establishing initial contact. Subsequent requests may use GET or POST, depending on whether data needs to be sent to the C2 server. The C2 server responds with a PNG file containing the next instruction. ZoxPNG is resilient to network instability, retrying connections multiple times with delays.",
+        "Others": "ZoxPNG's communication with the C2 server is based on a polling model, with the binary attempting to contact the C2 server up to five times with 5-second intervals between attempts. The communication subsystem uses standard Base64 encoding to transfer data without NULL byte issues. The PNG file format is used for data transmission, adhering to the PNG standard to reduce detectability. ZoxPNG can be detected over the network by looking for a specific static string in the traffic. On disk, the same string can be used for detection with a YARA signature. Known samples of ZoxPNG have been identified, with some signed using a certificate from '4NB Corp.' The malware has evolved from an earlier variant known as ZoxRPC, which targeted specific regional versions of Windows and used the MS08-067 vulnerability."
+    },
+    "technique_label": true
+}

@@ -1,0 +1,126 @@
+{
+    "file_name": "nccgroup.trust-Decoding network data from a Gh0st RAT variant",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "During a forensic investigation in March 2018, files linked to Iron Tiger were retrieved, including a malicious executable that dropped a batch file (install.bat) and a cabinet file (data.cab) in a new folder in C:\\ProgramData with a random name. The cabinet file contained partially encrypted malicious shellcode and a DLL to execute it. Persistence was achieved via a new service or registry key, depending on malware privileges.",
+        "Execution": "The malicious executable executed the batch file, decompressing and executing the DLL file. The shellcode decrypted the rest of the encrypted data using a single byte key in an XOR loop, revealing a string indicating a C&C IP address and port. The shellcode's main goal was to load and execute attacker plugins in memory.",
+        "Persistence": "Persistence was achieved by creating a new service or a new registry key, depending on the privileges that the malware has. The registry key for persistence was 'rundll32.exe_malicious_DLL_path' in 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run'.",
+        "Command and Control": "The network traffic between the victim and the attacker was encrypted using Rivest Cipher 4 (RC4), with a unique key for each request, encrypted using 'XOR' and 'AND' instructions. The key was stored in the first 28 bytes of the request. A Python script was written to decrypt network captures (PCAP). Command and Control (C&C) IPs identified were 23.227.207.137 and 89.249.65.194.",
+        "Others": "The investigation uncovered tools such as password dumpers, Monero cryptocurrency miners, PE injectors, and a modified version of Gh0st RAT. The modified Gh0st RAT, named 'Noodles', appeared to be an old version based on its compilation date and features. Another file, 'Mozilla', was the primary tool used in the attack. Both tools could listen on given ports, but only 'Mozilla' could connect to a bind port. The tools supported SSL and TCP, with a protocol named 'WINNET' not yet supported, suggesting ongoing development. The 'Mozilla' tool relied heavily on plugins, allowing the attacker to load new plugins to the infected machine. A Program database (PDB) path was found inside the binary of the 'Mozilla' tool. Malicious files were found in directories C:\\ProgramData\\HIDMgr, C:\\ProgramData\\Rascon, and C:\\ProgramData\\TrkSvr, with service names HIDMgr, RasconMan, and TrkSvr. File names and hashes were provided for various malicious executables and DLLs."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "Iron Tiger",
+                    "SubjectType": "threat-actor",
+                    "Relation": "drop",
+                    "Object": "install.bat",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 1
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1573-Encrypted Channel": [
+                {
+                    "Subject": "network traffic",
+                    "SubjectType": "network trafic",
+                    "Relation": "encrypt",
+                    "Object": "Rivest Cipher 4 (RC4)",
+                    "ObjectType": "encryption-algorithm",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1573-Encrypted Channel"
+                    ],
+                    "id": 4
+                }
+            ]
+        },
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "malicious executable",
+                    "SubjectType": "Malware",
+                    "Relation": "execute",
+                    "Object": "batch file",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "batch file",
+                    "SubjectType": "file",
+                    "Relation": "decompress",
+                    "Object": "DLL file",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 9
+                },
+                {
+                    "Subject": "shellcode",
+                    "SubjectType": "tool",
+                    "Relation": "decrypt",
+                    "Object": "encrypted data",
+                    "ObjectType": "artifacts",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "shellcode",
+                    "SubjectType": "tool",
+                    "Relation": "load",
+                    "Object": "attacker plugins",
+                    "ObjectType": "software",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 12
+                }
+            ]
+        },
+        "Persistence": {
+            "T1543-Create or Modify System Process": [
+                {
+                    "Subject": "Persistence",
+                    "SubjectType": "Tactic",
+                    "Relation": "achieve-by",
+                    "Object": "creating a new service or a new registry key",
+                    "ObjectType": "course-of-action",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "The registry key for persistence",
+                    "SubjectType": "registry",
+                    "Relation": "is",
+                    "Object": "'rundll32.exe_malicious_DLL_path' in 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run'",
+                    "ObjectType": "registry",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 14
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,198 @@
+{
+    "file_name": "unit42-new-poison-ivy-rat-variant-targets-hong-kong-pro-democracy-activists",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "Unit 42 observed a new variant of Poison Ivy, named SPIVY, being deployed via weaponized documents leveraging CVE-2015-2545. The documents were themed around recent Hong Kong pro-democracy events. The exploit drops a self-extracting RAR containing three files: a legitimate executable (RasTls.exe) for side-loading the malware DLL (ssMUIDLL.dll), and an encoded shellcode Poison Ivy backdoor (samsung.hlp).",
+        "Execution": "The SPIVY variant of Poison Ivy uses a search order hijacking technique, also known as 'DLL Sideloading', similar to malware like PlugX. The Poison Ivy builder allows output as either a PE file or shellcode. In this case, the backdoor was built as shellcode and then obfuscated to prevent detection. The encoded shellcode is decoded with a single byte addition of 0x99, XOR with 0xD4, then subtract 0x33. The decoded shellcode is launched by ssMUIDLL.dll.",
+        "Defense Evasion": "SPIVY uses a modified network communication protocol to help evade detection. Unlike previous versions of Poison Ivy which utilize a fixed 256 byte challenge-response handshake, SPIVY generates a payload with 1 to 16 bytes of pseudo-random data plus control bytes, where the 1st byte indicates the length of the padding before the handshake. The remainder of the protocol remains unchanged.",
+        "Command and Control": "Two C2 domains were identified: sent.leeh0m[.]org and found.leeh0m[.]org, both third-level domains off of leeh0m[.]org, created in late February 2016. Unit 42 observed two configurations with SHA256 hashes 9c6dc1c2ea5b2370b58b0ac11fde8287cd49aee3e089dbdf589cc8d51c1f7a9e and 4d38d4ee5b625e09b61a253a52eb29fcf9c506ee9329b3a90a0b3911e59174f2, both using password 'bqesid#@', C2 port 443, and mutex '40EM76iR9'.",
+        "Others": "The decoy documents associated with SPIVY reference specific events and organizations related to the Hong Kong pro-democracy movement. One decoy is from Joshua Wong, announcing a press conference about ending the Scholarism group to start a political party, Demosist\u014d. Another concerns the Mong Kok riot, purporting to be from the Justice & Peace Commission of the Hong Kong Catholic Diocese. The final decoy is an invitation to a wreath laying event by the Hong Kong Alliance in Support of Patriotic Democratic Movements of China, commemorating the Tiananmen Square massacre."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1190-Exploit Public-Facing Application": [
+                {
+                    "Subject": "Unit 42",
+                    "SubjectType": "CTI vender",
+                    "Relation": "observe",
+                    "Object": "SPIVY",
+                    "ObjectType": "Malware",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1190-Exploit Public-Facing Application"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "SPIVY",
+                    "SubjectType": "Malware",
+                    "Relation": "variant-of",
+                    "Object": "Poison Ivy",
+                    "ObjectType": "Malware",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1190-Exploit Public-Facing Application"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "SPIVY",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "CVE-2015-2545",
+                    "ObjectType": "vulnerablity",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1190-Exploit Public-Facing Application"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "SPIVY",
+                    "SubjectType": "Malware",
+                    "Relation": "drop",
+                    "Object": "ssMUIDLL.dll",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1190-Exploit Public-Facing Application"
+                    ],
+                    "id": 4
+                },
+                {
+                    "Subject": "SPIVY",
+                    "SubjectType": "Malware",
+                    "Relation": "drop",
+                    "Object": "samsung.hlp",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1190-Exploit Public-Facing Application"
+                    ],
+                    "id": 5
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1027-Obfuscated Files or Information": [
+                {
+                    "Subject": "SPIVY",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "modified network communication protocol",
+                    "ObjectType": "network traffic",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "SPIVY",
+                    "SubjectType": "Malware",
+                    "Relation": "generate",
+                    "Object": "payload with pseudo-random data",
+                    "ObjectType": "artifacts",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 7
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1571-Non-Standard Port": [
+                {
+                    "Subject": "sent.leeh0m[.]org",
+                    "SubjectType": "domain-name",
+                    "Relation": "host",
+                    "Object": "C2",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1571-Non-Standard Port"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "found.leeh0m[.]org",
+                    "SubjectType": "domain-name",
+                    "Relation": "host",
+                    "Object": "C2",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1571-Non-Standard Port"
+                    ],
+                    "id": 9
+                },
+                {
+                    "Subject": "SHA256",
+                    "SubjectType": "artifacts",
+                    "Relation": "use",
+                    "Object": "password 'bqesid#@'",
+                    "ObjectType": "artifacts",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1571-Non-Standard Port"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "SHA256",
+                    "SubjectType": "artifacts",
+                    "Relation": "use",
+                    "Object": "mutex '40EM76iR9'",
+                    "ObjectType": "artifacts",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1571-Non-Standard Port"
+                    ],
+                    "id": 11
+                }
+            ]
+        },
+        "Execution": {
+            "T1129-Shared Modules": [
+                {
+                    "Subject": "SPIVY",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "DLL Sideloading",
+                    "ObjectType": "Technique",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 14
+                },
+                {
+                    "Subject": "SPIVY",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "shellcode",
+                    "ObjectType": "artifacts",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "SPIVY",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "ssMUIDLL.dll",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 16
+                }
+            ]
+        }
+    }
+}

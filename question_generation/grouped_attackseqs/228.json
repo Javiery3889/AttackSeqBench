@@ -1,0 +1,383 @@
+{
+    "file_name": "Bitdefender-Whitepaper-APT-Mac-A4-en-EN-web",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "The CTI report details an attack flow initiated by the APT28/Sofacy group using a Mac OS X Trojan named 'Komplex'. The attack begins with the Komplex Binder, which is an executable named 'roskosmos_2015-2025.app'. Its primary function is to save a second payload, the dropper, on the system and open a decoy PDF file. The Komplex Dropper's main role is to drop the final payload, ensuring persistence on the infected system by creating directories and modifying file permissions. The final payload, the Komplex Payload, is responsible for downloading and executing files as directed by the C&C servers. The report suggests that the XAgent malware is likely distributed via the Komplex malware.",
+        "Execution": "The CTI report describes the initialization of the XAgent component's main module, BootXLoader, which checks for debugger presence and waits for internet connectivity before initializing communication with C&C servers. The MainHandler module starts and manages C&C commands and spying modules.",
+        "Persistence": "The report indicates that the Komplex Dropper ensures persistence on the infected system by creating directories and modifying file permissions. Additionally, the Launcher module within XAgent is responsible for generating the malware's file path on the infected system and re-executing itself. The malware is located in a random directory within the '<UserHomedir>/Library/Assistants/.local/' path, with both the directory and filename picked from hardcoded lists.",
+        "Defense Evasion": "The CTI report mentions that the XAgent component checks for the presence of a debugger during its initialization process and exits if one is found, as a means of defense evasion. Additionally, the Komplex Binder opens a decoy PDF file to distract the user while the actual payload is being executed.",
+        "Credential Access": "The Password module within XAgent is used to obtain passwords from Firefox browser profiles, which are then saved to a file to be sent to the C&C servers.",
+        "Discovery": "The InfoOS module within XAgent gathers information from the infected computer, such as IOPlatformUUID, process list, and operating system version. The RemoteShell module lists installed applications and iPhone backups.",
+        "Collection": "The FileSystem module within XAgent is used for file management, including finding, deleting, executing, and creating files. The CameraShot module, although not implemented, suggests an intention to capture images, potentially for data collection purposes.",
+        "Command and Control": "The CTI report details the communication process between the XAgent malware and the C&C servers. It starts by selecting a C&C server from a hardcoded list, sends a hello message, and then starts two main communication threads: one for receiving commands and one for sending data. The HTTPChannel module is used for continuous communication with the C&C server, receiving commands, and sending stolen data.",
+        "Exfiltration": "The CTI report describes the use of the msgPacket structure for exfiltrating information to the C&C server, such as screenshots, passwords, files, and more. The data is encrypted with RC4 and sent in a POST request to the C&C server.",
+        "Others": "The CTI report provides an overview of the APT28 group's targeting of Mac OS X users with the XAgent malware, highlighting the need for organizations to address computer security across all operating systems. Bitdefender, the CTI vendor, emphasizes the importance of unified security measures to prevent determined attackers from exploiting devices and networks."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Persistence": {
+            "T1543-Create or Modify System Process": [
+                {
+                    "Subject": "Komplex Dropper",
+                    "SubjectType": "Malware",
+                    "Relation": "ensure persistence",
+                    "Object": "infected system",
+                    "ObjectType": "Infrastructure",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 7
+                },
+                {
+                    "Subject": "Komplex Dropper",
+                    "SubjectType": "Malware",
+                    "Relation": "create",
+                    "Object": "directories",
+                    "ObjectType": "directory",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "Komplex Dropper",
+                    "SubjectType": "Malware",
+                    "Relation": "modify",
+                    "Object": "file permissions",
+                    "ObjectType": "artifact",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 9
+                },
+                {
+                    "Subject": "Launcher module within XAgent",
+                    "SubjectType": "Malware",
+                    "Relation": "responsible for",
+                    "Object": "generating malware's file path",
+                    "ObjectType": "artifact",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "Launcher module within XAgent",
+                    "SubjectType": "Malware",
+                    "Relation": "execute",
+                    "Object": "itself",
+                    "ObjectType": "Malware",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 11
+                },
+                {
+                    "Subject": "malware",
+                    "SubjectType": "Malware",
+                    "Relation": "located in",
+                    "Object": "random directory within '<UserHomedir>/Library/Assistants/.local/' path",
+                    "ObjectType": "directory",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 12
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1090-Proxy": [
+                {
+                    "Subject": "XAgent",
+                    "SubjectType": "Malware",
+                    "Relation": "communicate-with",
+                    "Object": "C&C servers",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1090-Proxy"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "HTTPChannel module",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "C&C server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1090-Proxy"
+                    ],
+                    "id": 14
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1622-Debugger Evasion": [
+                {
+                    "Subject": "XAgent component",
+                    "SubjectType": "Malware",
+                    "Relation": "check for",
+                    "Object": "presence of a debugger",
+                    "ObjectType": "artifact",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1622-Debugger Evasion"
+                    ],
+                    "id": 21
+                }
+            ],
+            "T1497-Virtualization/Sandbox Evasion": [
+                {
+                    "Subject": "XAgent component",
+                    "SubjectType": "Malware",
+                    "Relation": "exit",
+                    "Object": "initialization process",
+                    "ObjectType": "process",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1497-Virtualization/Sandbox Evasion"
+                    ],
+                    "id": 22
+                }
+            ],
+            "T1564-Hide Artifacts": [
+                {
+                    "Subject": "Komplex Binder",
+                    "SubjectType": "Malware",
+                    "Relation": "open",
+                    "Object": "decoy PDF file",
+                    "ObjectType": "file",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1564-Hide Artifacts"
+                    ],
+                    "id": 23
+                },
+                {
+                    "Subject": "Komplex Binder",
+                    "SubjectType": "Malware",
+                    "Relation": "execute",
+                    "Object": "actual payload",
+                    "ObjectType": "artifact",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1564-Hide Artifacts"
+                    ],
+                    "id": 24
+                }
+            ]
+        },
+        "Credential Access": {
+            "T1555-Credentials from Password Stores": [
+                {
+                    "Subject": "Password module",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "XAgent",
+                    "ObjectType": "Malware",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1555-Credentials from Password Stores"
+                    ],
+                    "id": 25
+                },
+                {
+                    "Subject": "Password module",
+                    "SubjectType": "tool",
+                    "Relation": "obtain",
+                    "Object": "passwords",
+                    "ObjectType": "artifacts",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1555-Credentials from Password Stores"
+                    ],
+                    "id": 26
+                },
+                {
+                    "Subject": "passwords",
+                    "SubjectType": "artifacts",
+                    "Relation": "save-to",
+                    "Object": "file",
+                    "ObjectType": "file",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1555-Credentials from Password Stores"
+                    ],
+                    "id": 27
+                }
+            ]
+        },
+        "Discovery": {
+            "T1082-System Information Discovery": [
+                {
+                    "Subject": "InfoOS module",
+                    "SubjectType": "tool",
+                    "Relation": "gather",
+                    "Object": "information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 29
+                },
+                {
+                    "Subject": "InfoOS module",
+                    "SubjectType": "tool",
+                    "Relation": "gather",
+                    "Object": "IOPlatformUUID",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 30
+                },
+                {
+                    "Subject": "InfoOS module",
+                    "SubjectType": "tool",
+                    "Relation": "gather",
+                    "Object": "operating system version",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 32
+                }
+            ],
+            "T1057-Process Discovery": [
+                {
+                    "Subject": "InfoOS module",
+                    "SubjectType": "tool",
+                    "Relation": "gather",
+                    "Object": "process list",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1057-Process Discovery"
+                    ],
+                    "id": 31
+                }
+            ],
+            "T1518-Software Discovery": [
+                {
+                    "Subject": "RemoteShell module",
+                    "SubjectType": "tool",
+                    "Relation": "list",
+                    "Object": "installed applications",
+                    "ObjectType": "software",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1518-Software Discovery"
+                    ],
+                    "id": 33
+                }
+            ],
+            "T1083-File and Directory Discovery": [
+                {
+                    "Subject": "RemoteShell module",
+                    "SubjectType": "tool",
+                    "Relation": "list",
+                    "Object": "iPhone backups",
+                    "ObjectType": "file",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1083-File and Directory Discovery"
+                    ],
+                    "id": 34
+                }
+            ]
+        },
+        "Collection": {
+            "T1005-Data from Local System": [
+                {
+                    "Subject": "FileSystem module",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "XAgent",
+                    "ObjectType": "Malware",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1005-Data from Local System"
+                    ],
+                    "id": 35
+                }
+            ],
+            "T1125-Video Capture": [
+                {
+                    "Subject": "CameraShot module",
+                    "SubjectType": "tool",
+                    "Relation": "suggest",
+                    "Object": "intention to capture images",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1125-Video Capture"
+                    ],
+                    "id": 36
+                }
+            ]
+        },
+        "Exfiltration": {
+            "T1041-Exfiltration Over C2 Channel": [
+                {
+                    "Subject": "msgPacket structure",
+                    "SubjectType": "artifact",
+                    "Relation": "use",
+                    "Object": "exfiltrating information",
+                    "ObjectType": "network traffic",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 37
+                },
+                {
+                    "Subject": "The data",
+                    "SubjectType": "network trafic",
+                    "Relation": "encrypt-with",
+                    "Object": "RC4",
+                    "ObjectType": "tool",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 38
+                },
+                {
+                    "Subject": "The data",
+                    "SubjectType": "network trafic",
+                    "Relation": "send-in",
+                    "Object": "POST request",
+                    "ObjectType": "network traffic",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 39
+                },
+                {
+                    "Subject": "POST request",
+                    "SubjectType": "network trafic",
+                    "Relation": "to",
+                    "Object": "C&C server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 40
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,75 @@
+{
+    "file_name": "DTL-06282015-01",
+    "tactic_label": true,
+    "rewrite": {
+        "Reconnaissance": "The CTI report mentions an attack against the Taiwanese Government, indicating that the threat actor, known to operate in South East Asia, has started using SSL encryption in their malware. This change in behavior suggests that the adversary has gathered enough information about the target to enhance their attack methods, possibly as a result of global shifts in cybersecurity practices post-Snowden revelations.",
+        "Initial Access": "The report describes a spearphishing incident where an employee of the Taiwanese Government received an email from an attacker impersonating a co-worker. The email asked the recipient to open an attachment to install LINE, a popular instant messaging program. The malware was contained within an unencrypted zip file. The email headers revealed that the email originated from outside the organization, not from a co-worker as the attacker had pretended.",
+        "Persistence": "The malware, named Mocelpa, lacks a bootstrap mechanism, meaning it will not survive a user logout, shutdown, or reboot. This suggests the malware author is confident in the malware's stability and does not require it to maintain persistence on the system.",
+        "Defense Evasion": "Mocelpa exhibits a fake SSL handshake with hardcoded values, which could be an attempt to evade network detection. However, the hardcoded nature of the SSL handshake makes it easier to create a reliable signature for IDS/IPS systems.",
+        "Command and Control": "Mocelpa communicates with a command and control server, sending an encoded MAC address to identify unique victims. The command and control functionality is simple but structured in a complex way, making it difficult to create a reliable IDS signature or detection heuristic.",
+        "Others": "Detection and mitigation strategies for Mocelpa include network IDS rules and disk-scan rules for Snort and Yara. The report provides specific YARA disk signature rules and SNORT network beaconing rules to detect Mocelpa activity. Additionally, the report lists several IP addresses associated with Mocelpa's command and control servers."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "attacker",
+                    "SubjectType": "threat-actor",
+                    "Relation": "impersonate",
+                    "Object": "co-worker",
+                    "ObjectType": "identity",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 4
+                },
+                {
+                    "Subject": "email",
+                    "SubjectType": "Email Message",
+                    "Relation": "originate-from",
+                    "Object": "outside the organization",
+                    "ObjectType": "Location",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 5
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1027-Obfuscated Files or Information": [
+                {
+                    "Subject": "Mocelpa",
+                    "SubjectType": "Malware",
+                    "Relation": "exhibit",
+                    "Object": "fake SSL handshake",
+                    "ObjectType": "artifact",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 7
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1102-Web Service": [
+                {
+                    "Subject": "Mocelpa",
+                    "SubjectType": "Malware",
+                    "Relation": "communicate-with",
+                    "Object": "command and control server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1102-Web Service"
+                    ],
+                    "id": 8
+                }
+            ]
+        }
+    }
+}

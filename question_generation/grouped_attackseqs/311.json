@@ -1,0 +1,456 @@
+{
+    "file_name": "WastedLocker_ Symantec Identifies Wave of Attacks Against U.S. Organizations _ Symantec Blogs",
+    "tactic_label": true,
+    "rewrite": {
+        "Reconnaissance": "The CTI report by Symantec, a division of Broadcom, identified a series of attacks against U.S. organizations, aiming to deploy WastedLocker ransomware. The attackers, linked to the group 'Evil Corp', used a malicious JavaScript-based framework called SocGholish, found on over 150 compromised websites, to masquerade as a software update and initiate the attack.",
+        "Initial Access": "The initial compromise involved the SocGholish framework, delivered via compromised legitimate websites. Victims received a zipped file containing malicious JavaScript disguised as a browser update. This led to the execution of a second JavaScript file by wscript.exe, profiling the computer and downloading additional discovery-related PowerShell scripts.",
+        "Execution": "The attackers deployed Cobalt Strike using PowerShell to download and execute a loader, which contained a .NET injector taken from an open-source project called Donut. This was used to execute the Cobalt Strike Beacon payload, capable of command execution, process injection, privilege escalation, and file upload/download.",
+        "Privilege Escalation": "Privilege escalation was achieved using a publicly documented technique involving the Software Licensing User Interface tool (slui.exe). The attackers also used the Windows Management Instrumentation Command Line Utility (wmic.exe) to execute commands on remote computers.",
+        "Defense Evasion": "To deploy the ransomware, the attackers used PsExec to launch a command line tool for managing Windows Defender, disabling scanning, removing definitions, and in some cases, disabling real-time monitoring. They also used PsExec to stop services across the organization before launching the WastedLocker ransomware.",
+        "Credential Access": "Cobalt Strike was used for credential dumping using ProcDump and to empty log files, aiding in the concealment of the attackers' activities.",
+        "Discovery": "The discovery phase involved profiling the computer using commands like whoami, net user, and net group. The attackers also used the Get-NetComputer command from PowerView, renamed to a random name, to search for computer objects in the Active Directory database.",
+        "Lateral Movement": "The attackers used Cobalt Strike Beacon for lateral movement, executing commands and injecting processes on remote computers.",
+        "Command and Control": "The injected Cobalt Strike Beacon payload communicated with a command and control (C&C) domain, which was publicly reported as part of the WastedLocker attack infrastructure.",
+        "Impact": "The end goal of the WastedLocker attacks was to cripple the victim's IT infrastructure by encrypting computers and servers, leading to significant disruption and demanding a multimillion-dollar ransom.",
+        "Others": "Symantec's Targeted Attack Cloud Analytics, using advanced machine learning, proactively detected the attacks. The Threat Hunter team verified the activity, which corresponded to the early stages of WastedLocker attacks. This discovery helped identify additional targeted organizations and strengthen protection against the attack. Symantec has alerted at least 31 customer organizations to the threat, with the majority being major U.S. corporations, including 11 listed companies and eight Fortune 500 companies. The attackers demonstrated skill and experience, capable of penetrating well-protected corporations, stealing credentials, and moving across networks with ease. Symantec has implemented file-based protection and intrusion prevention measures to protect against WastedLocker and associated activities. Indicators of Compromise (IoCs) including domains and IP addresses linked to the attacks have been reported to the relevant registrar, with assistance from Namecheap in suspending some domains. The Critical Attack Discovery and Intelligence team within Symantec is dedicated to investigating targeted attacks, enhancing protection in Symantec products, and providing analysis to help customers respond to attacks."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Reconnaissance": {
+            "T1589-Gather Victim Identity Information": [
+                {
+                    "Subject": "attacks",
+                    "SubjectType": "campaign",
+                    "Relation": "target",
+                    "Object": "U.S. organizations",
+                    "ObjectType": "identity",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1589-Gather Victim Identity Information"
+                    ],
+                    "id": 3
+                }
+            ]
+        },
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "SocGholish framework",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "compromised legitimate websites",
+                    "ObjectType": "infrastrcucture",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 9
+                },
+                {
+                    "Subject": "victims",
+                    "SubjectType": "identity",
+                    "Relation": "receive",
+                    "Object": "malicious JavaScript",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "wscript.exe",
+                    "SubjectType": "process",
+                    "Relation": "execute",
+                    "Object": "JavaScript file",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 11
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1202-Indirect Command Execution": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "PsExec",
+                    "ObjectType": "tool",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1202-Indirect Command Execution"
+                    ],
+                    "id": 12
+                },
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "launch",
+                    "Object": "command line tool",
+                    "ObjectType": "tool",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1202-Indirect Command Execution"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "stop services",
+                    "Object": "organization",
+                    "ObjectType": "identity",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1202-Indirect Command Execution"
+                    ],
+                    "id": 14
+                },
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "launch",
+                    "Object": "WastedLocker ransomware",
+                    "ObjectType": "Malware",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1202-Indirect Command Execution"
+                    ],
+                    "id": 15
+                }
+            ]
+        },
+        "Credential Access": {
+            "T1003-OS Credential Dumping": [
+                {
+                    "Subject": "Cobalt Strike",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "ProcDump",
+                    "ObjectType": "tool",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1003-OS Credential Dumping"
+                    ],
+                    "id": 16
+                },
+                {
+                    "Subject": "Cobalt Strike",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "credential dumping",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1003-OS Credential Dumping"
+                    ],
+                    "id": 17
+                }
+            ],
+            "T1070-Indicator Removal on Host": [
+                {
+                    "Subject": "Cobalt Strike",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "empty log files",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1070-Indicator Removal on Host"
+                    ],
+                    "id": 18
+                }
+            ]
+        },
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "deploy",
+                    "Object": "Cobalt Strike",
+                    "ObjectType": "tool",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 19
+                },
+                {
+                    "Subject": "Cobalt Strike",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "PowerShell",
+                    "ObjectType": "software",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 20
+                }
+            ],
+            "T1106-Native API": [
+                {
+                    "Subject": "loader",
+                    "SubjectType": "artifacts",
+                    "Relation": "contain",
+                    "Object": ".NET injector",
+                    "ObjectType": "artifacts",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1106-Native API"
+                    ],
+                    "id": 21
+                },
+                {
+                    "Subject": ".NET injector",
+                    "SubjectType": "artifacts",
+                    "Relation": "taken from",
+                    "Object": "Donut",
+                    "ObjectType": "tool",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1106-Native API"
+                    ],
+                    "id": 22
+                },
+                {
+                    "Subject": "Cobalt Strike Beacon payload",
+                    "SubjectType": "artifacts",
+                    "Relation": "capable of",
+                    "Object": "command execution",
+                    "ObjectType": "Tactic",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1106-Native API"
+                    ],
+                    "id": 23
+                }
+            ]
+        },
+        "Discovery": {
+            "T1033-System Owner/User Discovery": [
+                {
+                    "Subject": "The discovery phase",
+                    "SubjectType": "Tactic",
+                    "Relation": "involve",
+                    "Object": "profiling the computer",
+                    "ObjectType": "Technique",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1033-System Owner/User Discovery",
+                        "T1087-Account Discovery"
+                    ],
+                    "id": 26
+                },
+                {
+                    "Subject": "The attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "whoami",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1033-System Owner/User Discovery",
+                        "T1087-Account Discovery"
+                    ],
+                    "id": 27
+                },
+                {
+                    "Subject": "The attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "net user",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1033-System Owner/User Discovery",
+                        "T1087-Account Discovery"
+                    ],
+                    "id": 28
+                },
+                {
+                    "Subject": "The attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "net group",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1033-System Owner/User Discovery",
+                        "T1087-Account Discovery"
+                    ],
+                    "id": 29
+                }
+            ],
+            "T1087-Account Discovery": [
+                {
+                    "Subject": "The discovery phase",
+                    "SubjectType": "Tactic",
+                    "Relation": "involve",
+                    "Object": "profiling the computer",
+                    "ObjectType": "Technique",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1033-System Owner/User Discovery",
+                        "T1087-Account Discovery"
+                    ],
+                    "id": 26
+                },
+                {
+                    "Subject": "The attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "whoami",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1033-System Owner/User Discovery",
+                        "T1087-Account Discovery"
+                    ],
+                    "id": 27
+                },
+                {
+                    "Subject": "The attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "net user",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1033-System Owner/User Discovery",
+                        "T1087-Account Discovery"
+                    ],
+                    "id": 28
+                },
+                {
+                    "Subject": "The attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "net group",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1033-System Owner/User Discovery",
+                        "T1087-Account Discovery"
+                    ],
+                    "id": 29
+                }
+            ],
+            "T1018-Remote System Discovery": [
+                {
+                    "Subject": "The attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "Get-NetComputer command from PowerView",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1018-Remote System Discovery"
+                    ],
+                    "id": 30
+                }
+            ]
+        },
+        "Privilege Escalation": {
+            "T1548-Abuse Elevation Control Mechanism": [
+                {
+                    "Subject": "Privilege escalation",
+                    "SubjectType": "Tactic",
+                    "Relation": "achieve using",
+                    "Object": "slui.exe",
+                    "ObjectType": "tool",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1548-Abuse Elevation Control Mechanism"
+                    ],
+                    "id": 31
+                },
+                {
+                    "Subject": "Attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "wmic.exe",
+                    "ObjectType": "tool",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1548-Abuse Elevation Control Mechanism"
+                    ],
+                    "id": 32
+                }
+            ]
+        },
+        "Lateral Movement": {
+            "T1021-Remote Services": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "Cobalt Strike Beacon",
+                    "ObjectType": "tool",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1021-Remote Services"
+                    ],
+                    "id": 33
+                }
+            ]
+        },
+        "Impact": {
+            "T1486-Data Encrypted for Impact": [
+                {
+                    "Subject": "WastedLocker attacks",
+                    "SubjectType": "campaign",
+                    "Relation": "target",
+                    "Object": "victim's IT infrastructure",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1486-Data Encrypted for Impact"
+                    ],
+                    "id": 34
+                },
+                {
+                    "Subject": "WastedLocker attacks",
+                    "SubjectType": "campaign",
+                    "Relation": "use",
+                    "Object": "encrypting computers and servers",
+                    "ObjectType": "course-of-action",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1486-Data Encrypted for Impact"
+                    ],
+                    "id": 35
+                },
+                {
+                    "Subject": "WastedLocker attacks",
+                    "SubjectType": "campaign",
+                    "Relation": "lead to",
+                    "Object": "significant disruption",
+                    "ObjectType": "effect",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1486-Data Encrypted for Impact"
+                    ],
+                    "id": 36
+                },
+                {
+                    "Subject": "WastedLocker attacks",
+                    "SubjectType": "campaign",
+                    "Relation": "demand",
+                    "Object": "multimillion-dollar ransom",
+                    "ObjectType": "artifact",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1486-Data Encrypted for Impact"
+                    ],
+                    "id": 37
+                }
+            ]
+        }
+    }
+}

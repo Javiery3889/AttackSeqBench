@@ -1,0 +1,414 @@
+{
+    "file_name": "ESET-LightNeuron",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "Turla, also known as Snake, is believed to have used stolen credentials to deploy LightNeuron, a backdoor specifically designed to target Microsoft Exchange mail servers. This tactic aligns with MITRE ATT&CK technique T1078, Valid Accounts.",
+        "Execution": "A PowerShell script was utilized to install LightNeuron on the compromised Microsoft Exchange servers, corresponding to MITRE ATT&CK technique T1086, PowerShell.",
+        "Privilege Escalation": "To obtain administrative rights on the Microsoft Exchange servers, attackers likely used stolen credentials, which is consistent with MITRE ATT&CK technique T1078, Valid Accounts.",
+        "Discovery": "LightNeuron is capable of executing functions to discover system network configurations, specifically GetAdaptersInfo and GetComputerName, which aligns with MITRE ATT&CK technique T1016, System Network Configuration Discovery.",
+        "Collection": "LightNeuron can collect all emails matching specified rules in its configuration, as well as exfiltrate any local file using a backdoor function. This behavior corresponds to MITRE ATT&CK techniques T1114, Email Collection, and T1005, Data from Local System. Additionally, LightNeuron can automatically collect files from a specific path, which is related to MITRE ATT&CK technique T1119, Automated Collection.",
+        "Command and Control": "LightNeuron uses emails for Command and Control (C&C) communication, which is encrypted using AES and aligns with MITRE ATT&CK techniques T1032, Standard Cryptographic Protocol, and T1071, Standard Application Layer Protocol. The C&C data is hidden in PDF documents or JPG images using steganography, which is a form of data obfuscation (MITRE ATT&CK technique T1001).",
+        "Exfiltration": "Data exfiltration is conducted through the email C&C channel (MITRE ATT&CK technique T1041, Exfiltration Over Command and Control Channel) and can be scheduled to occur during the night or working hours (MITRE ATT&CK technique T1029, Scheduled Transfer). The data is encrypted using AES (MITRE ATT&CK technique T1022, Data Encrypted)."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1078-Valid Accounts": [
+                {
+                    "Subject": "Turla",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "stolen credentials",
+                    "ObjectType": "artifacts",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1078-Valid Accounts"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "Turla",
+                    "SubjectType": "threat-actor",
+                    "Relation": "deploy",
+                    "Object": "LightNeuron",
+                    "ObjectType": "Malware",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1078-Valid Accounts"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "LightNeuron",
+                    "SubjectType": "Malware",
+                    "Relation": "target",
+                    "Object": "Microsoft Exchange mail servers",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1078-Valid Accounts"
+                    ],
+                    "id": 3
+                }
+            ]
+        },
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "A PowerShell script",
+                    "SubjectType": "tool",
+                    "Relation": "install",
+                    "Object": "LightNeuron",
+                    "ObjectType": "Malware",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 4
+                }
+            ]
+        },
+        "Discovery": {
+            "T1016-System Network Configuration Discovery": [
+                {
+                    "Subject": "LightNeuron",
+                    "SubjectType": "Malware",
+                    "Relation": "execute",
+                    "Object": "GetAdaptersInfo",
+                    "ObjectType": "function",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1016-System Network Configuration Discovery"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "LightNeuron",
+                    "SubjectType": "Malware",
+                    "Relation": "execute",
+                    "Object": "GetComputerName",
+                    "ObjectType": "function",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1016-System Network Configuration Discovery"
+                    ],
+                    "id": 7
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "LightNeuron",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "emails",
+                    "ObjectType": "Email Message",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "C&C communication",
+                    "SubjectType": "network trafic",
+                    "Relation": "align-with",
+                    "Object": "T1071",
+                    "ObjectType": "Technique",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 11
+                }
+            ],
+            "T1573-Encrypted Channel": [
+                {
+                    "Subject": "C&C communication",
+                    "SubjectType": "network trafic",
+                    "Relation": "encrypt",
+                    "Object": "AES",
+                    "ObjectType": "encryption-algorithm",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1573-Encrypted Channel"
+                    ],
+                    "id": 9
+                }
+            ],
+            "T1001-Data Obfuscation": [
+                {
+                    "Subject": "C&C data",
+                    "SubjectType": "network trafic",
+                    "Relation": "use",
+                    "Object": "steganography",
+                    "ObjectType": "technique",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1001-Data Obfuscation"
+                    ],
+                    "id": 14
+                }
+            ]
+        },
+        "Privilege Escalation": {
+            "T1078-Valid Accounts": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "stolen credentials",
+                    "ObjectType": "artifact",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1078-Valid Accounts"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "stolen credentials",
+                    "SubjectType": "artifact",
+                    "Relation": "consistent-with",
+                    "Object": "T1078, Valid Accounts",
+                    "ObjectType": "Technique",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1078-Valid Accounts"
+                    ],
+                    "id": 16
+                }
+            ]
+        },
+        "Collection": {
+            "T1114-Email Collection": [
+                {
+                    "Subject": "LightNeuron",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "emails",
+                    "ObjectType": "Email Message",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1114-Email Collection",
+                        "T1005-Data from Local System",
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 17
+                },
+                {
+                    "Subject": "LightNeuron",
+                    "SubjectType": "Malware",
+                    "Relation": "exfiltrate",
+                    "Object": "local file",
+                    "ObjectType": "file",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1114-Email Collection",
+                        "T1005-Data from Local System",
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 18
+                },
+                {
+                    "Subject": "LightNeuron",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "files",
+                    "ObjectType": "file",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1114-Email Collection",
+                        "T1005-Data from Local System",
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 19
+                }
+            ],
+            "T1005-Data from Local System": [
+                {
+                    "Subject": "LightNeuron",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "emails",
+                    "ObjectType": "Email Message",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1114-Email Collection",
+                        "T1005-Data from Local System",
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 17
+                },
+                {
+                    "Subject": "LightNeuron",
+                    "SubjectType": "Malware",
+                    "Relation": "exfiltrate",
+                    "Object": "local file",
+                    "ObjectType": "file",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1114-Email Collection",
+                        "T1005-Data from Local System",
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 18
+                },
+                {
+                    "Subject": "LightNeuron",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "files",
+                    "ObjectType": "file",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1114-Email Collection",
+                        "T1005-Data from Local System",
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 19
+                }
+            ],
+            "T1119-Automated Collection": [
+                {
+                    "Subject": "LightNeuron",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "emails",
+                    "ObjectType": "Email Message",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1114-Email Collection",
+                        "T1005-Data from Local System",
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 17
+                },
+                {
+                    "Subject": "LightNeuron",
+                    "SubjectType": "Malware",
+                    "Relation": "exfiltrate",
+                    "Object": "local file",
+                    "ObjectType": "file",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1114-Email Collection",
+                        "T1005-Data from Local System",
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 18
+                },
+                {
+                    "Subject": "LightNeuron",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "files",
+                    "ObjectType": "file",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1114-Email Collection",
+                        "T1005-Data from Local System",
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 19
+                }
+            ]
+        },
+        "Exfiltration": {
+            "T1041-Exfiltration Over C2 Channel": [
+                {
+                    "Subject": "Data exfiltration",
+                    "SubjectType": "Tactic",
+                    "Relation": "use",
+                    "Object": "C&C channel",
+                    "ObjectType": "network traffic",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel",
+                        "T1029-Scheduled Transfer"
+                    ],
+                    "id": 20
+                },
+                {
+                    "Subject": "Data exfiltration",
+                    "SubjectType": "Tactic",
+                    "Relation": "occur",
+                    "Object": "night",
+                    "ObjectType": "date",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel",
+                        "T1029-Scheduled Transfer"
+                    ],
+                    "id": 21
+                },
+                {
+                    "Subject": "Data exfiltration",
+                    "SubjectType": "Tactic",
+                    "Relation": "occur",
+                    "Object": "working hours",
+                    "ObjectType": "date",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel",
+                        "T1029-Scheduled Transfer"
+                    ],
+                    "id": 22
+                },
+                {
+                    "Subject": "Data",
+                    "SubjectType": "artifacts",
+                    "Relation": "encrypt",
+                    "Object": "AES",
+                    "ObjectType": "tool",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 23
+                }
+            ],
+            "T1029-Scheduled Transfer": [
+                {
+                    "Subject": "Data exfiltration",
+                    "SubjectType": "Tactic",
+                    "Relation": "use",
+                    "Object": "C&C channel",
+                    "ObjectType": "network traffic",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel",
+                        "T1029-Scheduled Transfer"
+                    ],
+                    "id": 20
+                },
+                {
+                    "Subject": "Data exfiltration",
+                    "SubjectType": "Tactic",
+                    "Relation": "occur",
+                    "Object": "night",
+                    "ObjectType": "date",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel",
+                        "T1029-Scheduled Transfer"
+                    ],
+                    "id": 21
+                },
+                {
+                    "Subject": "Data exfiltration",
+                    "SubjectType": "Tactic",
+                    "Relation": "occur",
+                    "Object": "working hours",
+                    "ObjectType": "date",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel",
+                        "T1029-Scheduled Transfer"
+                    ],
+                    "id": 22
+                }
+            ]
+        }
+    }
+}

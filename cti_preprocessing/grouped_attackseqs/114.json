@@ -1,0 +1,308 @@
+{
+    "file_name": "evol-agrius",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "Agrius' primary method for gaining initial access involved exploiting public-facing applications, likely using publicly available exploits. The group attempted to exploit FortiOS CVE-2018-13379 against Israeli targets and also tried various 1-day vulnerabilities and SQL injection. Successful exploitation led to the uploading of webshells for lateral movement using RDP.",
+        "Execution": "Agrius deployed custom malware, including a .NET backdoor named 'IPsec Helper', which was used to exfiltrate data or deploy additional malware. This backdoor was registered as a service for persistence and could execute commands, upload files, and update its configuration based on commands from C2 servers.",
+        "Persistence": "Agrius achieved persistence by deploying webshells and registering its custom backdoor 'IPsec Helper' as a service on compromised systems.",
+        "Defense Evasion": "Agrius used webshells with variations of ASPXSpy, some of which were obfuscated with a custom base64 encoding function unique to the group. The backdoor 'IPsec Helper' contained functionality to update its engine and delete traces of itself to evade defenses.",
+        "Lateral Movement": "Agrius used webshells to tunnel RDP traffic and leverage compromised accounts for lateral movement within the target network. The group utilized a variety of publicly available offensive security tools for credential harvesting and lateral movement.",
+        "Command and Control": "The 'IPsec Helper' backdoor communicated with C2 servers over HTTP, based on a configuration file containing encrypted server addresses. The malware awaited commands from these relays, which included updating relays, sending recon information, downloading files, and self-deletion.",
+        "Impact": "Agrius deployed wipers, including 'Apostle' and DEADWOOD, to destroy data on targeted systems. Initially, 'Apostle' was a wiper that failed to execute properly due to a logic flaw but was later turned into functioning ransomware. DEADWOOD was used to overwrite files with random data and could be executed in service or Windows application mode, with various functionalities to prevent user access and ensure proper execution."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1190-Exploit Public-Facing Application": [
+                {
+                    "Subject": "Agrius",
+                    "SubjectType": "threat-actor",
+                    "Relation": "exploit",
+                    "Object": "FortiOS CVE-2018-13379",
+                    "ObjectType": "vulnerability",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1190-Exploit Public-Facing Application"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "Agrius",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "webshells",
+                    "ObjectType": "tool",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1190-Exploit Public-Facing Application"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "Agrius",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "RDP",
+                    "ObjectType": "tool",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1190-Exploit Public-Facing Application"
+                    ],
+                    "id": 3
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1573-Encrypted Channel": [
+                {
+                    "Subject": "IPsec Helper",
+                    "SubjectType": "Malware",
+                    "Relation": "communicate-with",
+                    "Object": "C2 servers",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1573-Encrypted Channel"
+                    ],
+                    "id": 4
+                }
+            ]
+        },
+        "Execution": {
+            "T1610-Deploy Container": [
+                {
+                    "Subject": "Agrius",
+                    "SubjectType": "threat-actor",
+                    "Relation": "deploy",
+                    "Object": "IPsec Helper",
+                    "ObjectType": "Malware",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1610-Deploy Container"
+                    ],
+                    "id": 5
+                }
+            ],
+            "T1569-System Services": [
+                {
+                    "Subject": "IPsec Helper",
+                    "SubjectType": "Malware",
+                    "Relation": "exfiltrate-to",
+                    "Object": "C2 servers",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1569-System Services"
+                    ],
+                    "id": 6
+                }
+            ]
+        },
+        "Persistence": {
+            "T1543-Create or Modify System Process": [
+                {
+                    "Subject": "Agrius",
+                    "SubjectType": "threat-actor",
+                    "Relation": "deploy",
+                    "Object": "webshells",
+                    "ObjectType": "tool",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 7
+                },
+                {
+                    "Subject": "Agrius",
+                    "SubjectType": "threat-actor",
+                    "Relation": "register",
+                    "Object": "IPsec Helper",
+                    "ObjectType": "software",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 8
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1070-Indicator Removal": [
+                {
+                    "Subject": "Agrius",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "webshells",
+                    "ObjectType": "tool",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1070-Indicator Removal"
+                    ],
+                    "id": 9
+                },
+                {
+                    "Subject": "IPsec Helper",
+                    "SubjectType": "Malware",
+                    "Relation": "have",
+                    "Object": "functionality to update its engine and delete traces of itself",
+                    "ObjectType": "Tactic",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1070-Indicator Removal"
+                    ],
+                    "id": 11
+                }
+            ],
+            "T1027-Obfuscated Files or Information": [
+                {
+                    "Subject": "webshells",
+                    "SubjectType": "tool",
+                    "Relation": "consist-of",
+                    "Object": "ASPXSpy",
+                    "ObjectType": "Malware",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 10
+                }
+            ]
+        },
+        "Lateral Movement": {
+            "T1021-Remote Services": [
+                {
+                    "Subject": "Agrius",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "webshells",
+                    "ObjectType": "tool",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1021-Remote Services"
+                    ],
+                    "id": 12
+                },
+                {
+                    "Subject": "Agrius",
+                    "SubjectType": "threat-actor",
+                    "Relation": "leverage",
+                    "Object": "compromised accounts",
+                    "ObjectType": "user-account",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1021-Remote Services",
+                        "T1550-Use Alternate Authentication Material"
+                    ],
+                    "id": 14
+                },
+                {
+                    "Subject": "Agrius",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "offensive security tools",
+                    "ObjectType": "tool",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1021-Remote Services"
+                    ],
+                    "id": 15
+                }
+            ],
+            "T1210-Exploitation of Remote Services": [
+                {
+                    "Subject": "Agrius",
+                    "SubjectType": "threat-actor",
+                    "Relation": "tunnel",
+                    "Object": "RDP traffic",
+                    "ObjectType": "network traffic",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1210-Exploitation of Remote Services"
+                    ],
+                    "id": 13
+                }
+            ],
+            "T1550-Use Alternate Authentication Material": [
+                {
+                    "Subject": "Agrius",
+                    "SubjectType": "threat-actor",
+                    "Relation": "leverage",
+                    "Object": "compromised accounts",
+                    "ObjectType": "user-account",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1021-Remote Services",
+                        "T1550-Use Alternate Authentication Material"
+                    ],
+                    "id": 14
+                }
+            ]
+        },
+        "Impact": {
+            "T1485-Data Destruction": [
+                {
+                    "Subject": "Agrius",
+                    "SubjectType": "threat-actor",
+                    "Relation": "deploy",
+                    "Object": "Apostle",
+                    "ObjectType": "Malware",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1485-Data Destruction"
+                    ],
+                    "id": 16
+                },
+                {
+                    "Subject": "Agrius",
+                    "SubjectType": "threat-actor",
+                    "Relation": "deploy",
+                    "Object": "DEADWOOD",
+                    "ObjectType": "Malware",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1485-Data Destruction"
+                    ],
+                    "id": 17
+                },
+                {
+                    "Subject": "Apostle",
+                    "SubjectType": "Malware",
+                    "Relation": "fail",
+                    "Object": "execution",
+                    "ObjectType": "event",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1485-Data Destruction"
+                    ],
+                    "id": 18
+                },
+                {
+                    "Subject": "DEADWOOD",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "overwrite files",
+                    "ObjectType": "event",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1485-Data Destruction"
+                    ],
+                    "id": 20
+                }
+            ],
+            "T1486-Data Encrypted for Impact": [
+                {
+                    "Subject": "Apostle",
+                    "SubjectType": "Malware",
+                    "Relation": "turn into",
+                    "Object": "functioning ransomware",
+                    "ObjectType": "Malware",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1486-Data Encrypted for Impact"
+                    ],
+                    "id": 19
+                }
+            ]
+        }
+    }
+}

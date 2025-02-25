@@ -1,0 +1,613 @@
+{
+    "file_name": "rp-operation-sharpshooter",
+    "tactic_label": true,
+    "rewrite": {
+        "Reconnaissance": "The McAfee Advanced Threat Research team reported that Operation Sharpshooter masqueraded as legitimate industry job recruitment activity to gather information for potential exploitation. The campaign used similar techniques associated with other job recruitment campaigns. The malicious documents contained Korean-language metadata and English-language job description titles, indicating a focus on English-speaking targets or those with English-speaking regional offices. The majority of targets were defense and government-related organizations.",
+        "Initial Access": "Operation Sharpshooter began on October 25 with a series of malicious documents authored by 'Richard' and distributed via an IP address in the United States and through Dropbox. These documents contained a malicious macro that injected the Sharpshooter downloader into the memory of Word, which then retrieved the second-stage implant Rising Sun from a control server.",
+        "Execution": "The shellcode executed by the macro in winword.exe acted as a downloader for the Rising Sun implant. It resolved Libraries and APIs using LoadLibraryA() and GetProcAddress(), downloaded the second-stage payload and a decoy document to the startup folder and %LOCALAPPDATA% respectively, and executed both payloads using CreateProcessA() and ShellExecuteA().",
+        "Persistence": "The Rising Sun implant ensured persistence on the system by downloading the second-stage binary to the startup folder during the download process, thereby removing the need for the implant to set up persistence for itself.",
+        "Discovery": "The Rising Sun implant performed initial reconnaissance by fetching network adapter info, computer name, user name, IP address information, native system information, and OS product name from the registry. It also decrypted additional information during the reconnaissance process, although not all of it was used by the implant.",
+        "Command and Control": "The Rising Sun implant communicated with control servers using HTTP POST requests, sending data in various formats encrypted with RC4 and obfuscated with Base64 encoding. The control servers identified were 34.214.99.20/view_style.php, 137.74.41.56/board.php, and kingkoil.com.sg/board.php.",
+        "Exfiltration": "The Rising Sun implant encrypted data using the RC4 stream encryption algorithm and obfuscated it with Base64 encoding before exfiltrating it to the control server via HTTP POST requests.",
+        "Others": "The McAfee Advanced Threat Research team discovered a new implant framework using code from the 2015 backdoor Duuzer, which was last seen targeting South Korea and Japan. The Rising Sun implant shares multiple similarities with Lazarus Group attacks but also raises the possibility of false flags. The campaign targeted nuclear, defense, energy, and financial companies globally, predominantly in the United States. The implant carries 14 backdoor capabilities, including executing commands, gathering drive and process information, reading and writing files, and modifying file attributes. Attribution to the Lazarus Group is suggested but not confirmed due to potential false flags."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1189-Drive-by Compromise": [
+                {
+                    "Subject": "Operation Sharpshooter",
+                    "SubjectType": "campaign",
+                    "Relation": "begin",
+                    "Object": "October 25",
+                    "ObjectType": "date",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1189-Drive-by Compromise"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "Operation Sharpshooter",
+                    "SubjectType": "campaign",
+                    "Relation": "use",
+                    "Object": "malicious documents",
+                    "ObjectType": "artifact",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1189-Drive-by Compromise"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "Richard",
+                    "SubjectType": "author",
+                    "Relation": "author",
+                    "Object": "malicious documents",
+                    "ObjectType": "artifact",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1189-Drive-by Compromise"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "Sharpshooter downloader",
+                    "SubjectType": "Malware",
+                    "Relation": "retrieve",
+                    "Object": "Rising Sun",
+                    "ObjectType": "Malware",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1189-Drive-by Compromise"
+                    ],
+                    "id": 4
+                }
+            ]
+        },
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "macro",
+                    "SubjectType": "artifact",
+                    "Relation": "execute",
+                    "Object": "shellcode",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "shellcode",
+                    "SubjectType": "file",
+                    "Relation": "act-as",
+                    "Object": "downloader",
+                    "ObjectType": "tool",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "shellcode",
+                    "SubjectType": "file",
+                    "Relation": "resolve",
+                    "Object": "Libraries and APIs",
+                    "ObjectType": "software",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 7
+                },
+                {
+                    "Subject": "shellcode",
+                    "SubjectType": "file",
+                    "Relation": "download",
+                    "Object": "second-stage payload",
+                    "ObjectType": "Malware",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 8
+                }
+            ],
+            "T1106-Native API": [
+                {
+                    "Subject": "shellcode",
+                    "SubjectType": "file",
+                    "Relation": "download",
+                    "Object": "decoy document",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1106-Native API"
+                    ],
+                    "id": 9
+                },
+                {
+                    "Subject": "second-stage payload",
+                    "SubjectType": "Malware",
+                    "Relation": "execute",
+                    "Object": "CreateProcessA()",
+                    "ObjectType": "tool",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1106-Native API"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "decoy document",
+                    "SubjectType": "file",
+                    "Relation": "execute",
+                    "Object": "ShellExecuteA()",
+                    "ObjectType": "tool",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1106-Native API"
+                    ],
+                    "id": 11
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "communicate-with",
+                    "Object": "control servers",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1573-Encrypted Channel",
+                        "T1001-Data Obfuscation"
+                    ],
+                    "id": 12
+                },
+                {
+                    "Subject": "control servers",
+                    "SubjectType": "infrastructure",
+                    "Relation": "identified",
+                    "Object": "34.214.99.20/view_style.php",
+                    "ObjectType": "ipv4-addr",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "control servers",
+                    "SubjectType": "infrastructure",
+                    "Relation": "identified",
+                    "Object": "137.74.41.56/board.php",
+                    "ObjectType": "ipv4-addr",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 14
+                },
+                {
+                    "Subject": "control servers",
+                    "SubjectType": "infrastructure",
+                    "Relation": "identified",
+                    "Object": "kingkoil.com.sg/board.php",
+                    "ObjectType": "domain-name",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 15
+                }
+            ],
+            "T1573-Encrypted Channel": [
+                {
+                    "Subject": "Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "communicate-with",
+                    "Object": "control servers",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1573-Encrypted Channel",
+                        "T1001-Data Obfuscation"
+                    ],
+                    "id": 12
+                }
+            ],
+            "T1001-Data Obfuscation": [
+                {
+                    "Subject": "Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "communicate-with",
+                    "Object": "control servers",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1573-Encrypted Channel",
+                        "T1001-Data Obfuscation"
+                    ],
+                    "id": 12
+                }
+            ]
+        },
+        "Persistence": {
+            "T1547-Boot or Logon Autostart Execution": [
+                {
+                    "Subject": "Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "ensured persistence on",
+                    "Object": "system",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 16
+                },
+                {
+                    "Subject": "Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "downloading",
+                    "Object": "second-stage binary",
+                    "ObjectType": "file",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 17
+                },
+                {
+                    "Subject": "second-stage binary",
+                    "SubjectType": "file",
+                    "Relation": "to",
+                    "Object": "startup folder",
+                    "ObjectType": "directory",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 18
+                }
+            ]
+        },
+        "Discovery": {
+            "T1016-System Network Configuration Discovery": [
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "perform",
+                    "Object": "initial reconnaissance",
+                    "ObjectType": "campaign",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1016-System Network Configuration Discovery",
+                        "T1033-System Owner/User Discovery",
+                        "T1082-System Information Discovery",
+                        "T1518-Software Discovery",
+                        "T1012-Query Registry"
+                    ],
+                    "id": 19
+                },
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "fetch",
+                    "Object": "network adapter info",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1016-System Network Configuration Discovery",
+                        "T1012-Query Registry"
+                    ],
+                    "id": 20
+                },
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "fetch",
+                    "Object": "IP address information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1016-System Network Configuration Discovery",
+                        "T1012-Query Registry"
+                    ],
+                    "id": 23
+                }
+            ],
+            "T1033-System Owner/User Discovery": [
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "perform",
+                    "Object": "initial reconnaissance",
+                    "ObjectType": "campaign",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1016-System Network Configuration Discovery",
+                        "T1033-System Owner/User Discovery",
+                        "T1082-System Information Discovery",
+                        "T1518-Software Discovery",
+                        "T1012-Query Registry"
+                    ],
+                    "id": 19
+                },
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "fetch",
+                    "Object": "computer name",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1033-System Owner/User Discovery",
+                        "T1012-Query Registry"
+                    ],
+                    "id": 21
+                },
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "fetch",
+                    "Object": "user name",
+                    "ObjectType": "identity",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1033-System Owner/User Discovery",
+                        "T1012-Query Registry"
+                    ],
+                    "id": 22
+                }
+            ],
+            "T1082-System Information Discovery": [
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "perform",
+                    "Object": "initial reconnaissance",
+                    "ObjectType": "campaign",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1016-System Network Configuration Discovery",
+                        "T1033-System Owner/User Discovery",
+                        "T1082-System Information Discovery",
+                        "T1518-Software Discovery",
+                        "T1012-Query Registry"
+                    ],
+                    "id": 19
+                },
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "fetch",
+                    "Object": "native system information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery",
+                        "T1012-Query Registry"
+                    ],
+                    "id": 24
+                }
+            ],
+            "T1518-Software Discovery": [
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "perform",
+                    "Object": "initial reconnaissance",
+                    "ObjectType": "campaign",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1016-System Network Configuration Discovery",
+                        "T1033-System Owner/User Discovery",
+                        "T1082-System Information Discovery",
+                        "T1518-Software Discovery",
+                        "T1012-Query Registry"
+                    ],
+                    "id": 19
+                },
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "fetch",
+                    "Object": "OS product name",
+                    "ObjectType": "software",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1518-Software Discovery",
+                        "T1012-Query Registry"
+                    ],
+                    "id": 25
+                }
+            ],
+            "T1012-Query Registry": [
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "perform",
+                    "Object": "initial reconnaissance",
+                    "ObjectType": "campaign",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1016-System Network Configuration Discovery",
+                        "T1033-System Owner/User Discovery",
+                        "T1082-System Information Discovery",
+                        "T1518-Software Discovery",
+                        "T1012-Query Registry"
+                    ],
+                    "id": 19
+                },
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "fetch",
+                    "Object": "network adapter info",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1016-System Network Configuration Discovery",
+                        "T1012-Query Registry"
+                    ],
+                    "id": 20
+                },
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "fetch",
+                    "Object": "computer name",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1033-System Owner/User Discovery",
+                        "T1012-Query Registry"
+                    ],
+                    "id": 21
+                },
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "fetch",
+                    "Object": "user name",
+                    "ObjectType": "identity",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1033-System Owner/User Discovery",
+                        "T1012-Query Registry"
+                    ],
+                    "id": 22
+                },
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "fetch",
+                    "Object": "IP address information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1016-System Network Configuration Discovery",
+                        "T1012-Query Registry"
+                    ],
+                    "id": 23
+                },
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "fetch",
+                    "Object": "native system information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery",
+                        "T1012-Query Registry"
+                    ],
+                    "id": 24
+                },
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "fetch",
+                    "Object": "OS product name",
+                    "ObjectType": "software",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1518-Software Discovery",
+                        "T1012-Query Registry"
+                    ],
+                    "id": 25
+                },
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "decrypt",
+                    "Object": "additional information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1012-Query Registry"
+                    ],
+                    "id": 26
+                }
+            ]
+        },
+        "Reconnaissance": {
+            "T1589-Gather Victim Identity Information": [
+                {
+                    "Subject": "Operation Sharpshooter",
+                    "SubjectType": "campaign",
+                    "Relation": "masquerade-as",
+                    "Object": "legitimate industry job recruitment activity",
+                    "ObjectType": "campaign",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1589-Gather Victim Identity Information"
+                    ],
+                    "id": 27
+                },
+                {
+                    "Subject": "Operation Sharpshooter",
+                    "SubjectType": "campaign",
+                    "Relation": "target",
+                    "Object": "defense and government-related organizations",
+                    "ObjectType": "identity",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1589-Gather Victim Identity Information"
+                    ],
+                    "id": 28
+                }
+            ]
+        },
+        "Exfiltration": {
+            "T1041-Exfiltration Over C2 Channel": [
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "RC4 stream encryption algorithm",
+                    "ObjectType": "encryption-algorithm",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 29
+                },
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "obfuscate",
+                    "Object": "Base64 encoding",
+                    "ObjectType": "encoding",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 30
+                },
+                {
+                    "Subject": "The Rising Sun implant",
+                    "SubjectType": "Malware",
+                    "Relation": "exfiltrate-to",
+                    "Object": "control server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 31
+                }
+            ]
+        }
+    }
+}

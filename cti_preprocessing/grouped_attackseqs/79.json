@@ -1,0 +1,197 @@
+{
+    "file_name": "PawnStorm_iOS",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "In our continued research on Operation Pawn Storm, we found one interesting poisoned pawn \n\nThe iOS malware we found is among those advanced malware. We believe the iOS malware gets installed on already compromised systems, and it is very similar to next stage SEDNIT malware we have found for Microsoft Windows systems.",
+        "Execution": "The XAgent app is fully functional malware. After being installed on iOS 7, the app's icon is hidden and it runs in the background immediately. When we try to terminate it by killing the process, it will restart almost immediately.\n\nInstalling the malware into an iOS 8 device yields different results. The icon is not hidden and it also cannot restart automatically. This suggests that the malware was designed prior to the release of iOS 8 last September 2014.",
+        "Discovery": "The app is designed to collect all kind of information on an iOS device. It is able to perform the following routines:\n\nCollect text messages\nGet contact lists\nGet pictures\nCollect geo-location data\nStart voice recording\nGet a list of installed apps\nGet a list of processes\nGet the Wi-Fi status",
+        "Command and Control": "Besides collecting information from the iOS device, the app sends the information out via HTTP. It uses POST request to send messages, and GET request to receive commands.\n\nThe malware's log messages are written in HTML and color coded, making it easier for human operators to read. Error messages tend to be in red, while others are in green as shown in the figure below.\n\nThe full uniform resource identifier (URI) for C&C HTTP requests is randomly generated, according to a template agreed upon with the C&C server. The base URI can be seen in Figure 4, and parameters are chosen from the list below and appended to the base URI.\n\nThe malware uses a token to identify which module is communicating. The token is Base64 encoded data, but padded with a 5-byte random prefix so that it looks like valid Base64 data. See the first line \"ai=\" part in the figure below.\n\nReverse engineering also revealed additional communication functions.\n\nThe app is also able to upload files via FTP protocol."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Execution": {
+            "T1204-User Execution": [
+                {
+                    "Subject": "XAgent app",
+                    "SubjectType": "Malware",
+                    "Relation": "run",
+                    "Object": "iOS 7",
+                    "ObjectType": "software",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1204-User Execution"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "XAgent app",
+                    "SubjectType": "Malware",
+                    "Relation": "restart",
+                    "Object": "process",
+                    "ObjectType": "process",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1204-User Execution"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "XAgent app",
+                    "SubjectType": "Malware",
+                    "Relation": "install",
+                    "Object": "iOS 8 device",
+                    "ObjectType": "software",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1204-User Execution"
+                    ],
+                    "id": 3
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "app",
+                    "SubjectType": "Malware",
+                    "Relation": "send",
+                    "Object": "information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1102-Web Service"
+                    ],
+                    "id": 4
+                },
+                {
+                    "Subject": "malware",
+                    "SubjectType": "Malware",
+                    "Relation": "write",
+                    "Object": "log messages",
+                    "ObjectType": "artifacts",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "malware",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "token",
+                    "ObjectType": "artifacts",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1132-Data Encoding"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "app",
+                    "SubjectType": "Malware",
+                    "Relation": "upload",
+                    "Object": "files",
+                    "ObjectType": "artifacts",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1105-Ingress Tool Transfer"
+                    ],
+                    "id": 7
+                }
+            ],
+            "T1102-Web Service": [
+                {
+                    "Subject": "app",
+                    "SubjectType": "Malware",
+                    "Relation": "send",
+                    "Object": "information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1102-Web Service"
+                    ],
+                    "id": 4
+                }
+            ],
+            "T1132-Data Encoding": [
+                {
+                    "Subject": "malware",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "token",
+                    "ObjectType": "artifacts",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1132-Data Encoding"
+                    ],
+                    "id": 6
+                }
+            ],
+            "T1105-Ingress Tool Transfer": [
+                {
+                    "Subject": "app",
+                    "SubjectType": "Malware",
+                    "Relation": "upload",
+                    "Object": "files",
+                    "ObjectType": "artifacts",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1105-Ingress Tool Transfer"
+                    ],
+                    "id": 7
+                }
+            ]
+        },
+        "Discovery": {
+            "T1614-System Location Discovery": [
+                {
+                    "Subject": "The app",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "geo-location data",
+                    "ObjectType": "Location",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1614-System Location Discovery"
+                    ],
+                    "id": 14
+                }
+            ],
+            "T1518-Software Discovery": [
+                {
+                    "Subject": "The app",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "list of installed apps",
+                    "ObjectType": "software",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1518-Software Discovery"
+                    ],
+                    "id": 16
+                }
+            ],
+            "T1057-Process Discovery": [
+                {
+                    "Subject": "The app",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "list of processes",
+                    "ObjectType": "process",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1057-Process Discovery"
+                    ],
+                    "id": 17
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,237 @@
+{
+    "file_name": "Winnti Group\u2019s skip\u20112.0_ A\u00a0Microsoft SQL Server backdoor",
+    "tactic_label": true,
+    "rewrite": {
+        "Execution": "The Winnti Group has been observed using a backdoor targeting Microsoft SQL Server, known as skip-2.0, which is launched via a VMProtected launcher. This launcher is typically associated with payloads such as PortReuse or ShadowPad. The skip-2.0 backdoor is executed with the SessionEnv service and is likely to use a DLL hijacking technique against this service for persistence.",
+        "Persistence": "The skip-2.0 backdoor likely achieves persistence by exploiting a DLL hijacking vulnerability, being installed at C:\\Windows\\System32\\TSVIPSrv.DLL, which results in the DLL being loaded by the standard Windows SessionEnv service at system startup.",
+        "Defense Evasion": "The skip-2.0 backdoor employs multiple hooks in the sqllang.dll service to bypass authentication and maintain stealth, effectively blocking event logging. It also uses Winnti's custom packer for software packing, and the launcher is VMProtected, which contributes to its evasion capabilities.",
+        "Discovery": "The Inner-Loader component of the skip-2.0 backdoor lists running processes to find the process running MSSQL Server, indicating a process discovery technique.",
+        "Impact": "The skip-2.0 backdoor allows unauthorized access to MSSQL databases, which could lead to data destruction or tampering. It manipulates event logging at runtime and enables manipulation of stored data, potentially impacting the integrity of the data within the MSSQL databases.",
+        "Others": "ESET researchers have been tracking the Winnti Group, active since at least 2012, known for high-profile supply-chain attacks against the video game and software industry. The group's recent backdoor, skip-2.0, targets MSSQL Server 11 and 12, allowing attackers to connect stealthily to any MSSQL account using a 'magic password' and automatically hiding these connections from logs. This backdoor shares similarities with the PortReuse backdoor and ShadowPad, using the same custom packer and VMProtected launcher, leading to its attribution to the Winnti Group. The backdoor's functionality includes hooking functions related to authentication and event logging in sqllang.dll to allow persistent and undetected access. ESET has published a white paper detailing the Winnti Group's arsenal and has provided indicators of compromise (IoCs) for skip-2.0, including SHA-1 hashes for the VMP Loader, Inner-Loader injector, and skip-2.0 itself, as well as known targeted sqllang.dll files. MITRE ATT&CK techniques associated with skip-2.0 include Execution, Persistence, Defense Evasion, Discovery, and Impact."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Execution": {
+            "T1569-System Services": [
+                {
+                    "Subject": "skip-2.0",
+                    "SubjectType": "Malware",
+                    "Relation": "execute",
+                    "Object": "SessionEnv service",
+                    "ObjectType": "service",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1569-System Services"
+                    ],
+                    "id": 2
+                }
+            ],
+            "T1129-Shared Modules": [
+                {
+                    "Subject": "skip-2.0",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "DLL hijacking technique",
+                    "ObjectType": "technique",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 3
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1574-Hijack Execution Flow": [
+                {
+                    "Subject": "The skip-2.0 backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "employ",
+                    "Object": "multiple hooks in the sqllang.dll service",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1574-Hijack Execution Flow"
+                    ],
+                    "id": 4
+                }
+            ],
+            "T1556-Modify Authentication Process": [
+                {
+                    "Subject": "The skip-2.0 backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "bypass",
+                    "Object": "authentication",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1556-Modify Authentication Process"
+                    ],
+                    "id": 5
+                }
+            ],
+            "T1562-Impair Defenses": [
+                {
+                    "Subject": "The skip-2.0 backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "block",
+                    "Object": "event logging",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1562-Impair Defenses"
+                    ],
+                    "id": 6
+                }
+            ],
+            "T1027-Obfuscated Files or Information": [
+                {
+                    "Subject": "It",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "Winnti's custom packer",
+                    "ObjectType": "tool",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 7
+                }
+            ],
+            "T1497-Virtualization/Sandbox Evasion": [
+                {
+                    "Subject": "The launcher",
+                    "SubjectType": "tool",
+                    "Relation": "protect",
+                    "Object": "VMProtected",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1497-Virtualization/Sandbox Evasion"
+                    ],
+                    "id": 8
+                }
+            ]
+        },
+        "Discovery": {
+            "T1057-Process Discovery": [
+                {
+                    "Subject": "The Inner-Loader component",
+                    "SubjectType": "Malware",
+                    "Relation": "list",
+                    "Object": "running processes",
+                    "ObjectType": "process",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1057-Process Discovery"
+                    ],
+                    "id": 9
+                },
+                {
+                    "Subject": "The Inner-Loader component",
+                    "SubjectType": "Malware",
+                    "Relation": "find",
+                    "Object": "process running MSSQL Server",
+                    "ObjectType": "process",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1057-Process Discovery"
+                    ],
+                    "id": 10
+                }
+            ]
+        },
+        "Impact": {
+            "T1565-Data Manipulation": [
+                {
+                    "Subject": "skip-2.0 backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "allow",
+                    "Object": "unauthorized access",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1565-Data Manipulation"
+                    ],
+                    "id": 11
+                },
+                {
+                    "Subject": "skip-2.0 backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "manipulate",
+                    "Object": "event logging",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1565-Data Manipulation"
+                    ],
+                    "id": 12
+                },
+                {
+                    "Subject": "skip-2.0 backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "enable",
+                    "Object": "manipulation of stored data",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1565-Data Manipulation"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "manipulation of stored data",
+                    "SubjectType": "attack-pattern",
+                    "Relation": "impact",
+                    "Object": "integrity of the data",
+                    "ObjectType": "artifact",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1565-Data Manipulation"
+                    ],
+                    "id": 14
+                }
+            ]
+        },
+        "Persistence": {
+            "T1574-Hijack Execution Flow": [
+                {
+                    "Subject": "The skip-2.0 backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "exploit",
+                    "Object": "DLL hijacking vulnerability",
+                    "ObjectType": "vulnerability",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1574-Hijack Execution Flow"
+                    ],
+                    "id": 16
+                },
+                {
+                    "Subject": "The skip-2.0 backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "install",
+                    "Object": "C:\\Windows\\System32\\TSVIPSrv.DLL",
+                    "ObjectType": "file",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1574-Hijack Execution Flow"
+                    ],
+                    "id": 17
+                },
+                {
+                    "Subject": "The skip-2.0 backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "be loaded by",
+                    "Object": "Windows SessionEnv service",
+                    "ObjectType": "software",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1574-Hijack Execution Flow"
+                    ],
+                    "id": 18
+                }
+            ]
+        }
+    }
+}

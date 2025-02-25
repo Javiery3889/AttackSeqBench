@@ -1,0 +1,631 @@
+{
+    "file_name": "Sayad_Flying_Kitten_analysis",
+    "tactic_label": true,
+    "rewrite": {
+        "Reconnaissance": "The Sayad malware, also known as Flying Kitten, is distributed through phishing emails, indicating a form of reconnaissance where the attackers gather email addresses and possibly other information to target specific individuals or organizations.",
+        "Resource Development": "The Sayad malware is a self-contained executable that embeds all required malicious components, meaning it does not need to download additional content from a C2 server, which could be suspicious. This suggests that the attackers have developed and staged their capabilities in advance.",
+        "Initial Access": "Sayad malware gains initial access through phishing emails, which trick users into downloading and executing the malicious executable.",
+        "Execution": "The Sayad malware executes by first running a self-extracting executable (WEXTRACT.exe) that drops and launches the Binder executable malware. The Binder then checks the .NET version installed on the machine and drops the information stealer DLL component, Sayad (aka Client) \n- DiagnosticsService.dll.",
+        "Persistence": "The Sayad malware ensures persistence by modifying the registry to run at startup using rundll32.exe, which loads the Client (DiagnosticsService.dll).",
+        "Defense Evasion": "Sayad uses an oversimplified form of obfuscation for strings utilizing Base64 encoding, which can be easily de-obfuscated. It also uses non-traditional methods for native to .NET interop, like exporting a managed API through the native Export Address Table, to evade detection.",
+        "Credential Access": "Sayad is designed to steal sensitive information, including credentials for FTP clients (FileZilla and WinSCP), VPN client user configuration files, and RDP and Putty accounts.",
+        "Discovery": "Sayad collects a wide range of information from the compromised host, including system information, running processes, open ports, and registered proxies. It also gathers data from browsers, messengers, and other applications to discover the environment it has compromised.",
+        "Collection": "Sayad collects various types of data, including keystrokes, clipboard contents, browser bookmarks and cookies, chat history, and VPN-related account information. It also captures screenshots and collects data from removable media.",
+        "Command and Control": "The Sayad malware communicates with a C2 server located at the IP address 107.6.182.179 to upload collected data. The data is encrypted using an RSA public key before being uploaded.",
+        "Exfiltration": "The Sayad malware uploads the collected and encrypted data to a malicious web server using the URL hxxp://0o0o0o0o0.com/soft.php.",
+        "Others": "The Sayad malware is linked to the Iranian hacking group Ajax Security Team. The detection rate for the Sayad malware binary at VirusTotal is zero, indicating that it may not be widely recognized by antivirus solutions. The malware uses a .NET OOP/OOD background and is unique in its implementation. The malicious server is located in the Netherlands, and the domain was registered with email addresses associated with microsofts.com, which raises questions about the legitimacy of the registration."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "Sayad malware",
+                    "SubjectType": "Malware",
+                    "Relation": "gain",
+                    "Object": "initial access",
+                    "ObjectType": "campaign",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "phishing emails",
+                    "SubjectType": "Email Message",
+                    "Relation": "trick",
+                    "Object": "users",
+                    "ObjectType": "identity",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "users",
+                    "SubjectType": "identity",
+                    "Relation": "download",
+                    "Object": "malicious executable",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 3
+                }
+            ]
+        },
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "Sayad malware",
+                    "SubjectType": "malware",
+                    "Relation": "execute",
+                    "Object": "WEXTRACT.exe",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 4
+                },
+                {
+                    "Subject": "WEXTRACT.exe",
+                    "SubjectType": "file",
+                    "Relation": "drop",
+                    "Object": "Binder executable malware",
+                    "ObjectType": "malware",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "Binder",
+                    "SubjectType": "malware",
+                    "Relation": "check",
+                    "Object": ".NET version",
+                    "ObjectType": "software",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "Binder",
+                    "SubjectType": "malware",
+                    "Relation": "drop",
+                    "Object": "Sayad (aka Client) - DiagnosticsService.dll",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 7
+                }
+            ]
+        },
+        "Persistence": {
+            "T1547-Boot or Logon Autostart Execution": [
+                {
+                    "Subject": "Sayad malware",
+                    "SubjectType": "Malware",
+                    "Relation": "ensure persistence by modifying",
+                    "Object": "registry",
+                    "ObjectType": "registry",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "Sayad malware",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "rundll32.exe",
+                    "ObjectType": "file",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 9
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1027-Obfuscated Files or Information": [
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "Base64 encoding",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "Export Address Table",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 11
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1573-Encrypted Channel": [
+                {
+                    "Subject": "Sayad malware",
+                    "SubjectType": "Malware",
+                    "Relation": "communicate-with",
+                    "Object": "C2 server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1573-Encrypted Channel"
+                    ],
+                    "id": 12
+                },
+                {
+                    "Subject": "data",
+                    "SubjectType": "artifacts",
+                    "Relation": "encrypt",
+                    "Object": "RSA public key",
+                    "ObjectType": "artifacts",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1573-Encrypted Channel"
+                    ],
+                    "id": 14
+                }
+            ]
+        },
+        "Discovery": {
+            "T1082-System Information Discovery": [
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "system information",
+                    "ObjectType": "information",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 15
+                }
+            ],
+            "T1057-Process Discovery": [
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "running processes",
+                    "ObjectType": "process",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1057-Process Discovery"
+                    ],
+                    "id": 16
+                }
+            ],
+            "T1046-Network Service Discovery": [
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "open ports",
+                    "ObjectType": "network traffic",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1046-Network Service Discovery"
+                    ],
+                    "id": 17
+                }
+            ],
+            "T1016-System Network Configuration Discovery": [
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "registered proxies",
+                    "ObjectType": "network traffic",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1016-System Network Configuration Discovery"
+                    ],
+                    "id": 18
+                }
+            ],
+            "T1217-Browser Information Discovery": [
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "data from browsers",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1217-Browser Information Discovery"
+                    ],
+                    "id": 19
+                }
+            ],
+            "T1518-Software Discovery": [
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "messengers",
+                    "ObjectType": "software",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1518-Software Discovery"
+                    ],
+                    "id": 20
+                },
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "other applications",
+                    "ObjectType": "software",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1518-Software Discovery"
+                    ],
+                    "id": 21
+                }
+            ]
+        },
+        "Reconnaissance": {
+            "T1598-Phishing for Information": [
+                {
+                    "Subject": "Sayad malware",
+                    "SubjectType": "Malware",
+                    "Relation": "distributed through",
+                    "Object": "phishing emails",
+                    "ObjectType": "Email Message",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1598-Phishing for Information"
+                    ],
+                    "id": 22
+                },
+                {
+                    "Subject": "Sayad malware",
+                    "SubjectType": "Malware",
+                    "Relation": "also known as",
+                    "Object": "Flying Kitten",
+                    "ObjectType": "Malware",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1598-Phishing for Information"
+                    ],
+                    "id": 23
+                },
+                {
+                    "Subject": "Attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "gather",
+                    "Object": "email addresses",
+                    "ObjectType": "Email Message",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1598-Phishing for Information"
+                    ],
+                    "id": 24
+                },
+                {
+                    "Subject": "Attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "possibly gather",
+                    "Object": "other information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1598-Phishing for Information"
+                    ],
+                    "id": 25
+                },
+                {
+                    "Subject": "Attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "target",
+                    "Object": "specific individuals or organizations",
+                    "ObjectType": "identity",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1598-Phishing for Information"
+                    ],
+                    "id": 26
+                }
+            ]
+        },
+        "Resource Development": {
+            "T1587-Develop Capabilities": [
+                {
+                    "Subject": "Sayad malware",
+                    "SubjectType": "Malware",
+                    "Relation": "embed",
+                    "Object": "all required malicious components",
+                    "ObjectType": "artifacts",
+                    "tactic": "Resource Development",
+                    "technique": [
+                        "T1587-Develop Capabilities",
+                        "T1608-Stage Capabilities"
+                    ],
+                    "id": 27
+                },
+                {
+                    "Subject": "Sayad malware",
+                    "SubjectType": "Malware",
+                    "Relation": "not need",
+                    "Object": "to download additional content from a C2 server",
+                    "ObjectType": "activity",
+                    "tactic": "Resource Development",
+                    "technique": [
+                        "T1587-Develop Capabilities",
+                        "T1608-Stage Capabilities"
+                    ],
+                    "id": 28
+                },
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "have developed and staged",
+                    "Object": "their capabilities",
+                    "ObjectType": "artifacts",
+                    "tactic": "Resource Development",
+                    "technique": [
+                        "T1587-Develop Capabilities",
+                        "T1608-Stage Capabilities"
+                    ],
+                    "id": 29
+                }
+            ],
+            "T1608-Stage Capabilities": [
+                {
+                    "Subject": "Sayad malware",
+                    "SubjectType": "Malware",
+                    "Relation": "embed",
+                    "Object": "all required malicious components",
+                    "ObjectType": "artifacts",
+                    "tactic": "Resource Development",
+                    "technique": [
+                        "T1587-Develop Capabilities",
+                        "T1608-Stage Capabilities"
+                    ],
+                    "id": 27
+                },
+                {
+                    "Subject": "Sayad malware",
+                    "SubjectType": "Malware",
+                    "Relation": "not need",
+                    "Object": "to download additional content from a C2 server",
+                    "ObjectType": "activity",
+                    "tactic": "Resource Development",
+                    "technique": [
+                        "T1587-Develop Capabilities",
+                        "T1608-Stage Capabilities"
+                    ],
+                    "id": 28
+                },
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "have developed and staged",
+                    "Object": "their capabilities",
+                    "ObjectType": "artifacts",
+                    "tactic": "Resource Development",
+                    "technique": [
+                        "T1587-Develop Capabilities",
+                        "T1608-Stage Capabilities"
+                    ],
+                    "id": 29
+                }
+            ]
+        },
+        "Credential Access": {
+            "T1555-Credentials from Password Stores": [
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "designed to steal",
+                    "Object": "sensitive information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1555-Credentials from Password Stores"
+                    ],
+                    "id": 30
+                },
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "steal",
+                    "Object": "credentials for FTP clients",
+                    "ObjectType": "artifacts",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1555-Credentials from Password Stores"
+                    ],
+                    "id": 31
+                },
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "steal",
+                    "Object": "VPN client user configuration files",
+                    "ObjectType": "artifacts",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1555-Credentials from Password Stores"
+                    ],
+                    "id": 32
+                },
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "steal",
+                    "Object": "RDP and Putty accounts",
+                    "ObjectType": "artifacts",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1555-Credentials from Password Stores"
+                    ],
+                    "id": 33
+                }
+            ]
+        },
+        "Collection": {
+            "T1119-Automated Collection": [
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "keystrokes",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 34
+                },
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "clipboard contents",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1119-Automated Collection",
+                        "T1115-Clipboard Data"
+                    ],
+                    "id": 35
+                },
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "browser bookmarks",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 36
+                },
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "cookies",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 37
+                },
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "chat history",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 38
+                },
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "VPN-related account information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 39
+                }
+            ],
+            "T1115-Clipboard Data": [
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "clipboard contents",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1119-Automated Collection",
+                        "T1115-Clipboard Data"
+                    ],
+                    "id": 35
+                }
+            ],
+            "T1113-Screen Capture": [
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "capture",
+                    "Object": "screenshots",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1113-Screen Capture"
+                    ],
+                    "id": 40
+                }
+            ],
+            "T1025-Data from Removable Media": [
+                {
+                    "Subject": "Sayad",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "data from removable media",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1025-Data from Removable Media"
+                    ],
+                    "id": 41
+                }
+            ]
+        },
+        "Exfiltration": {
+            "T1567-Exfiltration Over Web Service": [
+                {
+                    "Subject": "Sayad malware",
+                    "SubjectType": "Malware",
+                    "Relation": "upload",
+                    "Object": "hxxp://0o0o0o0o0.com/soft.php",
+                    "ObjectType": "url",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1567-Exfiltration Over Web Service"
+                    ],
+                    "id": 42
+                }
+            ]
+        }
+    }
+}

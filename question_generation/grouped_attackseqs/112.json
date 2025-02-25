@@ -1,0 +1,283 @@
+{
+    "file_name": "Waterbear is Back, Uses API Hooking to Evade Security Product Detection",
+    "tactic_label": true,
+    "rewrite": {
+        "Execution": "The Waterbear campaign, associated with the BlackTech cyberespionage group, uses a modular malware approach. It employs a DLL loader to decrypt and execute an RC4-encrypted payload, typically a first-stage backdoor. This backdoor can receive and load additional executables from external attackers. The infection begins with a malicious DLL loader, which can be triggered by modifying a legitimate server application to import the malicious DLL or through phantom DLL hijacking and DLL side-loading. The loader searches for a hardcoded path to decrypt the payload, which is then injected into an existing Windows Service, such as LanmanServer, run by svchost.exe.",
+        "Defense Evasion": "In a recent campaign, Waterbear was observed using API hooking techniques to evade detection by a specific security product. The malware injects code into the security product to hide its network behaviors. The payload uses API hooking to modify the functions 'ZwOpenProcess' and 'GetExtendedTcpTable' in memory, thus avoiding detection while the original system DLL files remain unchanged. The API hooking is designed to hide specific processes and TCP endpoint records associated with Waterbear's activities.",
+        "Command and Control": "Waterbear's first-stage backdoor configuration contains information required for execution and communication with external entities. It includes an encryption/decryption key, version, mutex, and XOR-encrypted C&C server address. If the backdoor is intended to listen on a specific port, this section will be filled with 0x00. The backdoor can connect to a C&C server or open a port to wait for external connections and load incoming executables.",
+        "Others": "The Waterbear campaign targets technology companies and government agencies in East Asia, specifically Taiwan, and sometimes Japan and Hong Kong. The attackers demonstrate knowledge of the victims' environments and security products, indicating a high level of familiarity with their targets. The API hooking shellcode is generic and could potentially be used to target other security products in the future, making Waterbear harder to detect."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Execution": {
+            "T1129-Shared Modules": [
+                {
+                    "Subject": "Waterbear campaign",
+                    "SubjectType": "campaign",
+                    "Relation": "employ",
+                    "Object": "DLL loader",
+                    "ObjectType": "tool",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "DLL loader",
+                    "SubjectType": "tool",
+                    "Relation": "decrypt and execute",
+                    "Object": "RC4-encrypted payload",
+                    "ObjectType": "artifact",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 4
+                },
+                {
+                    "Subject": "first-stage backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "receive and load",
+                    "Object": "executables",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "malicious DLL loader",
+                    "SubjectType": "tool",
+                    "Relation": "trigger",
+                    "Object": "legitimate server application",
+                    "ObjectType": "software",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "malicious DLL loader",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "phantom DLL hijacking",
+                    "ObjectType": "Technique",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 7
+                },
+                {
+                    "Subject": "malicious DLL loader",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "DLL side-loading",
+                    "ObjectType": "Technique",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "DLL loader",
+                    "SubjectType": "tool",
+                    "Relation": "search for",
+                    "Object": "hardcoded path",
+                    "ObjectType": "artifact",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 9
+                },
+                {
+                    "Subject": "payload",
+                    "SubjectType": "artifact",
+                    "Relation": "inject into",
+                    "Object": "Windows Service",
+                    "ObjectType": "software",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 10
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1055-Process Injection": [
+                {
+                    "Subject": "Waterbear",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "API hooking techniques",
+                    "ObjectType": "Technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1055-Process Injection"
+                    ],
+                    "id": 11
+                },
+                {
+                    "Subject": "Waterbear",
+                    "SubjectType": "Malware",
+                    "Relation": "inject",
+                    "Object": "code",
+                    "ObjectType": "artifact",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1055-Process Injection"
+                    ],
+                    "id": 12
+                },
+                {
+                    "Subject": "payload",
+                    "SubjectType": "artifact",
+                    "Relation": "use",
+                    "Object": "API hooking",
+                    "ObjectType": "Technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1055-Process Injection"
+                    ],
+                    "id": 14
+                }
+            ],
+            "T1564-Hide Artifacts": [
+                {
+                    "Subject": "Waterbear",
+                    "SubjectType": "Malware",
+                    "Relation": "hide",
+                    "Object": "network behaviors",
+                    "ObjectType": "network traffic",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1564-Hide Artifacts"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "API hooking",
+                    "SubjectType": "Technique",
+                    "Relation": "modify",
+                    "Object": "ZwOpenProcess",
+                    "ObjectType": "process",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1564-Hide Artifacts"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "API hooking",
+                    "SubjectType": "Technique",
+                    "Relation": "modify",
+                    "Object": "GetExtendedTcpTable",
+                    "ObjectType": "process",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1564-Hide Artifacts"
+                    ],
+                    "id": 16
+                },
+                {
+                    "Subject": "API hooking",
+                    "SubjectType": "Technique",
+                    "Relation": "hide",
+                    "Object": "specific processes",
+                    "ObjectType": "process",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1564-Hide Artifacts"
+                    ],
+                    "id": 17
+                },
+                {
+                    "Subject": "API hooking",
+                    "SubjectType": "Technique",
+                    "Relation": "hide",
+                    "Object": "TCP endpoint records",
+                    "ObjectType": "network traffic",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1564-Hide Artifacts"
+                    ],
+                    "id": 18
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1573-Encrypted Channel": [
+                {
+                    "Subject": "Waterbear",
+                    "SubjectType": "Malware",
+                    "Relation": "contain",
+                    "Object": "backdoor configuration",
+                    "ObjectType": "artifacts",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1573-Encrypted Channel"
+                    ],
+                    "id": 19
+                },
+                {
+                    "Subject": "backdoor configuration",
+                    "SubjectType": "artifacts",
+                    "Relation": "include",
+                    "Object": "encryption/decryption key",
+                    "ObjectType": "artifacts",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1573-Encrypted Channel"
+                    ],
+                    "id": 20
+                },
+                {
+                    "Subject": "backdoor configuration",
+                    "SubjectType": "artifacts",
+                    "Relation": "include",
+                    "Object": "XOR-encrypted C&C server address",
+                    "ObjectType": "artifacts",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1573-Encrypted Channel"
+                    ],
+                    "id": 23
+                }
+            ],
+            "T1205-Traffic Signaling": [
+                {
+                    "Subject": "backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "open",
+                    "Object": "port",
+                    "ObjectType": "network traffic",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1205-Traffic Signaling"
+                    ],
+                    "id": 25
+                }
+            ],
+            "T1105-Ingress Tool Transfer": [
+                {
+                    "Subject": "backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "load",
+                    "Object": "incoming executables",
+                    "ObjectType": "file",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1105-Ingress Tool Transfer"
+                    ],
+                    "id": 26
+                }
+            ]
+        }
+    }
+}

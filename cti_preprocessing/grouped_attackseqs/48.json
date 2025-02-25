@@ -1,0 +1,285 @@
+{
+    "file_name": "New Milestones for Deep Panda_ Log4Shell and Digitally Signed Fire Chili Rootkits",
+    "tactic_label": true,
+    "rewrite": {
+        "Resource Development": "During the past month, FortiEDR detected a campaign by Deep Panda, a Chinese APT group, which exploited the Log4Shell vulnerability in VMware Horizon servers. The group targeted multiple sectors, including financial, academic, cosmetics, and travel industries, across several countries. Deep Panda deployed a backdoor on infected machines and used a stolen digital certificate, also utilized by another Chinese APT group, Winnti, to sign their tools.",
+        "Initial Access": "Deep Panda gained initial access through the exploitation of the Log4Shell vulnerability in VMware Horizon servers. This allowed them to spawn new PowerShell processes to download and execute a chain of scripts, culminating in the installation of a malicious DLL.",
+        "Execution": "The attack chain involved the execution of PowerShell scripts and a batch file to download and run additional files, including syn.exe and 1.dll. The 1.dll module, dubbed Milestone, is a backdoor based on Gh0st RAT/Netbot Attacker's leaked source code and packed with Themida. It creates a service named msupdate2 and masquerades as the legitimate Microsoft newdev.dll.",
+        "Persistence": "The Milestone backdoor ensures persistence by copying itself to %APPDATA%\\newdev.dll and creating a service named msupdate2 directly in the registry. This service is registered with various names and descriptions across different samples.",
+        "Privilege Escalation": "The 2016 version of the Milestone backdoor creates a new administrator user with the username ANONYMOUS and password MileSt0ne2@16, executes another instance of itself with CreateProcessAsUser, and then removes the user from the system.",
+        "Defense Evasion": "Deep Panda's campaign involved the use of a novel kernel rootkit, Fire Chili, which hides and protects malicious artifacts, including files, processes, registry keys, and network connections. The rootkit uses Direct Kernel Object Modification (DKOM) and is signed with stolen certificates from game development companies. It also employs Themida for software packing and masquerading techniques to evade detection.",
+        "Discovery": "The Milestone backdoor has capabilities for system information discovery, file and directory discovery, and screen capture.",
+        "Command and Control": "The Milestone backdoor communicates with a C2 server uncompressed, unlike the zlib-compressed communication of Gh0st RAT. It also supports a command that sends information about the current sessions on the system to the server.",
+        "Exfiltration": "The Milestone backdoor exfiltrates data over the C2 channel.",
+        "Others": "The campaign's attribution to Deep Panda and Winnti is based on the use of the Milestone backdoor, previously known as Infoadmin RAT, and the Fire Chili rootkit, both of which share similarities with tools used by these groups in the past. The use of stolen certificates and C2 infrastructure suggests possible resource sharing between the groups. FortiEDR detects and blocks these threats, and all network IOCs have been added to the FortiGuard WebFiltering blocklist."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1190-Exploit Public-Facing Application": [
+                {
+                    "Subject": "Deep Panda",
+                    "SubjectType": "threat-actor",
+                    "Relation": "exploit",
+                    "Object": "Log4Shell vulnerability",
+                    "ObjectType": "vulnerability",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1190-Exploit Public-Facing Application"
+                    ],
+                    "id": 1
+                }
+            ]
+        },
+        "Persistence": {
+            "T1547-Boot or Logon Autostart Execution": [
+                {
+                    "Subject": "The Milestone backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "%APPDATA%\\newdev.dll",
+                    "ObjectType": "file",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "The Milestone backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "create",
+                    "Object": "msupdate2",
+                    "ObjectType": "service",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 4
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1014-Rootkit": [
+                {
+                    "Subject": "Deep Panda",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "Fire Chili",
+                    "ObjectType": "Malware",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1014-Rootkit"
+                    ],
+                    "id": 5
+                }
+            ],
+            "T1564-Hide Artifacts": [
+                {
+                    "Subject": "Fire Chili",
+                    "SubjectType": "Malware",
+                    "Relation": "hide",
+                    "Object": "artifacts",
+                    "ObjectType": "artifacts",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1564-Hide Artifacts"
+                    ],
+                    "id": 6
+                }
+            ],
+            "T1574-Hijack Execution Flow": [
+                {
+                    "Subject": "Fire Chili",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "Direct Kernel Object Modification (DKOM)",
+                    "ObjectType": "Technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1574-Hijack Execution Flow"
+                    ],
+                    "id": 7
+                }
+            ],
+            "T1036-Masquerading": [
+                {
+                    "Subject": "Fire Chili",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "Themida",
+                    "ObjectType": "software",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1036-Masquerading"
+                    ],
+                    "id": 8
+                }
+            ]
+        },
+        "Discovery": {
+            "T1082-System Information Discovery": [
+                {
+                    "Subject": "The Milestone backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "have",
+                    "Object": "system information discovery",
+                    "ObjectType": "Tactic",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 9
+                }
+            ],
+            "T1083-File and Directory Discovery": [
+                {
+                    "Subject": "The Milestone backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "have",
+                    "Object": "file and directory discovery",
+                    "ObjectType": "Tactic",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1083-File and Directory Discovery"
+                    ],
+                    "id": 10
+                }
+            ]
+        },
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "PowerShell scripts",
+                    "SubjectType": "file",
+                    "Relation": "download",
+                    "Object": "additional files",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 12
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "Milestone backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "communicate-with",
+                    "Object": "C2 server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1102-Web Service"
+                    ],
+                    "id": 15
+                }
+            ],
+            "T1102-Web Service": [
+                {
+                    "Subject": "Milestone backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "communicate-with",
+                    "Object": "C2 server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1102-Web Service"
+                    ],
+                    "id": 15
+                }
+            ]
+        },
+        "Exfiltration": {
+            "T1041-Exfiltration Over C2 Channel": [
+                {
+                    "Subject": "The Milestone backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "exfiltrate-to",
+                    "Object": "the C2 channel",
+                    "ObjectType": "network traffic",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 16
+                }
+            ]
+        },
+        "Resource Development": {
+            "T1588-Obtain Capabilities": [
+                {
+                    "Subject": "Deep Panda",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "stolen digital certificate",
+                    "ObjectType": "X.509 Certificate",
+                    "tactic": "Resource Development",
+                    "technique": [
+                        "T1588-Obtain Capabilities"
+                    ],
+                    "id": 21
+                },
+                {
+                    "Subject": "Winnti",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "stolen digital certificate",
+                    "ObjectType": "X.509 Certificate",
+                    "tactic": "Resource Development",
+                    "technique": [
+                        "T1588-Obtain Capabilities"
+                    ],
+                    "id": 22
+                }
+            ]
+        },
+        "Privilege Escalation": {
+            "T1098-Account Manipulation": [
+                {
+                    "Subject": "Milestone backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "create",
+                    "Object": "ANONYMOUS user-account",
+                    "ObjectType": "user-account",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1098-Account Manipulation"
+                    ],
+                    "id": 23
+                },
+                {
+                    "Subject": "Milestone backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "remove",
+                    "Object": "ANONYMOUS user-account",
+                    "ObjectType": "user-account",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1098-Account Manipulation"
+                    ],
+                    "id": 25
+                }
+            ],
+            "T1134-Access Token Manipulation": [
+                {
+                    "Subject": "Milestone backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "CreateProcessAsUser",
+                    "ObjectType": "tool",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1134-Access Token Manipulation"
+                    ],
+                    "id": 24
+                }
+            ]
+        }
+    }
+}

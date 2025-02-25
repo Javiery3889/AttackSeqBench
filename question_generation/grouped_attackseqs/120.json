@@ -1,0 +1,499 @@
+{
+    "file_name": "NCSC-MAR-Infamous-Chisel",
+    "tactic_label": true,
+    "rewrite": {
+        "Execution": "Infamous Chisel is a collection of components targeting Android devices, associated with Sandworm activity. It includes a multi-call binary with utilities like dropbear, dropbearkey, ssh, scp, nmap, dbclient, watchdog, rmflag, mkflag, and is capable of executing shell scripts as the root user of the device. The malware replaces the legitimate netd and is executed by init, inheriting root privileges.",
+        "Persistence": "Infamous Chisel persists on the system by replacing the legitimate netd system binary at the path /system/bin/netd. The malicious netd checks if init is the parent process and executes the legitimate process backed up at /system/bin/netd_, allowing the malicious netd to execute as root.",
+        "Privilege Escalation": "Infamous Chisel replaces the legitimate netd and is executed by init, inheriting root privileges. It executes shell scripts as the root user of the device.",
+        "Defense Evasion": "Infamous Chisel's blob decompresses executables from bzip archives. The malware checks that it is executed by init and at the path for the legitimate netd, impairing defenses by ensuring it is run as intended.",
+        "Credential Access": "Infamous Chisel scrapes multiple files containing credentials and key information. It deploys tcpdump alongside the malware, which has the ability to sniff network interfaces and monitor network traffic.",
+        "Discovery": "Infamous Chisel's netd component enumerates multiple data directories to discover files of interest, collects GPS information, lists installed packages, and gathers various system information such as the Android ID and other hardware information. It also performs IP scanning of the local network to discover other devices.",
+        "Collection": "Infamous Chisel's netd component automatically collects files from the local system based on a predefined list of file extensions. It also collects files from application and data directories containing communication data.",
+        "Command and Control": "Infamous Chisel's db component provides SCP functionality, and td is deployed alongside the malware providing a Tor hidden service relaying connections to SSH program. The malware also provides a local Socks connection for db, and db provides a SSH server and client.",
+        "Exfiltration": "Infamous Chisel's netd component automatically exfiltrates files at regular intervals using a Tor hidden service and SSH connections.",
+        "Impact": "Infamous Chisel replaces the legitimate netd, potentially impacting the service."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "Infamous Chisel",
+                    "SubjectType": "Malware",
+                    "Relation": "belong-to",
+                    "Object": "Sandworm",
+                    "ObjectType": "threat-actor",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "Infamous Chisel",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "multi-call binary",
+                    "ObjectType": "tool",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "Infamous Chisel",
+                    "SubjectType": "Malware",
+                    "Relation": "execute",
+                    "Object": "init",
+                    "ObjectType": "process",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 4
+                }
+            ],
+            "T1106-Native API": [
+                {
+                    "Subject": "Infamous Chisel",
+                    "SubjectType": "Malware",
+                    "Relation": "replace",
+                    "Object": "netd",
+                    "ObjectType": "software",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1106-Native API"
+                    ],
+                    "id": 3
+                }
+            ]
+        },
+        "Persistence": {
+            "T1554-Compromise Client Software Binary": [
+                {
+                    "Subject": "Infamous Chisel",
+                    "SubjectType": "Malware",
+                    "Relation": "persists on",
+                    "Object": "system",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1554-Compromise Client Software Binary"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "malicious netd",
+                    "SubjectType": "Malware",
+                    "Relation": "replaces",
+                    "Object": "legitimate netd system binary",
+                    "ObjectType": "file",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1554-Compromise Client Software Binary"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "malicious netd",
+                    "SubjectType": "Malware",
+                    "Relation": "checks",
+                    "Object": "init",
+                    "ObjectType": "process",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1554-Compromise Client Software Binary"
+                    ],
+                    "id": 7
+                },
+                {
+                    "Subject": "malicious netd",
+                    "SubjectType": "Malware",
+                    "Relation": "executes",
+                    "Object": "legitimate process",
+                    "ObjectType": "process",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1554-Compromise Client Software Binary"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "malicious netd",
+                    "SubjectType": "Malware",
+                    "Relation": "execute as",
+                    "Object": "root",
+                    "ObjectType": "user-account",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1554-Compromise Client Software Binary"
+                    ],
+                    "id": 9
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1562-Impair Defenses": [
+                {
+                    "Subject": "Chisel's blob",
+                    "SubjectType": "Malware",
+                    "Relation": "decompress",
+                    "Object": "executables",
+                    "ObjectType": "file",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1562-Impair Defenses"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "Chisel's blob",
+                    "SubjectType": "Malware",
+                    "Relation": "check",
+                    "Object": "init",
+                    "ObjectType": "process",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1562-Impair Defenses"
+                    ],
+                    "id": 11
+                },
+                {
+                    "Subject": "Chisel's blob",
+                    "SubjectType": "Malware",
+                    "Relation": "impair",
+                    "Object": "defenses",
+                    "ObjectType": "course-of-action",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1562-Impair Defenses"
+                    ],
+                    "id": 12
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1095-Non-Application Layer Protocol": [
+                {
+                    "Subject": "Chisel",
+                    "SubjectType": "Malware",
+                    "Relation": "provide",
+                    "Object": "SCP functionality",
+                    "ObjectType": "feature",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1095-Non-Application Layer Protocol"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "Chisel",
+                    "SubjectType": "Malware",
+                    "Relation": "provide",
+                    "Object": "Socks connection",
+                    "ObjectType": "feature",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1095-Non-Application Layer Protocol"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "db",
+                    "SubjectType": "component",
+                    "Relation": "provide",
+                    "Object": "SSH server and client",
+                    "ObjectType": "feature",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1095-Non-Application Layer Protocol"
+                    ],
+                    "id": 16
+                }
+            ],
+            "T1102-Web Service": [
+                {
+                    "Subject": "td",
+                    "SubjectType": "tool",
+                    "Relation": "deploy",
+                    "Object": "Chisel",
+                    "ObjectType": "Malware",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1102-Web Service"
+                    ],
+                    "id": 14
+                }
+            ]
+        },
+        "Credential Access": {
+            "T1056-Input Capture": [
+                {
+                    "Subject": "Infamous Chisel",
+                    "SubjectType": "Malware",
+                    "Relation": "scrape",
+                    "Object": "files containing credentials and key information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1056-Input Capture"
+                    ],
+                    "id": 17
+                }
+            ],
+            "T1040-Network Sniffing": [
+                {
+                    "Subject": "Infamous Chisel",
+                    "SubjectType": "Malware",
+                    "Relation": "deploy",
+                    "Object": "tcpdump",
+                    "ObjectType": "tool",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1040-Network Sniffing"
+                    ],
+                    "id": 18
+                },
+                {
+                    "Subject": "tcpdump",
+                    "SubjectType": "tool",
+                    "Relation": "sniff",
+                    "Object": "network interfaces",
+                    "ObjectType": "infrastrcucture",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1040-Network Sniffing"
+                    ],
+                    "id": 19
+                },
+                {
+                    "Subject": "tcpdump",
+                    "SubjectType": "tool",
+                    "Relation": "monitor",
+                    "Object": "network traffic",
+                    "ObjectType": "network traffic",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1040-Network Sniffing"
+                    ],
+                    "id": 20
+                }
+            ]
+        },
+        "Privilege Escalation": {
+            "T1543-Create or Modify System Process": [
+                {
+                    "Subject": "Chisel",
+                    "SubjectType": "Malware",
+                    "Relation": "replace",
+                    "Object": "netd",
+                    "ObjectType": "process",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 21
+                },
+                {
+                    "Subject": "Chisel",
+                    "SubjectType": "Malware",
+                    "Relation": "execute",
+                    "Object": "shell scripts",
+                    "ObjectType": "artifacts",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 22
+                },
+                {
+                    "Subject": "Chisel",
+                    "SubjectType": "Malware",
+                    "Relation": "inherit",
+                    "Object": "root privileges",
+                    "ObjectType": "privilege",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 23
+                }
+            ]
+        },
+        "Discovery": {
+            "T1083-File and Directory Discovery": [
+                {
+                    "Subject": "Chisel's netd component",
+                    "SubjectType": "tool",
+                    "Relation": "enumerate",
+                    "Object": "data directories",
+                    "ObjectType": "directory",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1083-File and Directory Discovery"
+                    ],
+                    "id": 24
+                }
+            ],
+            "T1614-System Location Discovery": [
+                {
+                    "Subject": "Chisel's netd component",
+                    "SubjectType": "tool",
+                    "Relation": "collect",
+                    "Object": "GPS information",
+                    "ObjectType": "artifact",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1614-System Location Discovery"
+                    ],
+                    "id": 25
+                }
+            ],
+            "T1518-Software Discovery": [
+                {
+                    "Subject": "Chisel's netd component",
+                    "SubjectType": "tool",
+                    "Relation": "list",
+                    "Object": "installed packages",
+                    "ObjectType": "software",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1518-Software Discovery"
+                    ],
+                    "id": 26
+                }
+            ],
+            "T1082-System Information Discovery": [
+                {
+                    "Subject": "Chisel's netd component",
+                    "SubjectType": "tool",
+                    "Relation": "gather",
+                    "Object": "system information",
+                    "ObjectType": "artifact",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 27
+                }
+            ],
+            "T1046-Network Service Discovery": [
+                {
+                    "Subject": "Chisel's netd component",
+                    "SubjectType": "tool",
+                    "Relation": "perform",
+                    "Object": "IP scanning",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1046-Network Service Discovery"
+                    ],
+                    "id": 28
+                }
+            ]
+        },
+        "Collection": {
+            "T1119-Automated Collection": [
+                {
+                    "Subject": "Chisel's netd component",
+                    "SubjectType": "tool",
+                    "Relation": "collect",
+                    "Object": "files",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 29
+                },
+                {
+                    "Subject": "Chisel's netd component",
+                    "SubjectType": "tool",
+                    "Relation": "collect",
+                    "Object": "files",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 30
+                }
+            ]
+        },
+        "Exfiltration": {
+            "T1020-Automated Exfiltration": [
+                {
+                    "Subject": "Chisel's netd component",
+                    "SubjectType": "tool",
+                    "Relation": "exfiltrate-to",
+                    "Object": "Tor hidden service",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1020-Automated Exfiltration",
+                        "T1029-Scheduled Transfer"
+                    ],
+                    "id": 31
+                },
+                {
+                    "Subject": "Chisel's netd component",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "SSH connections",
+                    "ObjectType": "network traffic",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1020-Automated Exfiltration",
+                        "T1029-Scheduled Transfer"
+                    ],
+                    "id": 32
+                }
+            ],
+            "T1029-Scheduled Transfer": [
+                {
+                    "Subject": "Chisel's netd component",
+                    "SubjectType": "tool",
+                    "Relation": "exfiltrate-to",
+                    "Object": "Tor hidden service",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1020-Automated Exfiltration",
+                        "T1029-Scheduled Transfer"
+                    ],
+                    "id": 31
+                },
+                {
+                    "Subject": "Chisel's netd component",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "SSH connections",
+                    "ObjectType": "network traffic",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1020-Automated Exfiltration",
+                        "T1029-Scheduled Transfer"
+                    ],
+                    "id": 32
+                }
+            ]
+        },
+        "Impact": {
+            "T1489-Service Stop": [
+                {
+                    "Subject": "Infamous Chisel",
+                    "SubjectType": "Malware",
+                    "Relation": "replace",
+                    "Object": "netd",
+                    "ObjectType": "software",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1489-Service Stop"
+                    ],
+                    "id": 33
+                }
+            ]
+        }
+    }
+}

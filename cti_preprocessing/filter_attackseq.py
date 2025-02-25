@@ -31,7 +31,7 @@ def remove_empty_tactics(report_data: dict) -> dict:
 
 def main():
     json_dir = Path(__file__).parent / 'original_reports'
-    write_dir = Path(__file__).parent / 'filtered-attackseqs'
+    write_dir = Path(__file__).parent / 'filtered_attackseqs'
     write_dir.mkdir(exist_ok=True)
     attackseq_id = 1
     for json_file in json_dir.glob('*.json'):

@@ -1,0 +1,378 @@
+{
+    "file_name": "A dive into Turla PowerShell usage",
+    "tactic_label": true,
+    "rewrite": {
+        "Execution": "ESET researchers have analyzed new tactics, techniques, and procedures (TTPs) attributed to the Turla group, which involve leveraging PowerShell to run malware directly in memory, thus bypassing detection mechanisms that activate when a malicious executable is dropped on disk. The Turla group, also known as Snake, has been active since at least 2008 and is known for its sophisticated malware and espionage operations. The PowerShell scripts used by Turla persist on the system by regularly loading embedded executables into memory only, without writing them to disk.",
+        "Persistence": "Turla operators have employed two methods for persistence: using a Windows Management Instrumentation (WMI) event subscription and altering the PowerShell profile (profile.ps1 file). In the case of WMI, attackers create event filters and consumers to execute base64-encoded PowerShell commands that load a large script stored in the Windows registry. The PowerShell profile is modified to run a script when PowerShell starts, which includes commands to load and execute the malware.",
+        "Defense Evasion": "Turla's PowerShell scripts are designed to evade detection by encrypting payloads and obfuscating scripts. They also include an AMSI bypass technique that patches the AmsiScanBuffer function in memory to prevent antimalware products from receiving and scanning the buffer. This technique was not newly discovered but reused from a presentation at Black Hat Asia 2018.",
+        "Discovery": "Turla's RPC backdoor and PowerStallion backdoor are used to perform lateral movement and take control of machines within a local network. They implement basic features such as file upload, download, and command execution. The RPC backdoor also supports the addition of plugins, which can gather file and directory information and monitor USB drives. PowerStallion monitors antimalware logs and the Windows process list.",
+        "Collection": "Turla's RPC backdoor plugins are capable of collecting recent files from the local file system and files from USB drives. PowerStallion, a lightweight PowerShell backdoor, uses Microsoft OneDrive as a command and control server and can execute additional PowerShell scripts, writing command results to another OneDrive subfolder.",
+        "Command and Control": "The RPC backdoor uses the RPC protocol for command and control, while PowerStallion uses Microsoft OneDrive, accessed via SMB, as its command and control server.",
+        "Exfiltration": "PowerStallion exfiltrates information through the command and control channel by writing command results to a OneDrive subfolder and encrypting them with XOR key 0xAA."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "Turla group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "leverage",
+                    "Object": "PowerShell",
+                    "ObjectType": "tool",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "PowerShell scripts",
+                    "SubjectType": "tool",
+                    "Relation": "persist on",
+                    "Object": "the system",
+                    "ObjectType": "infrastrcucture",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 4
+                },
+                {
+                    "Subject": "PowerShell scripts",
+                    "SubjectType": "tool",
+                    "Relation": "loading",
+                    "Object": "embedded executables",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 5
+                }
+            ]
+        },
+        "Collection": {
+            "T1025-Data from Removable Media": [
+                {
+                    "Subject": "Turla's RPC backdoor plugins",
+                    "SubjectType": "tool",
+                    "Relation": "capable of collecting",
+                    "Object": "recent files",
+                    "ObjectType": "file",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1025-Data from Removable Media",
+                        "T1005-Data from Local System"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "Turla's RPC backdoor plugins",
+                    "SubjectType": "tool",
+                    "Relation": "collect",
+                    "Object": "files from USB drives",
+                    "ObjectType": "file",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1025-Data from Removable Media",
+                        "T1005-Data from Local System"
+                    ],
+                    "id": 7
+                }
+            ],
+            "T1005-Data from Local System": [
+                {
+                    "Subject": "Turla's RPC backdoor plugins",
+                    "SubjectType": "tool",
+                    "Relation": "capable of collecting",
+                    "Object": "recent files",
+                    "ObjectType": "file",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1025-Data from Removable Media",
+                        "T1005-Data from Local System"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "Turla's RPC backdoor plugins",
+                    "SubjectType": "tool",
+                    "Relation": "collect",
+                    "Object": "files from USB drives",
+                    "ObjectType": "file",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1025-Data from Removable Media",
+                        "T1005-Data from Local System"
+                    ],
+                    "id": 7
+                }
+            ],
+            "T1530-Data from Cloud Storage": [
+                {
+                    "Subject": "PowerStallion",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "Microsoft OneDrive",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1530-Data from Cloud Storage"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "PowerStallion",
+                    "SubjectType": "Malware",
+                    "Relation": "execute",
+                    "Object": "additional PowerShell scripts",
+                    "ObjectType": "tool",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1530-Data from Cloud Storage"
+                    ],
+                    "id": 9
+                },
+                {
+                    "Subject": "PowerStallion",
+                    "SubjectType": "Malware",
+                    "Relation": "write",
+                    "Object": "command results",
+                    "ObjectType": "file",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1530-Data from Cloud Storage"
+                    ],
+                    "id": 10
+                }
+            ]
+        },
+        "Persistence": {
+            "T1546-Event Triggered Execution": [
+                {
+                    "Subject": "Turla operators",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "WMI event subscription",
+                    "ObjectType": "technique",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1546-Event Triggered Execution"
+                    ],
+                    "id": 11
+                },
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "create",
+                    "Object": "event filters and consumers",
+                    "ObjectType": "technique",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1546-Event Triggered Execution"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "execute",
+                    "Object": "PowerShell commands",
+                    "ObjectType": "technique",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1546-Event Triggered Execution"
+                    ],
+                    "id": 14
+                }
+            ],
+            "T1037-Boot or Logon Initialization Scripts": [
+                {
+                    "Subject": "PowerShell profile",
+                    "SubjectType": "file",
+                    "Relation": "run",
+                    "Object": "script",
+                    "ObjectType": "file",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1037-Boot or Logon Initialization Scripts"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "script",
+                    "SubjectType": "file",
+                    "Relation": "load and execute",
+                    "Object": "malware",
+                    "ObjectType": "malware",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1037-Boot or Logon Initialization Scripts"
+                    ],
+                    "id": 16
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1027-Obfuscated Files or Information": [
+                {
+                    "Subject": "Turla",
+                    "SubjectType": "threat-actor",
+                    "Relation": "design",
+                    "Object": "PowerShell scripts",
+                    "ObjectType": "tool",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 17
+                },
+                {
+                    "Subject": "PowerShell scripts",
+                    "SubjectType": "tool",
+                    "Relation": "evade detection",
+                    "Object": "encrypting payloads",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 18
+                },
+                {
+                    "Subject": "PowerShell scripts",
+                    "SubjectType": "tool",
+                    "Relation": "include",
+                    "Object": "AMSI bypass technique",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information",
+                        "T1562-Impair Defenses"
+                    ],
+                    "id": 19
+                }
+            ],
+            "T1562-Impair Defenses": [
+                {
+                    "Subject": "PowerShell scripts",
+                    "SubjectType": "tool",
+                    "Relation": "include",
+                    "Object": "AMSI bypass technique",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information",
+                        "T1562-Impair Defenses"
+                    ],
+                    "id": 19
+                },
+                {
+                    "Subject": "AMSI bypass technique",
+                    "SubjectType": "technique",
+                    "Relation": "patch",
+                    "Object": "AmsiScanBuffer function",
+                    "ObjectType": "software",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1562-Impair Defenses"
+                    ],
+                    "id": 20
+                }
+            ]
+        },
+        "Discovery": {
+            "T1083-File and Directory Discovery": [
+                {
+                    "Subject": "Turla's RPC backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "lateral movement",
+                    "ObjectType": "Tactic",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1083-File and Directory Discovery",
+                        "T1120-Peripheral Device Discovery"
+                    ],
+                    "id": 21
+                }
+            ],
+            "T1120-Peripheral Device Discovery": [
+                {
+                    "Subject": "Turla's RPC backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "lateral movement",
+                    "ObjectType": "Tactic",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1083-File and Directory Discovery",
+                        "T1120-Peripheral Device Discovery"
+                    ],
+                    "id": 21
+                }
+            ],
+            "T1057-Process Discovery": [
+                {
+                    "Subject": "PowerStallion backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "monitor",
+                    "Object": "Windows process list",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1057-Process Discovery"
+                    ],
+                    "id": 24
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "RPC backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "RPC protocol",
+                    "ObjectType": "network traffic",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 25
+                }
+            ],
+            "T1102-Web Service": [
+                {
+                    "Subject": "PowerStallion",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "Microsoft OneDrive",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1102-Web Service"
+                    ],
+                    "id": 26
+                }
+            ]
+        },
+        "Exfiltration": {
+            "T1041-Exfiltration Over C2 Channel": [
+                {
+                    "Subject": "PowerStallion",
+                    "SubjectType": "Malware",
+                    "Relation": "exfiltrate-to",
+                    "Object": "OneDrive subfolder",
+                    "ObjectType": "directory",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 27
+                }
+            ]
+        }
+    }
+}

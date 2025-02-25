@@ -1,0 +1,145 @@
+{
+    "triplets": [
+        {
+            "Subject": "EvilBunny campaign",
+            "SubjectType": "campaign",
+            "Relation": "utilize",
+            "Object": "malicious PDF document",
+            "ObjectType": "artifact",
+            "tactic": "Initial Access",
+            "technique": [
+                "T1566-Phishing"
+            ],
+            "id": 1
+        },
+        {
+            "Subject": "malicious PDF document",
+            "SubjectType": "artifact",
+            "Relation": "exploit",
+            "Object": "CVE-2011-4369",
+            "ObjectType": "vulnerablity",
+            "tactic": "Initial Access",
+            "technique": [
+                "T1190-Exploit Public-Facing Application"
+            ],
+            "id": 2
+        },
+        {
+            "Subject": "bunny dropper",
+            "SubjectType": "Malware",
+            "Relation": "install",
+            "Object": "suspect #4 malware",
+            "ObjectType": "Malware",
+            "tactic": "Initial Access",
+            "technique": [
+                "Others"
+            ],
+            "id": 3
+        },
+        {
+            "Subject": "bunny dropper",
+            "SubjectType": "Malware",
+            "Relation": "perform",
+            "Object": "sandbox check",
+            "ObjectType": "technique",
+            "tactic": "Defense Evasion",
+            "technique": [
+                "T1497-Virtualization/Sandbox Evasion"
+            ],
+            "id": 4
+        },
+        {
+            "Subject": "bunny dropper",
+            "SubjectType": "Malware",
+            "Relation": "access",
+            "Object": "WMI",
+            "ObjectType": "software",
+            "tactic": "Defense Evasion",
+            "technique": [
+                "Others"
+            ],
+            "id": 5
+        },
+        {
+            "Subject": "Suspect #4",
+            "SubjectType": "Malware",
+            "Relation": "inject",
+            "Object": "svchost.exe",
+            "ObjectType": "process",
+            "tactic": "Defense Evasion",
+            "technique": [
+                "T1055-Process Injection"
+            ],
+            "id": 6
+        },
+        {
+            "Subject": "bunny dropper",
+            "SubjectType": "Malware",
+            "Relation": "ensure",
+            "Object": "persistence",
+            "ObjectType": "Tactic",
+            "tactic": "Persistence",
+            "technique": [
+                "T1547-Boot or Logon Autostart Execution"
+            ],
+            "id": 7
+        },
+        {
+            "Subject": "bunny dropper",
+            "SubjectType": "Malware",
+            "Relation": "create",
+            "Object": "registry key",
+            "ObjectType": "registry",
+            "tactic": "Persistence",
+            "technique": [
+                "T1547-Boot or Logon Autostart Execution"
+            ],
+            "id": 8
+        },
+        {
+            "Subject": "netmgr.exe",
+            "SubjectType": "file",
+            "Relation": "use",
+            "Object": "registry key",
+            "ObjectType": "registry",
+            "tactic": "Persistence",
+            "technique": [
+                "T1547-Boot or Logon Autostart Execution"
+            ],
+            "id": 9
+        },
+        {
+            "Subject": "netmgr.exe",
+            "SubjectType": "Malware",
+            "Relation": "decrypt",
+            "Object": "configuration file",
+            "ObjectType": "file",
+            "tactic": "Command and Control",
+            "technique": [
+                "T1071-Application Layer Protocol"
+            ],
+            "id": 10
+        },
+        {
+            "Subject": "netmgr.exe",
+            "SubjectType": "Malware",
+            "Relation": "reveal",
+            "Object": "C&C server URLs",
+            "ObjectType": "url",
+            "tactic": "Command and Control",
+            "technique": [
+                "T1071-Application Layer Protocol"
+            ],
+            "id": 11
+        }
+    ],
+    "file_name": "EvilBunny_Suspect4_v1.0",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "The EvilBunny campaign utilized a malicious PDF document to exploit CVE-2011-4369 on December 20, 2011. The exploit downloaded and installed the 'bunny dropper' which subsequently installed 'suspect #4' malware on the infected system. Both the dropper and payload were compiled on October 25, 2011, prior to the public release of CVE-2011-4369 on December 16, indicating the attackers either quickly adopted the vulnerability or used a zero-day exploit.",
+        "Persistence": "The 'bunny dropper' ensured persistence by creating a registry key under [HKLM|HKCU]\\...\\CurrentVersion\\Run pointing to the dropped 'netmgr.exe' binary, ensuring its execution at system boot. Additionally, it created a registry key named 'isakmpAutoNegociate' under [HKLM|HKCU]\\Software\\Microsoft\\IPSec for dropper cleanup, which was later used by 'netmgr.exe' to locate and delete the dropper binary.",
+        "Defense Evasion": "The 'bunny dropper' performed a sandbox check and enumerated antivirus products to evade detection. It aborted execution if certain conditions were met, such as the module file name being less than 5 characters or containing specific strings, or if less than 15 processes were running. It also accessed the system's WMI to query installed antivirus software. Suspect #4, the payload, aimed to inject itself into an 'svchost.exe' process for stealthiness and relied on the auto-start registry key created by the dropper for persistence.",
+        "Command and Control": "The 'netmgr.exe' malware decrypted a configuration file revealing three C&C server URLs and various settings, including encryption keys and timeout settings. The URLs served as contacts for sending commands or Lua scripts to the infected host. The malware also contained a URL 'http://1.9.32.11/bunny/test.php?rec=nvista', but its purpose was unclear as the malware never contacted this IP address."
+    },
+    "technique_label": true
+}

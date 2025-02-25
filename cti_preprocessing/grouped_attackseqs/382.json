@@ -1,0 +1,347 @@
+{
+    "file_name": "Cosmic Banker campaign is still active revealing link with Banload malware",
+    "tactic_label": true,
+    "rewrite": {
+        "Reconnaissance": "SCILabs identified a new Cosmic Banker attack that matches with previous attacks observed since March 2019. The campaign targets user credentials of Mexican banking institutions and is linked to another campaign targeting users from Brazil's banking institutions. The final phase executable contains specific Portuguese comments also spotted in other reported events, suggesting a link with the Banload malware, which affected banks in Brazil. The reuse of this malware left behind common traces that facilitate the attribution of this campaign to the Brazilian attackers.",
+        "Initial Access": "The attack begins with an email impersonating Mexico's tax department, Servicio de Administraci\\u00f3n Tributaria (SAT), warning of a pending tax return. The email includes a link to download a malicious attachment, COMPROBANTE FISCAL.zip, containing the malicious file COMPROBANTE FISCAL.bat and a folder with the legitimate file GoogleUpdate.exe and another .bat file with the same content as COMPROBANTE FISCAL.bat. Clicking either .bat file triggers the attack.",
+        "Execution": "The COMPROBANTE FISCAL.bat file includes a batch programming script that executes a PowerShell script from the Internet to run at memory level. The script downloads the file md.zip, which includes the main malware library DLL, the executable loader part of the Autolt toolkit, and other services. The script also creates a random variable and a folder in %Public%, extracts files from md.zip, renames them, and creates a file with specific contents.",
+        "Persistence": "The PowerShell script includes base64 coded text strings associated with startup persistence features, such as creating shortcuts in the startup folder and manipulating scheduled tasks.",
+        "Defense Evasion": "The main malicious file 12.dll, renamed to a random name with the .LNS extension and saved in the %Public% folder, is protected with the VMProtect packer, which makes static analysis difficult. The malware also includes the use of the VMProtect packer to make analysis harder in recent months.",
+        "Credential Access": "The malware aims to steal bank credentials from Mexican financial institution users by displaying text related to an alleged data update request. It also accesses Outlook info to collect email accounts from the contacts list, which could be used to send emails, impersonating the victim in Business Email Compromise (BEC) attacks.",
+        "Collection": "The malware accesses Microsoft Outlook MAPI to try to access contacts' email accounts and sends them to the cyber actors through a POST web request.",
+        "Command and Control": "The PowerShell script communicates with the following domains to download the malware and send collected data: h1m2en.ddns.net and dgi1b2n3m4.ddns.net.",
+        "Exfiltration": "The collected email accounts are exfiltrated to the cyber actors through a POST web request to the resource hxxp://dgi1b2n3m4.ddns.net/lists/kk/index.php?list.",
+        "Others": "SCILabs created a YARA rule to identify files that might belong to the same Cosmic Banker campaign. Additional malware was found in a private source with the YARA rule, including 14 additional compressed files named md.zip and a file named Java_qeyghf8_V.zip containing the pp.png file. The malware detection rate fluctuates from 9 to 27 antivirus search engines, making the detection rate a little low."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "The attack",
+                    "SubjectType": "campaign",
+                    "Relation": "impersonate",
+                    "Object": "Servicio de Administraci\\u00f3n Tributaria (SAT)",
+                    "ObjectType": "identity",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "The email",
+                    "SubjectType": "Email Message",
+                    "Relation": "deliver",
+                    "Object": "COMPROBANTE FISCAL.zip",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "COMPROBANTE FISCAL.zip",
+                    "SubjectType": "file",
+                    "Relation": "contain",
+                    "Object": "COMPROBANTE FISCAL.bat",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "COMPROBANTE FISCAL.bat",
+                    "SubjectType": "file",
+                    "Relation": "trigger",
+                    "Object": "the attack",
+                    "ObjectType": "campaign",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 4
+                }
+            ]
+        },
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "COMPROBANTE FISCAL.bat",
+                    "SubjectType": "file",
+                    "Relation": "execute",
+                    "Object": "PowerShell script",
+                    "ObjectType": "software",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 5
+                }
+            ]
+        },
+        "Persistence": {
+            "T1547-Boot or Logon Autostart Execution": [
+                {
+                    "Subject": "The PowerShell script",
+                    "SubjectType": "tool",
+                    "Relation": "include",
+                    "Object": "base64 coded text strings",
+                    "ObjectType": "artifacts",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "base64 coded text strings",
+                    "SubjectType": "artifacts",
+                    "Relation": "associated with",
+                    "Object": "startup persistence features",
+                    "ObjectType": "Tactic",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 11
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1036-Masquerading": [
+                {
+                    "Subject": "main malicious file 12.dll",
+                    "SubjectType": "file",
+                    "Relation": "renamed-to",
+                    "Object": "random name with the .LNS extension",
+                    "ObjectType": "file",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1036-Masquerading"
+                    ],
+                    "id": 12
+                }
+            ],
+            "T1140-Deobfuscate/Decode Files or Information": [
+                {
+                    "Subject": "main malicious file 12.dll",
+                    "SubjectType": "file",
+                    "Relation": "protected-with",
+                    "Object": "VMProtect packer",
+                    "ObjectType": "tool",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1140-Deobfuscate/Decode Files or Information"
+                    ],
+                    "id": 14
+                },
+                {
+                    "Subject": "malware",
+                    "SubjectType": "Malware",
+                    "Relation": "include-use-of",
+                    "Object": "VMProtect packer",
+                    "ObjectType": "tool",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1140-Deobfuscate/Decode Files or Information"
+                    ],
+                    "id": 15
+                }
+            ]
+        },
+        "Credential Access": {
+            "T1056-Input Capture": [
+                {
+                    "Subject": "The malware",
+                    "SubjectType": "Malware",
+                    "Relation": "target",
+                    "Object": "Mexican financial institution users",
+                    "ObjectType": "identity",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1056-Input Capture"
+                    ],
+                    "id": 16
+                },
+                {
+                    "Subject": "The malware",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "text related to an alleged data update request",
+                    "ObjectType": "artifact",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1056-Input Capture"
+                    ],
+                    "id": 17
+                },
+                {
+                    "Subject": "The malware",
+                    "SubjectType": "Malware",
+                    "Relation": "access",
+                    "Object": "Outlook info",
+                    "ObjectType": "software",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1056-Input Capture"
+                    ],
+                    "id": 18
+                },
+                {
+                    "Subject": "The malware",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "email accounts",
+                    "ObjectType": "email-address",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1056-Input Capture"
+                    ],
+                    "id": 19
+                },
+                {
+                    "Subject": "The malware",
+                    "SubjectType": "Malware",
+                    "Relation": "impersonate",
+                    "Object": "the victim",
+                    "ObjectType": "identity",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1056-Input Capture"
+                    ],
+                    "id": 20
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "The PowerShell script",
+                    "SubjectType": "tool",
+                    "Relation": "communicate-with",
+                    "Object": "h1m2en.ddns.net",
+                    "ObjectType": "domain-name",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 21
+                },
+                {
+                    "Subject": "The PowerShell script",
+                    "SubjectType": "tool",
+                    "Relation": "communicate-with",
+                    "Object": "dgi1b2n3m4.ddns.net",
+                    "ObjectType": "domain-name",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 22
+                }
+            ]
+        },
+        "Reconnaissance": {
+            "T1589-Gather Victim Identity Information": [
+                {
+                    "Subject": "Cosmic Banker attack",
+                    "SubjectType": "campaign",
+                    "Relation": "target",
+                    "Object": "user credentials of Mexican banking institutions",
+                    "ObjectType": "artifact",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1589-Gather Victim Identity Information"
+                    ],
+                    "id": 24
+                },
+                {
+                    "Subject": "Cosmic Banker attack",
+                    "SubjectType": "campaign",
+                    "Relation": "linked-to",
+                    "Object": "campaign targeting users from Brazil's banking institutions",
+                    "ObjectType": "campaign",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1589-Gather Victim Identity Information"
+                    ],
+                    "id": 25
+                },
+                {
+                    "Subject": "Banload malware",
+                    "SubjectType": "Malware",
+                    "Relation": "affect",
+                    "Object": "banks in Brazil",
+                    "ObjectType": "identity",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1589-Gather Victim Identity Information"
+                    ],
+                    "id": 28
+                }
+            ],
+            "T1591-Gather Victim Org Information": [
+                {
+                    "Subject": "attribution of this campaign",
+                    "SubjectType": "campaign",
+                    "Relation": "attributed-to",
+                    "Object": "Brazilian attackers",
+                    "ObjectType": "threat-actor",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1591-Gather Victim Org Information"
+                    ],
+                    "id": 30
+                }
+            ]
+        },
+        "Collection": {
+            "T1114-Email Collection": [
+                {
+                    "Subject": "The malware",
+                    "SubjectType": "Malware",
+                    "Relation": "access",
+                    "Object": "Microsoft Outlook MAPI",
+                    "ObjectType": "software",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1114-Email Collection"
+                    ],
+                    "id": 31
+                },
+                {
+                    "Subject": "The malware",
+                    "SubjectType": "Malware",
+                    "Relation": "send",
+                    "Object": "contacts' email accounts",
+                    "ObjectType": "Email Message",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1114-Email Collection"
+                    ],
+                    "id": 32
+                }
+            ]
+        },
+        "Exfiltration": {
+            "T1567-Exfiltration Over Web Service": [
+                {
+                    "Subject": "email accounts",
+                    "SubjectType": "Email Message",
+                    "Relation": "exfiltrate-to",
+                    "Object": "cyber actors",
+                    "ObjectType": "threat-actor",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1567-Exfiltration Over Web Service"
+                    ],
+                    "id": 33
+                }
+            ]
+        }
+    }
+}

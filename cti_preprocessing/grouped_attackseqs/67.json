@@ -1,0 +1,146 @@
+{
+    "file_name": "PaloAlto.musical-chairs-multi-year-campaign-involving-new-variant-of-gh0st-malware",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "The Gh0st malware, a remote administration tool (RAT) originating from China, has been deployed in a multi-year campaign called Musical Chairs, using a new variant named 'Piano Gh0st.' The attackers distribute the malware through compromised email accounts, adopting a 'shotgun' approach by sending phishing emails with attached executables to numerous recipients. The emails are sent from US-based residential ISP email addresses, which appear to be legitimate and compromised. Known filenames of attachments include 'Pleasantly Surprised.exe,' 'Beautiful Girls.exe,' 'Sexy Girls.exe,' 'gift card.exe,' and 'amazon gift card.pdf.exe.' The emails' subjects typically match the filenames without sophisticated social engineering attempts. Detected attacks by Palo Alto Networks WildFire have been exclusively in the United States, not targeting any specific industry.",
+        "Persistence": "The Piano Gh0st variant maintains persistence on infected systems by creating a registry entry at 'HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Run' with the key 'nvidiake' and value 'c:\\microsoft\\lib\\ke\\vv.js.' The 'vv.js' JavaScript file executes the 'vvv.bat' batch file, which in turn runs the Piano.dll payload using 'rundll32.exe' to call the 'mystart' function.",
+        "Defense Evasion": "The Piano Gh0st variant uses a new wrapper file to conceal the Gh0st payload, delivered as a self-extracting executable (SFW) acting as the dropper. It extracts its payload to 'c:\\microsoft\\lib\\ke\\Piano.dll' and executes the 'mystart' function within the DLL's export address table (EAT) using 'rundll32.exe.' The 'Piano.dll' file decrypts, loads, and runs an embedded DLL, which is the actual Gh0stRat Trojan, version 3.6.",
+        "Command and Control": "The Gh0stRat Trojan communicates with its command and control server using a custom network protocol. The magic tag used by this version of Gh0st is 'clarkclar1.' The command and control server domain is www.meitanjiaoyiwang[.]com, hosted by the IP address 98.126.67.114 on TCP port 200. The server uses a US-based IP address but displays a Chinese language interface for Remote Desktop connections. The infrastructure for Musical Chairs has been active for two years, with 32 different Gh0st samples connecting to this server dating back to July 2013, using 19 different TCP ports.",
+        "Others": "The Gh0st malware has been the subject of many analysis reports, including those describing targeted espionage campaigns like Operation Night Dragon and the GhostNet attacks on Tibet. The source code and building tools for Gh0st are freely available on the web, allowing anyone to build their own version of the malware. Researchers differentiate between variants based on their 'magic tag.' The malware identifies itself to the C2 server by sending a string of characters (the magic tag), which the server repeats back to confirm the connection. The original version's string was 'Gh0st,' but subsequent versions use many different strings. These strings, along with the location of the command and control server, allow association of various Gh0st samples with a single attacker or group. The earliest versions of the attacks are visible in email groups and public Facebook postings, with themes like 'my girlfriend's self-view video' linking to executables hosted on domains associated with the Musical Chairs infrastructure. The campaign's approximate start date is 2010."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "Gh0st malware",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "compromised email accounts",
+                    "ObjectType": "Email Message",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "emails",
+                    "SubjectType": "Email Message",
+                    "Relation": "send-from",
+                    "Object": "US-based residential ISP email addresses",
+                    "ObjectType": "email-address",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "Palo Alto Networks WildFire",
+                    "SubjectType": "CTI vender",
+                    "Relation": "detect",
+                    "Object": "attacks",
+                    "ObjectType": "campaign",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 3
+                }
+            ]
+        },
+        "Persistence": {
+            "T1547-Boot or Logon Autostart Execution": [
+                {
+                    "Subject": "Piano Gh0st variant",
+                    "SubjectType": "Malware",
+                    "Relation": "maintain",
+                    "Object": "persistence",
+                    "ObjectType": "Tactic",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 4
+                },
+                {
+                    "Subject": "registry entry",
+                    "SubjectType": "registry",
+                    "Relation": "host",
+                    "Object": "Piano.dll payload",
+                    "ObjectType": "file",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 5
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1218-System Binary Proxy Execution": [
+                {
+                    "Subject": "Piano Gh0st variant",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "wrapper file",
+                    "ObjectType": "file",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1218-System Binary Proxy Execution"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "Piano Gh0st variant",
+                    "SubjectType": "Malware",
+                    "Relation": "deliver",
+                    "Object": "Gh0st payload",
+                    "ObjectType": "Malware",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1218-System Binary Proxy Execution"
+                    ],
+                    "id": 7
+                },
+                {
+                    "Subject": "Piano Gh0st variant",
+                    "SubjectType": "Malware",
+                    "Relation": "drop",
+                    "Object": "Piano.dll",
+                    "ObjectType": "file",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1218-System Binary Proxy Execution"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "Piano.dll",
+                    "SubjectType": "file",
+                    "Relation": "execute",
+                    "Object": "mystart function",
+                    "ObjectType": "process",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1218-System Binary Proxy Execution"
+                    ],
+                    "id": 9
+                },
+                {
+                    "Subject": "Piano.dll",
+                    "SubjectType": "file",
+                    "Relation": "decrypt, load, and run",
+                    "Object": "embedded DLL",
+                    "ObjectType": "file",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1218-System Binary Proxy Execution"
+                    ],
+                    "id": 10
+                }
+            ]
+        }
+    }
+}

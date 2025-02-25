@@ -1,0 +1,249 @@
+{
+    "file_name": "The Dropping Elephant actor - Securelist",
+    "tactic_label": true,
+    "rewrite": {
+        "Reconnaissance": "The Dropping Elephant threat actor, also known as Chinastrats and Patchwork, has been observed targeting high-profile diplomatic and economic entities with a focus on China's foreign relations. The adversaries employ spear-phishing and watering hole attacks to gather information and compromise victims.",
+        "Initial Access": "Dropping Elephant uses spear-phishing with documents containing remote content that sends a 'ping' to the attackers' server upon opening. A subsequent spear-phishing email with an MS Word document exploiting CVE-2012-0158 or a PowerPoint document exploiting CVE-2014-6352 is sent. They also use watering hole attacks with a website that downloads genuine news articles and requires downloading a PowerPoint document to view the entire article, which contains a malicious artifact.",
+        "Execution": "The backdoor used by Dropping Elephant is UPX packed and downloads additional malware from the C2 server, including encoded blobs that are decoded to PowerShell command line scripts.",
+        "Defense Evasion": "The backdoor downloads encoded blobs that are decoded to PowerShell command line scripts, which are then executed to download additional malware. This method of using encoded blobs helps evade detection.",
+        "Credential Access": "The backdoor steals the user's Google Chrome credentials among other data.",
+        "Collection": "The file-stealer module iterates through directories to collect files with specific extensions (doc, docx, ppt, pptx, pps, ppsx, xls, xlsx, pdf) and uploads them to the C2 server.",
+        "Command and Control": "The backdoor pings the C2 server at regular intervals, which can be spotted by analyzing firewall log files. The group also uses resilient communications, hiding encrypted C2 server locations in comments on legitimate websites.",
+        "Others": "The Dropping Elephant artifacts are detected by Kaspersky Lab products under various signatures. Kaspersky Lab collaborates with CERTs and LEAs to notify victims and mitigate the threat. Indicators of Compromise (IoCs) include a list of backdoors, exploit documents, domains, IPs, and C2 redirectors."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1189-Drive-by Compromise": [
+                {
+                    "Subject": "Dropping Elephant",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "spear-phishing",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1189-Drive-by Compromise",
+                        "T1566-Phishing"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "Dropping Elephant",
+                    "SubjectType": "threat-actor",
+                    "Relation": "exploit",
+                    "Object": "CVE-2012-0158",
+                    "ObjectType": "vulnerability",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1189-Drive-by Compromise"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "Dropping Elephant",
+                    "SubjectType": "threat-actor",
+                    "Relation": "exploit",
+                    "Object": "CVE-2014-6352",
+                    "ObjectType": "vulnerability",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1189-Drive-by Compromise"
+                    ],
+                    "id": 3
+                }
+            ],
+            "T1566-Phishing": [
+                {
+                    "Subject": "Dropping Elephant",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "spear-phishing",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1189-Drive-by Compromise",
+                        "T1566-Phishing"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "Dropping Elephant",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "watering hole attacks",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 4
+                }
+            ]
+        },
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "UPX packed backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "download",
+                    "Object": "PowerShell command line scripts",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 7
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1027-Obfuscated Files or Information": [
+                {
+                    "Subject": "Backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "download",
+                    "Object": "encoded blobs",
+                    "ObjectType": "artifacts",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "Backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "decode",
+                    "Object": "encoded blobs",
+                    "ObjectType": "artifacts",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information",
+                        "T1140-Deobfuscate/Decode Files or Information"
+                    ],
+                    "id": 9
+                }
+            ],
+            "T1140-Deobfuscate/Decode Files or Information": [
+                {
+                    "Subject": "Backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "decode",
+                    "Object": "encoded blobs",
+                    "ObjectType": "artifacts",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information",
+                        "T1140-Deobfuscate/Decode Files or Information"
+                    ],
+                    "id": 9
+                }
+            ],
+            "T1202-Indirect Command Execution": [
+                {
+                    "Subject": "Backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "execute",
+                    "Object": "PowerShell command line scripts",
+                    "ObjectType": "Technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1202-Indirect Command Execution"
+                    ],
+                    "id": 10
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "ping",
+                    "Object": "C2 server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 12
+                }
+            ]
+        },
+        "Reconnaissance": {
+            "T1589-Gather Victim Identity Information": [
+                {
+                    "Subject": "Dropping Elephant",
+                    "SubjectType": "threat-actor",
+                    "Relation": "target",
+                    "Object": "diplomatic and economic entities",
+                    "ObjectType": "identity",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1589-Gather Victim Identity Information"
+                    ],
+                    "id": 14
+                }
+            ]
+        },
+        "Credential Access": {
+            "T1555-Credentials from Password Stores": [
+                {
+                    "Subject": "The backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "steal",
+                    "Object": "user's Google Chrome credentials",
+                    "ObjectType": "artifacts",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1555-Credentials from Password Stores"
+                    ],
+                    "id": 15
+                }
+            ]
+        },
+        "Collection": {
+            "T1119-Automated Collection": [
+                {
+                    "Subject": "file-stealer module",
+                    "SubjectType": "tool",
+                    "Relation": "iterate",
+                    "Object": "directories",
+                    "ObjectType": "directory",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 16
+                },
+                {
+                    "Subject": "file-stealer module",
+                    "SubjectType": "tool",
+                    "Relation": "collect",
+                    "Object": "files with specific extensions",
+                    "ObjectType": "file",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 17
+                }
+            ],
+            "T1074-Data Staged": [
+                {
+                    "Subject": "file-stealer module",
+                    "SubjectType": "tool",
+                    "Relation": "upload",
+                    "Object": "C2 server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1074-Data Staged"
+                    ],
+                    "id": 18
+                }
+            ]
+        }
+    }
+}

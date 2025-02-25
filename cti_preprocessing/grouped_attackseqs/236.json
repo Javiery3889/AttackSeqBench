@@ -1,0 +1,635 @@
+{
+    "file_name": "Lazarus Group Recruitment_ Threat Hunters vs Head Hunters",
+    "tactic_label": true,
+    "rewrite": {
+        "Reconnaissance": "In September 2020, the Lazarus Group initiated a cyber attack on a large pharmaceutical company. The attack began with the delivery of malicious documents containing job offers to company employees. These documents, once opened, activated malicious macros on the victims' home computers. The attackers used system utilities like ipconfig.exe, ping.exe, and net.exe for reconnaissance, as well as unknown PE files. The backdoor named CommsCacher and its configuration file encrypted with the VEST algorithm were used to monitor RDP sessions on the compromised computer. The attackers attempted to connect to the domain forecareer[.]com, which was registered shortly before the attack and mimicked the official website of General Dynamics Mission Systems.",
+        "Initial Access": "The initial access to the pharmaceutical company's network was achieved when employees opened malicious documents sent to them, which contained job offers. These documents were named GD2020090939393903.doc and GD20200909GAB31.doc. The attack vectors included LinkedIn, Telegram, WhatsApp, and corporate email. The documents activated malicious macros on the victims' home computers.",
+        "Execution": "The Lazarus Group executed malicious code using system utilities and a backdoor named CommsCacher. They also used the Windows command line to run commands and leveraged the legitimate SQLite DLL library with a malicious exported function sqlite3_create_functionex for execution.",
+        "Persistence": "To maintain their foothold, the Lazarus Group created services using the sc.exe utility and local administrator accounts. They also placed shortcuts in the startup folder for persistence.",
+        "Privilege Escalation": "The Lazarus Group escalated privileges by creating local administrator accounts and manipulating system processes and services.",
+        "Defense Evasion": "The group used various techniques to evade detection, including encrypting configuration files with the VEST algorithm, hiding malware in hidden folders at C:\\ProgramData, and removing malware samples from the file system. They also used rundll32.exe to launch a malicious DLL.",
+        "Discovery": "The Lazarus Group collected information about users, network settings, and processes using system utilities like net user, adfind, tasklist.exe, and systeminfo.exe. They also used the SMBMap utility to discover shared folders within the network.",
+        "Lateral Movement": "The group used compromised legitimate privileged accounts to move laterally on the network and their own data encryption algorithm to communicate with the C2 servers.",
+        "Command and Control": "The Lazarus Group's malware used the standard HTTP protocol to connect to the C2 servers, which were disguised as legitimate domains and hosted on resources located in various countries.",
+        "Others": "The Lazarus Group, also known as Hidden Cobra, has been operating since at least 2009 and is thought to be a government-sponsored APT group from North Korea. The group's main attack vector is targeted phishing through third-party resources. The group's TTPs allowed them to gain partial control over the pharmaceutical company's infrastructure within four days. The attackers used both publicly available software and tools of their own design. The incident response and threat intelligence teams at PT Expert Security Center were involved in the investigation and response to the attack."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "employees",
+                    "SubjectType": "identity",
+                    "Relation": "open",
+                    "Object": "GD2020090939393903.doc",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "employees",
+                    "SubjectType": "identity",
+                    "Relation": "open",
+                    "Object": "GD20200909GAB31.doc",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 2
+                }
+            ]
+        },
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "The Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "executed",
+                    "Object": "malicious code",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "The Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "leveraged",
+                    "Object": "SQLite DLL",
+                    "ObjectType": "software",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter",
+                        "T1106-Native API",
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 5
+                }
+            ],
+            "T1129-Shared Modules": [
+                {
+                    "Subject": "The Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "used",
+                    "Object": "CommsCacher",
+                    "ObjectType": "Malware",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 4
+                },
+                {
+                    "Subject": "The Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "leveraged",
+                    "Object": "SQLite DLL",
+                    "ObjectType": "software",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter",
+                        "T1106-Native API",
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 5
+                }
+            ],
+            "T1106-Native API": [
+                {
+                    "Subject": "The Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "leveraged",
+                    "Object": "SQLite DLL",
+                    "ObjectType": "software",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter",
+                        "T1106-Native API",
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 5
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1553-Subvert Trust Controls": [
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "VEST algorithm",
+                    "ObjectType": "encryption-algorithm",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1553-Subvert Trust Controls"
+                    ],
+                    "id": 6
+                }
+            ],
+            "T1564-Hide Artifacts": [
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "hide",
+                    "Object": "malware",
+                    "ObjectType": "Malware",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1564-Hide Artifacts"
+                    ],
+                    "id": 7
+                },
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "remove",
+                    "Object": "malware samples",
+                    "ObjectType": "Malware",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1564-Hide Artifacts"
+                    ],
+                    "id": 8
+                }
+            ],
+            "T1202-Indirect Command Execution": [
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "rundll32.exe",
+                    "ObjectType": "tool",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1202-Indirect Command Execution"
+                    ],
+                    "id": 9
+                }
+            ]
+        },
+        "Lateral Movement": {
+            "T1550-Use Alternate Authentication Material": [
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "compromised legitimate privileged accounts",
+                    "ObjectType": "user-account",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1550-Use Alternate Authentication Material"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "The group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "move laterally",
+                    "Object": "on the network",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1550-Use Alternate Authentication Material"
+                    ],
+                    "id": 11
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "The Lazarus Group's malware",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "HTTP protocol",
+                    "ObjectType": "network traffic",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1102-Web Service"
+                    ],
+                    "id": 14
+                },
+                {
+                    "Subject": "C2 servers",
+                    "SubjectType": "infrastructure",
+                    "Relation": "host",
+                    "Object": "legitimate domains",
+                    "ObjectType": "domain-name",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1102-Web Service"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "C2 servers",
+                    "SubjectType": "infrastructure",
+                    "Relation": "located-at",
+                    "Object": "various countries",
+                    "ObjectType": "Location",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1102-Web Service"
+                    ],
+                    "id": 16
+                }
+            ],
+            "T1102-Web Service": [
+                {
+                    "Subject": "The Lazarus Group's malware",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "HTTP protocol",
+                    "ObjectType": "network traffic",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1102-Web Service"
+                    ],
+                    "id": 14
+                },
+                {
+                    "Subject": "C2 servers",
+                    "SubjectType": "infrastructure",
+                    "Relation": "host",
+                    "Object": "legitimate domains",
+                    "ObjectType": "domain-name",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1102-Web Service"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "C2 servers",
+                    "SubjectType": "infrastructure",
+                    "Relation": "located-at",
+                    "Object": "various countries",
+                    "ObjectType": "Location",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1102-Web Service"
+                    ],
+                    "id": 16
+                }
+            ]
+        },
+        "Persistence": {
+            "T1547-Boot or Logon Autostart Execution": [
+                {
+                    "Subject": "Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "create",
+                    "Object": "services",
+                    "ObjectType": "artifact",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 17
+                },
+                {
+                    "Subject": "Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "place",
+                    "Object": "shortcuts",
+                    "ObjectType": "artifact",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 20
+                }
+            ],
+            "T1543-Create or Modify System Process": [
+                {
+                    "Subject": "Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "sc.exe",
+                    "ObjectType": "tool",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 18
+                },
+                {
+                    "Subject": "Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "own",
+                    "Object": "local administrator accounts",
+                    "ObjectType": "user-account",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 19
+                }
+            ]
+        },
+        "Reconnaissance": {
+            "T1592-Gather Victim Host Information": [
+                {
+                    "Subject": "Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "initiate",
+                    "Object": "cyber attack",
+                    "ObjectType": "campaign",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1592-Gather Victim Host Information"
+                    ],
+                    "id": 21
+                }
+            ],
+            "T1598-Phishing for Information": [
+                {
+                    "Subject": "Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "deliver",
+                    "Object": "malicious documents",
+                    "ObjectType": "artifact",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1598-Phishing for Information"
+                    ],
+                    "id": 22
+                },
+                {
+                    "Subject": "malicious documents",
+                    "SubjectType": "artifact",
+                    "Relation": "activate",
+                    "Object": "malicious macros",
+                    "ObjectType": "technique",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1598-Phishing for Information"
+                    ],
+                    "id": 23
+                }
+            ],
+            "T1595-Active Scanning": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "system utilities",
+                    "ObjectType": "tool",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning"
+                    ],
+                    "id": 24
+                },
+                {
+                    "Subject": "system utilities",
+                    "SubjectType": "tool",
+                    "Relation": "consist-of",
+                    "Object": "ipconfig.exe",
+                    "ObjectType": "file",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning"
+                    ],
+                    "id": 25
+                },
+                {
+                    "Subject": "system utilities",
+                    "SubjectType": "tool",
+                    "Relation": "consist-of",
+                    "Object": "ping.exe",
+                    "ObjectType": "file",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning"
+                    ],
+                    "id": 26
+                },
+                {
+                    "Subject": "system utilities",
+                    "SubjectType": "tool",
+                    "Relation": "consist-of",
+                    "Object": "net.exe",
+                    "ObjectType": "file",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning"
+                    ],
+                    "id": 27
+                }
+            ],
+            "T1590-Gather Victim Network Information": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "attempt-to-connect-to",
+                    "Object": "domain",
+                    "ObjectType": "domain-name",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1590-Gather Victim Network Information"
+                    ],
+                    "id": 32
+                }
+            ],
+            "T1589-Gather Victim Identity Information": [
+                {
+                    "Subject": "domain",
+                    "SubjectType": "domain-name",
+                    "Relation": "mimic",
+                    "Object": "official website of General Dynamics Mission Systems",
+                    "ObjectType": "identity",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1589-Gather Victim Identity Information"
+                    ],
+                    "id": 33
+                }
+            ]
+        },
+        "Privilege Escalation": {
+            "T1098-Account Manipulation": [
+                {
+                    "Subject": "The Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "create",
+                    "Object": "local administrator accounts",
+                    "ObjectType": "user-account",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1098-Account Manipulation"
+                    ],
+                    "id": 35
+                }
+            ],
+            "T1543-Create or Modify System Process": [
+                {
+                    "Subject": "The Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "manipulate",
+                    "Object": "system processes and services",
+                    "ObjectType": "process",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 36
+                }
+            ]
+        },
+        "Discovery": {
+            "T1087-Account Discovery": [
+                {
+                    "Subject": "The Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "net user",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1087-Account Discovery",
+                        "T1016-System Network Configuration Discovery",
+                        "T1057-Process Discovery",
+                        "T1135-Network Share Discovery",
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 37
+                }
+            ],
+            "T1016-System Network Configuration Discovery": [
+                {
+                    "Subject": "The Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "net user",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1087-Account Discovery",
+                        "T1016-System Network Configuration Discovery",
+                        "T1057-Process Discovery",
+                        "T1135-Network Share Discovery",
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 37
+                }
+            ],
+            "T1057-Process Discovery": [
+                {
+                    "Subject": "The Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "net user",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1087-Account Discovery",
+                        "T1016-System Network Configuration Discovery",
+                        "T1057-Process Discovery",
+                        "T1135-Network Share Discovery",
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 37
+                },
+                {
+                    "Subject": "The Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "tasklist.exe",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1057-Process Discovery"
+                    ],
+                    "id": 39
+                }
+            ],
+            "T1135-Network Share Discovery": [
+                {
+                    "Subject": "The Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "net user",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1087-Account Discovery",
+                        "T1016-System Network Configuration Discovery",
+                        "T1057-Process Discovery",
+                        "T1135-Network Share Discovery",
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 37
+                },
+                {
+                    "Subject": "The Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "SMBMap",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1135-Network Share Discovery"
+                    ],
+                    "id": 41
+                }
+            ],
+            "T1082-System Information Discovery": [
+                {
+                    "Subject": "The Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "net user",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1087-Account Discovery",
+                        "T1016-System Network Configuration Discovery",
+                        "T1057-Process Discovery",
+                        "T1135-Network Share Discovery",
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 37
+                },
+                {
+                    "Subject": "The Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "systeminfo.exe",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 40
+                }
+            ],
+            "T1518-Software Discovery": [
+                {
+                    "Subject": "The Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "adfind",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1518-Software Discovery"
+                    ],
+                    "id": 38
+                }
+            ]
+        }
+    }
+}

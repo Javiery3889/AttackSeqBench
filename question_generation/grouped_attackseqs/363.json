@@ -1,0 +1,519 @@
+{
+    "file_name": "SharpPanda_ Chinese APT Group Targets Southeast Asian Government With Previously Unknown Backdoor - Check Point Research",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "Check Point Research discovered an ongoing surveillance operation targeting a Southeast Asian government. The attackers used spear-phishing emails with malicious DOCX documents to gain initial access. These emails were sometimes spoofed to appear as if they were from other government-related entities. The attachments contained weaponized copies of legitimate-looking official documents that employed the remote template technique to retrieve the next stage from the attacker's server.",
+        "Execution": "The attackers leveraged old Microsoft Office vulnerabilities and a chain of in-memory loaders to install a previously unknown backdoor on victims' machines. The RTF files used in the attack were weaponized using a variant of a tool named RoyalRoad, which exploits Equation Editor vulnerabilities in Microsoft Word. The initial documents and RTF files initiated a multi-stage infection chain, ultimately leading to the execution of malicious code.",
+        "Persistence": "The attackers established persistence by creating a scheduled task named 'Windows Update' that was intended to run the exported function 'StartW' from a DLL named '5.t' with 'rundll32.exe' once a day. This task was set up by the shellcode within the RTF document to maintain the foothold on the system.",
+        "Defense Evasion": "The attackers employed anti-analysis and anti-debugging techniques throughout the infection chain. The loader used anti-sandboxing techniques and gathered data on the victim's computer, which was then encrypted and sent to the C&C server. The loader also decrypted and executed shellcode that was stored encrypted within the binary, using dynamic API resolving to hide its main functionality and avoid static detection of suspicious API calls.",
+        "Discovery": "The loader gathered detailed information about the victim's computer, including hostname, OS name and version, system type, user name, and MAC addresses of networking adapters. It also queried WMI for anti-virus information. This data was collected for the attackers to assess the value of the compromised machine.",
+        "Collection": "The backdoor installed by the attackers had capabilities to collect a wide range of data from the victim's system, including file manipulation, process and service information, screenshots, command execution, network tables, registry keys, and system information. This data collection was integral to the attackers' surveillance objectives.",
+        "Command and Control": "The backdoor communicated with a C&C server using a configuration that contained the server IP and port. It sent a 'Start conversation' message and received a 'Get Victim Information' message in return. The communication was encrypted and followed a specific format involving XORed TypeID and Data with a 256-byte key.",
+        "Exfiltration": "The backdoor was capable of exfiltrating data over the C&C channel. The communication protocol involved sending various types of data, including screenshots, files, and system information, back to the attackers through the established C&C channel.",
+        "Impact": "The backdoor had the capability to shut down the victim's computer, which could be used to disrupt operations and impact the availability of the system.",
+        "Others": "The operation was attributed to a Chinese APT group that has been refining its tools for at least 3 years. The C&C servers operated in a limited daily window, and the backdoor C&C server was hosted on a US-based provider widely used by multiple threat actors. The attackers' infrastructure included first-stage C&C servers hosted by cloud services in Asia and a backdoor C&C server hosted on Zenlayer. The activity cluster was attributed to a Chinese threat group based on artifacts and indicators such as the use of RoyalRoad RTF exploit building kit, the timing of C&C server activity, and submissions of test backdoor versions to VirusTotal from China."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Execution": {
+            "T1203-Exploitation for Client Execution": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "leverage",
+                    "Object": "old Microsoft Office vulnerabilities",
+                    "ObjectType": "vulnerability",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1203-Exploitation for Client Execution"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "RoyalRoad",
+                    "ObjectType": "tool",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1203-Exploitation for Client Execution"
+                    ],
+                    "id": 2
+                }
+            ]
+        },
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "Check Point Research",
+                    "SubjectType": "CTI vender",
+                    "Relation": "discover",
+                    "Object": "surveillance operation",
+                    "ObjectType": "campaign",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "spear-phishing emails",
+                    "ObjectType": "Email Message",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 4
+                },
+                {
+                    "Subject": "spear-phishing emails",
+                    "SubjectType": "Email Message",
+                    "Relation": "contain",
+                    "Object": "malicious DOCX documents",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "emails",
+                    "SubjectType": "Email Message",
+                    "Relation": "spoof",
+                    "Object": "government-related entities",
+                    "ObjectType": "identity",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "attachments",
+                    "SubjectType": "file",
+                    "Relation": "contain",
+                    "Object": "weaponized copies of legitimate-looking official documents",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 7
+                },
+                {
+                    "Subject": "weaponized copies of legitimate-looking official documents",
+                    "SubjectType": "file",
+                    "Relation": "employ",
+                    "Object": "remote template technique",
+                    "ObjectType": "Technique",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "remote template technique",
+                    "SubjectType": "Technique",
+                    "Relation": "retrieve",
+                    "Object": "next stage from the attacker's server",
+                    "ObjectType": "campaign",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 9
+                }
+            ]
+        },
+        "Persistence": {
+            "T1053-Scheduled Task/Job": [
+                {
+                    "Subject": "The attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "establish",
+                    "Object": "scheduled task 'Windows Update'",
+                    "ObjectType": "artifacts",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1053-Scheduled Task/Job"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "scheduled task 'Windows Update'",
+                    "SubjectType": "artifacts",
+                    "Relation": "run",
+                    "Object": "exported function 'StartW'",
+                    "ObjectType": "process",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1053-Scheduled Task/Job"
+                    ],
+                    "id": 11
+                },
+                {
+                    "Subject": "exported function 'StartW'",
+                    "SubjectType": "process",
+                    "Relation": "originate-from",
+                    "Object": "DLL named '5.t'",
+                    "ObjectType": "file",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1053-Scheduled Task/Job"
+                    ],
+                    "id": 12
+                },
+                {
+                    "Subject": "DLL named '5.t'",
+                    "SubjectType": "file",
+                    "Relation": "use",
+                    "Object": "rundll32.exe",
+                    "ObjectType": "process",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1053-Scheduled Task/Job"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "shellcode within the RTF document",
+                    "SubjectType": "artifacts",
+                    "Relation": "set up",
+                    "Object": "scheduled task 'Windows Update'",
+                    "ObjectType": "artifacts",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1053-Scheduled Task/Job"
+                    ],
+                    "id": 14
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1497-Virtualization/Sandbox Evasion": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "employ",
+                    "Object": "anti-analysis and anti-debugging techniques",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1497-Virtualization/Sandbox Evasion"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "loader",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "anti-sandboxing techniques",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1497-Virtualization/Sandbox Evasion"
+                    ],
+                    "id": 16
+                }
+            ],
+            "T1140-Deobfuscate/Decode Files or Information": [
+                {
+                    "Subject": "loader",
+                    "SubjectType": "tool",
+                    "Relation": "decrypt and execute",
+                    "Object": "shellcode",
+                    "ObjectType": "file",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1140-Deobfuscate/Decode Files or Information"
+                    ],
+                    "id": 19
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1573-Encrypted Channel": [
+                {
+                    "Subject": "The backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "communicated with",
+                    "Object": "a C&C server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1573-Encrypted Channel"
+                    ],
+                    "id": 21
+                }
+            ]
+        },
+        "Impact": {
+            "T1529-System Shutdown/Reboot": [
+                {
+                    "Subject": "backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "shut down",
+                    "Object": "victim's computer",
+                    "ObjectType": "infrastrcucture",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1529-System Shutdown/Reboot"
+                    ],
+                    "id": 22
+                }
+            ]
+        },
+        "Discovery": {
+            "T1082-System Information Discovery": [
+                {
+                    "Subject": "loader",
+                    "SubjectType": "Malware",
+                    "Relation": "gather",
+                    "Object": "information about the victim's computer",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery",
+                        "T1033-System Owner/User Discovery",
+                        "T1016-System Network Configuration Discovery"
+                    ],
+                    "id": 23
+                },
+                {
+                    "Subject": "loader",
+                    "SubjectType": "Malware",
+                    "Relation": "query",
+                    "Object": "WMI",
+                    "ObjectType": "software",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery",
+                        "T1518-Software Discovery"
+                    ],
+                    "id": 24
+                },
+                {
+                    "Subject": "data",
+                    "SubjectType": "artifacts",
+                    "Relation": "collect",
+                    "Object": "attackers",
+                    "ObjectType": "threat-actor",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 25
+                }
+            ],
+            "T1033-System Owner/User Discovery": [
+                {
+                    "Subject": "loader",
+                    "SubjectType": "Malware",
+                    "Relation": "gather",
+                    "Object": "information about the victim's computer",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery",
+                        "T1033-System Owner/User Discovery",
+                        "T1016-System Network Configuration Discovery"
+                    ],
+                    "id": 23
+                }
+            ],
+            "T1016-System Network Configuration Discovery": [
+                {
+                    "Subject": "loader",
+                    "SubjectType": "Malware",
+                    "Relation": "gather",
+                    "Object": "information about the victim's computer",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery",
+                        "T1033-System Owner/User Discovery",
+                        "T1016-System Network Configuration Discovery"
+                    ],
+                    "id": 23
+                }
+            ],
+            "T1518-Software Discovery": [
+                {
+                    "Subject": "loader",
+                    "SubjectType": "Malware",
+                    "Relation": "query",
+                    "Object": "WMI",
+                    "ObjectType": "software",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery",
+                        "T1518-Software Discovery"
+                    ],
+                    "id": 24
+                }
+            ]
+        },
+        "Collection": {
+            "T1005-Data from Local System": [
+                {
+                    "Subject": "backdoor",
+                    "SubjectType": "tool",
+                    "Relation": "collect",
+                    "Object": "wide range of data",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1005-Data from Local System"
+                    ],
+                    "id": 26
+                },
+                {
+                    "Subject": "backdoor",
+                    "SubjectType": "tool",
+                    "Relation": "collect",
+                    "Object": "file manipulation",
+                    "ObjectType": "technique",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1005-Data from Local System"
+                    ],
+                    "id": 27
+                },
+                {
+                    "Subject": "backdoor",
+                    "SubjectType": "tool",
+                    "Relation": "collect",
+                    "Object": "process and service information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1005-Data from Local System"
+                    ],
+                    "id": 28
+                },
+                {
+                    "Subject": "backdoor",
+                    "SubjectType": "tool",
+                    "Relation": "collect",
+                    "Object": "screenshots",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1005-Data from Local System",
+                        "T1113-Screen Capture"
+                    ],
+                    "id": 29
+                },
+                {
+                    "Subject": "backdoor",
+                    "SubjectType": "tool",
+                    "Relation": "collect",
+                    "Object": "command execution",
+                    "ObjectType": "technique",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1005-Data from Local System"
+                    ],
+                    "id": 30
+                },
+                {
+                    "Subject": "backdoor",
+                    "SubjectType": "tool",
+                    "Relation": "collect",
+                    "Object": "network tables",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1005-Data from Local System"
+                    ],
+                    "id": 31
+                },
+                {
+                    "Subject": "backdoor",
+                    "SubjectType": "tool",
+                    "Relation": "collect",
+                    "Object": "registry keys",
+                    "ObjectType": "registry",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1005-Data from Local System"
+                    ],
+                    "id": 32
+                },
+                {
+                    "Subject": "backdoor",
+                    "SubjectType": "tool",
+                    "Relation": "collect",
+                    "Object": "system information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1005-Data from Local System"
+                    ],
+                    "id": 33
+                }
+            ],
+            "T1113-Screen Capture": [
+                {
+                    "Subject": "backdoor",
+                    "SubjectType": "tool",
+                    "Relation": "collect",
+                    "Object": "screenshots",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1005-Data from Local System",
+                        "T1113-Screen Capture"
+                    ],
+                    "id": 29
+                }
+            ]
+        },
+        "Exfiltration": {
+            "T1041-Exfiltration Over C2 Channel": [
+                {
+                    "Subject": "The backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "capable of exfiltrating",
+                    "Object": "data",
+                    "ObjectType": "artifacts",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 34
+                },
+                {
+                    "Subject": "The communication protocol",
+                    "SubjectType": "tool",
+                    "Relation": "involved",
+                    "Object": "sending various types of data",
+                    "ObjectType": "artifacts",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 35
+                },
+                {
+                    "Subject": "sending various types of data",
+                    "SubjectType": "artifacts",
+                    "Relation": "back to",
+                    "Object": "the attackers",
+                    "ObjectType": "threat-actor",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 36
+                }
+            ]
+        }
+    }
+}

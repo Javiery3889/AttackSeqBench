@@ -1,0 +1,201 @@
+{
+    "file_name": "the_nitro_attacks",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "The attackers initiated their campaign by researching desired targets and sending specifically crafted emails to individuals within the organizations. These emails often masqueraded as meeting invitations from business partners or as necessary security updates, containing malicious attachments. The attachments were either executables disguised as text files or password-protected archives with the password included in the email, which upon execution, installed the PoisonIvy backdoor Trojan.",
+        "Execution": "Upon opening the malicious email attachment, the recipient inadvertently executed a file that installed PoisonIvy. This backdoor Trojan then contacted a C&C server using an encrypted communication protocol over TCP port 80. The attackers could then command the compromised computer to disclose its IP address, the names of other computers in the network, and Windows cached password hashes. The attackers used this access to traverse the network, infect additional computers, and ultimately aimed to obtain domain administrator credentials or access systems storing intellectual property.",
+        "Credential Access": "The attackers leveraged the PoisonIvy Trojan to dump Windows cached password hashes from the compromised systems. This allowed them to potentially crack the passwords and gain unauthorized access to additional systems within the network.",
+        "Lateral Movement": "The attackers used the credentials obtained from the compromised systems to move laterally within the network. Their goal was to find and access servers hosting sensitive intellectual property.",
+        "Collection": "Once the attackers identified the desired intellectual property, they copied it to archives on internal systems that served as staging servers. This content was then prepared for exfiltration.",
+        "Command and Control": "The PoisonIvy backdoor Trojan communicated with a C&C server over TCP port 80. The communication involved a handshake using an encryption algorithm, and the server would send binary code to be executed by the compromised system. Several C&C domains and IP addresses were identified, with some samples connecting directly to an IP address associated with a Chinese QQ user and antivirus-groups.com.",
+        "Exfiltration": "The attackers uploaded the collected intellectual property from the internal staging servers to a remote site outside of the compromised organization, completing the attack.",
+        "Others": "The Nitro Attacks targeted private companies in the chemical industry to steal intellectual property such as design documents, formulas, and manufacturing processes. The campaign began in late July 2011 and continued into mid-September 2011, with C&C servers used as early as April 2011. The attackers' geographic spread was wide, with infected machines located in the US, Bangladesh, the UK, and other countries. Attribution was traced back to a VPS in the US owned by a male located in the Hebei region of China, known as Covert Grove. The attacks used PoisonIvy, a RAT developed by a Chinese speaker. Other hacker groups also targeted the same chemical companies during this period, using malicious PDF and DOC files to drop variants of Backdoor.Sogu. The relationship between these groups is unclear."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "initiate",
+                    "Object": "campaign",
+                    "ObjectType": "campaign",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 1
+                }
+            ]
+        },
+        "Credential Access": {
+            "T1003-OS Credential Dumping": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "PoisonIvy Trojan",
+                    "ObjectType": "Malware",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1003-OS Credential Dumping"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "dump",
+                    "Object": "Windows cached password hashes",
+                    "ObjectType": "artifacts",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1003-OS Credential Dumping"
+                    ],
+                    "id": 4
+                }
+            ]
+        },
+        "Lateral Movement": {
+            "T1550-Use Alternate Authentication Material": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "credentials",
+                    "ObjectType": "artifact",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1550-Use Alternate Authentication Material"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "target",
+                    "Object": "servers hosting sensitive intellectual property",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1550-Use Alternate Authentication Material"
+                    ],
+                    "id": 7
+                }
+            ]
+        },
+        "Collection": {
+            "T1074-Data Staged": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "copy",
+                    "Object": "intellectual property",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1074-Data Staged"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "content",
+                    "SubjectType": "artifacts",
+                    "Relation": "prepare-for",
+                    "Object": "exfiltration",
+                    "ObjectType": "network traffic",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1074-Data Staged"
+                    ],
+                    "id": 9
+                }
+            ]
+        },
+        "Execution": {
+            "T1204-User Execution": [
+                {
+                    "Subject": "PoisonIvy",
+                    "SubjectType": "Malware",
+                    "Relation": "contact",
+                    "Object": "C&C server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1204-User Execution"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "PoisonIvy",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "TCP port 80",
+                    "ObjectType": "network traffic",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1204-User Execution"
+                    ],
+                    "id": 11
+                },
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "command",
+                    "Object": "compromised computer",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1204-User Execution"
+                    ],
+                    "id": 12
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "PoisonIvy backdoor Trojan",
+                    "SubjectType": "Malware",
+                    "Relation": "communicate-with",
+                    "Object": "C&C server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1571-Non-Standard Port"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "C&C server",
+                    "SubjectType": "infrastructure",
+                    "Relation": "send",
+                    "Object": "binary code",
+                    "ObjectType": "file",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 14
+                }
+            ],
+            "T1571-Non-Standard Port": [
+                {
+                    "Subject": "PoisonIvy backdoor Trojan",
+                    "SubjectType": "Malware",
+                    "Relation": "communicate-with",
+                    "Object": "C&C server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1571-Non-Standard Port"
+                    ],
+                    "id": 13
+                }
+            ]
+        }
+    }
+}

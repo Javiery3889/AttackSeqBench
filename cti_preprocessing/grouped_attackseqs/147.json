@@ -1,0 +1,460 @@
+{
+    "file_name": "Bitdefender-PR-Whitepaper-BADHATCH-creat5237-en-EN",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "The FIN8 group, known for targeting retail, hospitality, and entertainment sectors, has been observed using a backdoor called BADHATCH to gain initial access to networks. The latest version of BADHATCH, v2.14, uses a malicious PowerShell command line to download and execute a script from a domain mapped by the sslip.io service, which is abused to evade detection. The script, identified by a hash value, employs base64 representations of shellcode for different architectures and uses a .NET binary to execute the shellcode in memory.",
+        "Execution": "BADHATCH, once executed, can operate in two modes: CMD or POWERSHELL. In POWERSHELL mode, it launches powershell.exe with a command line that executes commands from a pipe using IEX. It supports custom commands such as info, Ping-Comp, Check-Port, Check-Share, psx, and GetComputerInfo. In CMD mode, it uses cmd.exe to execute a different set of commands, including spawn, proxy local, proxy bc, proxy status, ftp, steal, revert, and eventlog.",
+        "Persistence": "FIN8 ensures persistence by using the WMI event subscription mechanism. A PowerShell script, indicated by the command line 'powershell.exe -nop -ep bypass -c c:\\windows\\temp\\m.ps1 f9eef8b27ff68f41a8eb0b8739370640', sets up an event consumer named PerfData with a command line associated with it. This involves creating a WMI object named Win32_Base64Class with a property 'Prop' containing a base64 string of a .NET binary, which creates a svchost.exe process for code injection.",
+        "Privilege Escalation": "The deployment of BADHATCH involves privilege escalation, as indicated by the execution of a script named sh-tmp.ps1, which likely escalates privileges since subsequent commands are executed on behalf of the SYSTEM user. The exact method of privilege escalation is not detailed, but it is associated with the use of the SYSTEM token and potentially involves impersonating tokens of processes like lsass.exe.",
+        "Defense Evasion": "BADHATCH employs various defense evasion techniques, including the use of TLS encryption to conceal PowerShell commands and masquerading its communication with the C&C server as legitimate HTTP requests. It also uses a proxy to perform TLS encryption and redirection of decrypted data to the actual C&C application.",
+        "Credential Access": "Credential dumping is suggested by the execution of a script named mimi.ps1, which is speculated to be related to Mimikatz. This is supported by telemetry data indicating that the PowerShell process read the memory of lsass.exe, which is a common target for credential dumping.",
+        "Discovery": "The attackers conducted system fingerprinting using commands like systeminfo.exe, tasklist.exe, ipconfig.exe, net.exe, whoami.exe, and netstat.exe. They also discovered the Domain Controller and performed domain trust discovery using commands like nltest.exe and ping.exe.",
+        "Lateral Movement": "Lateral movement to the Domain Controller was achieved using wmic.exe to create a process on the DC and execute the BADHATCH deployment script. The output redirection to a local ADMIN$ share suggests the use of the wmiexec.py tool from Impacket.",
+        "Others": "FIN8 has targeted victims in various countries, including the United States, Canada, South Africa, Puerto Rico, Panama, and Italy, across industries such as insurance, retail, technology, and chemicals. Bitdefender recommends separating POS networks, cybersecurity awareness training, integrating threat intelligence, and considering outsourcing security operations to Managed Detection and Response providers."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1078-Valid Accounts": [
+                {
+                    "Subject": "FIN8 group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "BADHATCH",
+                    "ObjectType": "Malware",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1078-Valid Accounts"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "BADHATCH v2.14",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "PowerShell command line",
+                    "ObjectType": "tool",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1078-Valid Accounts"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "PowerShell command line",
+                    "SubjectType": "tool",
+                    "Relation": "download",
+                    "Object": "script",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1078-Valid Accounts"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "script",
+                    "SubjectType": "file",
+                    "Relation": "use",
+                    "Object": ".NET binary",
+                    "ObjectType": "tool",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1078-Valid Accounts"
+                    ],
+                    "id": 4
+                }
+            ]
+        },
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "BADHATCH",
+                    "SubjectType": "Malware",
+                    "Relation": "launch",
+                    "Object": "powershell.exe",
+                    "ObjectType": "Process",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "BADHATCH",
+                    "SubjectType": "Malware",
+                    "Relation": "execute",
+                    "Object": "cmd.exe",
+                    "ObjectType": "Process",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 6
+                }
+            ]
+        },
+        "Persistence": {
+            "T1543-Create or Modify System Process": [
+                {
+                    "Subject": "FIN8",
+                    "SubjectType": "threat-actor",
+                    "Relation": "ensure",
+                    "Object": "persistence",
+                    "ObjectType": "Tactic",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 7
+                },
+                {
+                    "Subject": "PowerShell script",
+                    "SubjectType": "tool",
+                    "Relation": "set up",
+                    "Object": "event consumer",
+                    "ObjectType": "Technique",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "Win32_Base64Class",
+                    "SubjectType": "artifact",
+                    "Relation": "create",
+                    "Object": "svchost.exe process",
+                    "ObjectType": "process",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 9
+                }
+            ]
+        },
+        "Privilege Escalation": {
+            "T1068-Exploitation for Privilege Escalation": [
+                {
+                    "Subject": "BADHATCH",
+                    "SubjectType": "Malware",
+                    "Relation": "involve",
+                    "Object": "privilege escalation",
+                    "ObjectType": "Tactic",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1068-Exploitation for Privilege Escalation"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "sh-tmp.ps1",
+                    "SubjectType": "file",
+                    "Relation": "likely escalate",
+                    "Object": "privileges",
+                    "ObjectType": "Tactic",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1068-Exploitation for Privilege Escalation"
+                    ],
+                    "id": 11
+                },
+                {
+                    "Subject": "subsequent commands",
+                    "SubjectType": "artifact",
+                    "Relation": "execute",
+                    "Object": "SYSTEM user",
+                    "ObjectType": "identity",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1068-Exploitation for Privilege Escalation"
+                    ],
+                    "id": 12
+                },
+                {
+                    "Subject": "SYSTEM token",
+                    "SubjectType": "artifact",
+                    "Relation": "use",
+                    "Object": "privilege escalation",
+                    "ObjectType": "Tactic",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1068-Exploitation for Privilege Escalation"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "privilege escalation",
+                    "SubjectType": "Tactic",
+                    "Relation": "impersonate",
+                    "Object": "lsass.exe",
+                    "ObjectType": "process",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1068-Exploitation for Privilege Escalation"
+                    ],
+                    "id": 14
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1553-Subvert Trust Controls": [
+                {
+                    "Subject": "BADHATCH",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "TLS encryption",
+                    "ObjectType": "Technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1553-Subvert Trust Controls"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "BADHATCH",
+                    "SubjectType": "Malware",
+                    "Relation": "masquerade",
+                    "Object": "communication with the C&C server",
+                    "ObjectType": "network traffic",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1553-Subvert Trust Controls"
+                    ],
+                    "id": 16
+                }
+            ],
+            "T1600-Weaken Encryption": [
+                {
+                    "Subject": "BADHATCH",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "proxy",
+                    "ObjectType": "tool",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1600-Weaken Encryption"
+                    ],
+                    "id": 17
+                }
+            ]
+        },
+        "Credential Access": {
+            "T1003-OS Credential Dumping": [
+                {
+                    "Subject": "script",
+                    "SubjectType": "artifact",
+                    "Relation": "use",
+                    "Object": "mimi.ps1",
+                    "ObjectType": "file",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1003-OS Credential Dumping"
+                    ],
+                    "id": 18
+                },
+                {
+                    "Subject": "mimi.ps1",
+                    "SubjectType": "file",
+                    "Relation": "related-to",
+                    "Object": "Mimikatz",
+                    "ObjectType": "tool",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1003-OS Credential Dumping"
+                    ],
+                    "id": 19
+                },
+                {
+                    "Subject": "PowerShell process",
+                    "SubjectType": "process",
+                    "Relation": "read",
+                    "Object": "lsass.exe",
+                    "ObjectType": "process",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1003-OS Credential Dumping"
+                    ],
+                    "id": 20
+                }
+            ]
+        },
+        "Discovery": {
+            "T1082-System Information Discovery": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "systeminfo.exe",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 21
+                }
+            ],
+            "T1057-Process Discovery": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "tasklist.exe",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1057-Process Discovery"
+                    ],
+                    "id": 22
+                }
+            ],
+            "T1016-System Network Configuration Discovery": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "ipconfig.exe",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1016-System Network Configuration Discovery"
+                    ],
+                    "id": 23
+                },
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "ping.exe",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1016-System Network Configuration Discovery"
+                    ],
+                    "id": 30
+                }
+            ],
+            "T1033-System Owner/User Discovery": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "whoami.exe",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1033-System Owner/User Discovery"
+                    ],
+                    "id": 25
+                }
+            ],
+            "T1049-System Network Connections Discovery": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "netstat.exe",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1049-System Network Connections Discovery"
+                    ],
+                    "id": 26
+                }
+            ],
+            "T1018-Remote System Discovery": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "discover",
+                    "Object": "Domain Controller",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1018-Remote System Discovery"
+                    ],
+                    "id": 27
+                }
+            ],
+            "T1482-Domain Trust Discovery": [
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "perform",
+                    "Object": "domain trust discovery",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1482-Domain Trust Discovery"
+                    ],
+                    "id": 28
+                },
+                {
+                    "Subject": "attackers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "nltest.exe",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1482-Domain Trust Discovery"
+                    ],
+                    "id": 29
+                }
+            ]
+        },
+        "Lateral Movement": {
+            "T1570-Lateral Tool Transfer": [
+                {
+                    "Subject": "Lateral movement",
+                    "SubjectType": "Tactic",
+                    "Relation": "achieve",
+                    "Object": "Domain Controller",
+                    "ObjectType": "Infrastructure",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1570-Lateral Tool Transfer"
+                    ],
+                    "id": 31
+                },
+                {
+                    "Subject": "wmic.exe",
+                    "SubjectType": "Tool",
+                    "Relation": "use",
+                    "Object": "BADHATCH deployment script",
+                    "ObjectType": "Artifact",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1570-Lateral Tool Transfer"
+                    ],
+                    "id": 32
+                },
+                {
+                    "Subject": "output redirection",
+                    "SubjectType": "Technique",
+                    "Relation": "suggest",
+                    "Object": "wmiexec.py",
+                    "ObjectType": "Tool",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1570-Lateral Tool Transfer"
+                    ],
+                    "id": 33
+                },
+                {
+                    "Subject": "wmiexec.py",
+                    "SubjectType": "Tool",
+                    "Relation": "belong-to",
+                    "Object": "Impacket",
+                    "ObjectType": "Software",
+                    "tactic": "Lateral Movement",
+                    "technique": [
+                        "T1570-Lateral Tool Transfer"
+                    ],
+                    "id": 34
+                }
+            ]
+        }
+    }
+}

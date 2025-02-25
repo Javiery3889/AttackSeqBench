@@ -1,0 +1,195 @@
+{
+    "file_name": "WinDealer dealing on the side _ Securelist",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "In 2020, a new distribution method for WinDealer malware was discovered, leveraging the automatic update mechanism of certain legitimate applications. A signed executable, qgametool.exe, compiled in 2012, was found to deploy WinDealer on a target machine by checking for updates from a hardcoded URL. Occasionally, a WinDealer sample was delivered instead of the benign executable. Chinese-speaking users reported finding malware named PPTV(pplive)_forap_1084_9993.exe on their machines, which was confirmed to be a sample of WinDealer.",
+        "Execution": "WinDealer is a modular malware platform that begins execution by locating an embedded DLL file in its resources, decoding it with a 10-byte XOR key. The malware's logic is divided between the initial EXE and the companion DLL, with capabilities including file manipulation, information gathering, arbitrary file download/upload, command execution, system-wide search, screenshot capture, network discovery, and backdoor maintenance.",
+        "Persistence": "WinDealer maintains persistence through the registry's RUN key, allowing for configuration updates.",
+        "Discovery": "WinDealer targets popular applications in Asia, such as QQ, WeChat, and WangWang, and references registry keys created by Sogou programs, indicating a focus on Chinese-speaking targets and organizations related to China.",
+        "Command and Control": "The latest WinDealer sample discovered in 2020 uses a complex IP generation algorithm to contact machines randomly selected from specific IP ranges within AS4134. Communication occurs over UDP port 6999 or TCP port 55556. An additional sample communicates with a hardcoded URL that is invalid under normal circumstances, suggesting the existence of a man-on-the-side attacker intercepting and modifying network traffic.",
+        "Others": "LuoYu, active since 2008, primarily targets entities in China, including foreign diplomatic organizations, academic community members, and companies from defense, logistics, and telecommunications sectors. Kaspersky and TeamT5 confirmed the connection between Demsty and WinDealer. LuoYu can perform man-on-the-side attacks, intercepting network traffic and modifying it if needed, with capabilities similar to the QUANTUM program. The majority of LuoYu targets are in China, with occasional infections in other countries. LuoYu has recently expanded its scope to East Asia. The attackers may have compromised routers or use unknown signals intelligence methods, potentially accessing law enforcement tools at the ISP level. Defending against such intrusions requires vigilance, regular antivirus scans, analysis of outbound network traffic, and extensive logging."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1195-Supply Chain Compromise": [
+                {
+                    "Subject": "WinDealer",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "qgametool.exe",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1195-Supply Chain Compromise"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "WinDealer",
+                    "SubjectType": "Malware",
+                    "Relation": "resolve-to",
+                    "Object": "hardcoded URL",
+                    "ObjectType": "url",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1195-Supply Chain Compromise"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "WinDealer",
+                    "SubjectType": "Malware",
+                    "Relation": "deliver",
+                    "Object": "PPTV(pplive)_forap_1084_9993.exe",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1195-Supply Chain Compromise"
+                    ],
+                    "id": 3
+                }
+            ]
+        },
+        "Execution": {
+            "T1129-Shared Modules": [
+                {
+                    "Subject": "WinDealer",
+                    "SubjectType": "Malware",
+                    "Relation": "locate",
+                    "Object": "DLL file",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 4
+                },
+                {
+                    "Subject": "WinDealer",
+                    "SubjectType": "Malware",
+                    "Relation": "decode",
+                    "Object": "DLL file",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 5
+                }
+            ]
+        },
+        "Persistence": {
+            "T1547-Boot or Logon Autostart Execution": [
+                {
+                    "Subject": "WinDealer",
+                    "SubjectType": "Malware",
+                    "Relation": "maintain persistence through",
+                    "Object": "registry's RUN key",
+                    "ObjectType": "registry",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 7
+                }
+            ]
+        },
+        "Discovery": {
+            "T1012-Query Registry": [
+                {
+                    "Subject": "WinDealer",
+                    "SubjectType": "Malware",
+                    "Relation": "reference",
+                    "Object": "registry keys",
+                    "ObjectType": "registry",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1012-Query Registry"
+                    ],
+                    "id": 11
+                },
+                {
+                    "Subject": "registry keys",
+                    "SubjectType": "registry",
+                    "Relation": "created-by",
+                    "Object": "Sogou programs",
+                    "ObjectType": "software",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1012-Query Registry"
+                    ],
+                    "id": 12
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1568-Dynamic Resolution": [
+                {
+                    "Subject": "WinDealer",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "IP generation algorithm",
+                    "ObjectType": "tool",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1568-Dynamic Resolution"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "WinDealer",
+                    "SubjectType": "Malware",
+                    "Relation": "communicate-with",
+                    "Object": "machines",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1568-Dynamic Resolution"
+                    ],
+                    "id": 16
+                }
+            ],
+            "T1095-Non-Application Layer Protocol": [
+                {
+                    "Subject": "WinDealer",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "UDP port 6999",
+                    "ObjectType": "network traffic",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1095-Non-Application Layer Protocol"
+                    ],
+                    "id": 17
+                },
+                {
+                    "Subject": "WinDealer",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "TCP port 55556",
+                    "ObjectType": "network traffic",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1095-Non-Application Layer Protocol"
+                    ],
+                    "id": 18
+                }
+            ],
+            "T1659-Content Injection": [
+                {
+                    "Subject": "WinDealer",
+                    "SubjectType": "Malware",
+                    "Relation": "communicate-with",
+                    "Object": "hardcoded URL",
+                    "ObjectType": "url",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1659-Content Injection"
+                    ],
+                    "id": 19
+                }
+            ]
+        }
+    }
+}

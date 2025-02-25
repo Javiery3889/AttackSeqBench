@@ -1,0 +1,583 @@
+{
+    "file_name": "Bitdefender_In-depth_analysis_of_APT28__The_Political_Cyber-Espionage",
+    "tactic_label": true,
+    "rewrite": {
+        "Reconnaissance": "APT28, also known as Sofacy, has been actively scanning for new targets, particularly focusing on Ukraine and Spain. They scanned 8,536,272 IPs in Ukraine during a political summit in Minsk, identifying 1,704,837 as vulnerable. The scanning process involved a python script generating random IPs, a database centralizing data, scan bots probing potential victims, and a Django application for administration and reporting. The bots are geographically distributed across the United States, United Kingdom, and Bulgaria.",
+        "Initial Access": "APT28 employs spear phishing emails with crafted Word and Excel documents, phishing websites on typosquatted domains, and malicious iFrames leading to Java and Flash zero-day exploits to infect targets. The first stage of the attack involves a dropper named runrun.exe, which drops and executes a file to contact the C&C server and download the second stage component.",
+        "Execution": "The second stage component, installed by a dropper named winloat.exe, writes key components to the disk along with a configuration file. It then takes control of the machine, deploying tools like a password dumper (run.exe), a privilege escalation tool (xp.exe), and a proxy tool (svehost.exe) to facilitate further actions.",
+        "Persistence": "APT28 ensures persistence by changing the timestamps of all files downloaded by the second stage dropper to 14/04/2008, 16:00, a technique to hide the files from victims who might attempt to list new files on the disk.",
+        "Privilege Escalation": "APT28 uses a tool exploiting a privilege escalation vulnerability (CVE-2014-4076) to gain system privileges, allowing the execution of files with elevated permissions.",
+        "Defense Evasion": "APT28 evades defenses by changing file timestamps and using a proxy tool (svehost.exe) to contact systems behind routers, which would otherwise not be accessible from outside the network.",
+        "Credential Access": "APT28 deploys a password dumping tool (run.exe) based on the mimikatz source, which dumps passwords from logged-in users through LSASS.",
+        "Discovery": "APT28 discovers the environment by scanning IP ranges and identifying vulnerable systems. The bots used for scanning report back to a central server, which centralizes the information.",
+        "Collection": "APT28 collects data by deploying additional modules like pr.dll, which uploads stolen data to the C&C server. The module is crafted individually for each target system and can accommodate different plugins for data collection.",
+        "Command and Control": "APT28's C&C communication is carried out via HTTP on port 443 or 80 if necessary. In some cases, the communication is encrypted using 3DES and RSA. The backdoor component advstoreshell.dll contacts the C&C servers indicated in the configuration file.",
+        "Exfiltration": "APT28 exfiltrates data such as emails and files to the central server. The stolen information includes emails from political figures and the aerospace industry, with specific examples of .pst and .dbx files being transferred to the server.",
+        "Others": "The authors of APT28 are believed to be Russian speakers, supported by evidence such as hardcoded paths in Russian in the files and the compilation times aligning with the working hours in the UTC+4 time zone, which includes Russia. The report is authored by a team from Bitdefender, including R\u0103zvan Benchea, Cristina Vatamanu, Alexandru Maximciuc, and Victor Luncasu."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "APT28",
+                    "SubjectType": "threat-actor",
+                    "Relation": "employs",
+                    "Object": "spear phishing emails",
+                    "ObjectType": "Email Message",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "APT28",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "runrun.exe",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "runrun.exe",
+                    "SubjectType": "file",
+                    "Relation": "drops",
+                    "Object": "file",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "runrun.exe",
+                    "SubjectType": "file",
+                    "Relation": "contact",
+                    "Object": "C&C server",
+                    "ObjectType": "infrastrcucture",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 4
+                }
+            ]
+        },
+        "Execution": {
+            "T1569-System Services": [
+                {
+                    "Subject": "The second stage component",
+                    "SubjectType": "artifact",
+                    "Relation": "installed by",
+                    "Object": "a dropper named winloat.exe",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1569-System Services"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "The second stage component",
+                    "SubjectType": "artifact",
+                    "Relation": "writes",
+                    "Object": "key components to the disk",
+                    "ObjectType": "artifact",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1569-System Services"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "The second stage component",
+                    "SubjectType": "artifact",
+                    "Relation": "takes control of",
+                    "Object": "the machine",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1569-System Services"
+                    ],
+                    "id": 7
+                },
+                {
+                    "Subject": "The second stage component",
+                    "SubjectType": "artifact",
+                    "Relation": "deploying",
+                    "Object": "tools like a password dumper (run.exe), a privilege escalation tool (xp.exe), and a proxy tool (svehost.exe)",
+                    "ObjectType": "tool",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1569-System Services"
+                    ],
+                    "id": 8
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1070-Indicator Removal": [
+                {
+                    "Subject": "APT28",
+                    "SubjectType": "threat-actor",
+                    "Relation": "evade",
+                    "Object": "defenses",
+                    "ObjectType": "course-of-action",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1070-Indicator Removal"
+                    ],
+                    "id": 11
+                },
+                {
+                    "Subject": "proxy tool",
+                    "SubjectType": "tool",
+                    "Relation": "contact",
+                    "Object": "systems behind routers",
+                    "ObjectType": "infrastrcucture",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1070-Indicator Removal"
+                    ],
+                    "id": 14
+                }
+            ],
+            "T1218-System Binary Proxy Execution": [
+                {
+                    "Subject": "APT28",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "proxy tool",
+                    "ObjectType": "tool",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1218-System Binary Proxy Execution"
+                    ],
+                    "id": 13
+                }
+            ]
+        },
+        "Discovery": {
+            "T1046-Network Service Discovery": [
+                {
+                    "Subject": "APT28",
+                    "SubjectType": "threat-actor",
+                    "Relation": "discover",
+                    "Object": "environment",
+                    "ObjectType": "infrastrcucture",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1046-Network Service Discovery",
+                        "T1018-Remote System Discovery"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "bots",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "APT28",
+                    "ObjectType": "threat-actor",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1046-Network Service Discovery",
+                        "T1018-Remote System Discovery"
+                    ],
+                    "id": 16
+                },
+                {
+                    "Subject": "bots",
+                    "SubjectType": "tool",
+                    "Relation": "report back to",
+                    "Object": "central server",
+                    "ObjectType": "infrastrcucture",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1046-Network Service Discovery",
+                        "T1018-Remote System Discovery"
+                    ],
+                    "id": 17
+                }
+            ],
+            "T1018-Remote System Discovery": [
+                {
+                    "Subject": "APT28",
+                    "SubjectType": "threat-actor",
+                    "Relation": "discover",
+                    "Object": "environment",
+                    "ObjectType": "infrastrcucture",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1046-Network Service Discovery",
+                        "T1018-Remote System Discovery"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "bots",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "APT28",
+                    "ObjectType": "threat-actor",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1046-Network Service Discovery",
+                        "T1018-Remote System Discovery"
+                    ],
+                    "id": 16
+                },
+                {
+                    "Subject": "bots",
+                    "SubjectType": "tool",
+                    "Relation": "report back to",
+                    "Object": "central server",
+                    "ObjectType": "infrastrcucture",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1046-Network Service Discovery",
+                        "T1018-Remote System Discovery"
+                    ],
+                    "id": 17
+                },
+                {
+                    "Subject": "central server",
+                    "SubjectType": "infrastrcucture",
+                    "Relation": "centralize",
+                    "Object": "information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1018-Remote System Discovery"
+                    ],
+                    "id": 18
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "APT28",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "advstoreshell.dll",
+                    "ObjectType": "file",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1573-Encrypted Channel"
+                    ],
+                    "id": 19
+                },
+                {
+                    "Subject": "advstoreshell.dll",
+                    "SubjectType": "file",
+                    "Relation": "communicate-with",
+                    "Object": "C&C servers",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 20
+                }
+            ],
+            "T1573-Encrypted Channel": [
+                {
+                    "Subject": "APT28",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "advstoreshell.dll",
+                    "ObjectType": "file",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1573-Encrypted Channel"
+                    ],
+                    "id": 19
+                }
+            ]
+        },
+        "Privilege Escalation": {
+            "T1068-Exploitation for Privilege Escalation": [
+                {
+                    "Subject": "APT28",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "tool",
+                    "ObjectType": "tool",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1068-Exploitation for Privilege Escalation"
+                    ],
+                    "id": 21
+                },
+                {
+                    "Subject": "tool",
+                    "SubjectType": "tool",
+                    "Relation": "exploit",
+                    "Object": "CVE-2014-4076",
+                    "ObjectType": "vulnerability",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1068-Exploitation for Privilege Escalation"
+                    ],
+                    "id": 22
+                },
+                {
+                    "Subject": "APT28",
+                    "SubjectType": "threat-actor",
+                    "Relation": "gain",
+                    "Object": "system privileges",
+                    "ObjectType": "privilege",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1068-Exploitation for Privilege Escalation"
+                    ],
+                    "id": 23
+                },
+                {
+                    "Subject": "APT28",
+                    "SubjectType": "threat-actor",
+                    "Relation": "allow",
+                    "Object": "execution of files",
+                    "ObjectType": "action",
+                    "tactic": "Privilege Escalation",
+                    "technique": [
+                        "T1068-Exploitation for Privilege Escalation"
+                    ],
+                    "id": 24
+                }
+            ]
+        },
+        "Collection": {
+            "T1213-Data from Information Repositories": [
+                {
+                    "Subject": "APT28",
+                    "SubjectType": "threat-actor",
+                    "Relation": "collect",
+                    "Object": "data",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1213-Data from Information Repositories"
+                    ],
+                    "id": 25
+                },
+                {
+                    "Subject": "pr.dll",
+                    "SubjectType": "file",
+                    "Relation": "upload",
+                    "Object": "stolen data",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1213-Data from Information Repositories"
+                    ],
+                    "id": 26
+                },
+                {
+                    "Subject": "pr.dll",
+                    "SubjectType": "file",
+                    "Relation": "crafted for",
+                    "Object": "each target system",
+                    "ObjectType": "identity",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1213-Data from Information Repositories"
+                    ],
+                    "id": 27
+                },
+                {
+                    "Subject": "module",
+                    "SubjectType": "tool",
+                    "Relation": "accommodate",
+                    "Object": "plugins",
+                    "ObjectType": "tool",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1213-Data from Information Repositories"
+                    ],
+                    "id": 28
+                }
+            ]
+        },
+        "Exfiltration": {
+            "T1048-Exfiltration Over Alternative Protocol": [
+                {
+                    "Subject": "APT28",
+                    "SubjectType": "threat-actor",
+                    "Relation": "exfiltrate-to",
+                    "Object": "central server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1048-Exfiltration Over Alternative Protocol"
+                    ],
+                    "id": 29
+                },
+                {
+                    "Subject": "emails",
+                    "SubjectType": "Email Message",
+                    "Relation": "target",
+                    "Object": "political figures",
+                    "ObjectType": "identity",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1048-Exfiltration Over Alternative Protocol"
+                    ],
+                    "id": 30
+                },
+                {
+                    "Subject": "emails",
+                    "SubjectType": "Email Message",
+                    "Relation": "target",
+                    "Object": "aerospace industry",
+                    "ObjectType": "identity",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1048-Exfiltration Over Alternative Protocol"
+                    ],
+                    "id": 31
+                },
+                {
+                    "Subject": ".pst files",
+                    "SubjectType": "file",
+                    "Relation": "exfiltrate-to",
+                    "Object": "central server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1048-Exfiltration Over Alternative Protocol"
+                    ],
+                    "id": 32
+                },
+                {
+                    "Subject": ".dbx files",
+                    "SubjectType": "file",
+                    "Relation": "exfiltrate-to",
+                    "Object": "central server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1048-Exfiltration Over Alternative Protocol"
+                    ],
+                    "id": 33
+                }
+            ]
+        },
+        "Credential Access": {
+            "T1003-OS Credential Dumping": [
+                {
+                    "Subject": "APT28",
+                    "SubjectType": "threat-actor",
+                    "Relation": "deploy",
+                    "Object": "run.exe",
+                    "ObjectType": "tool",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1003-OS Credential Dumping"
+                    ],
+                    "id": 34
+                },
+                {
+                    "Subject": "run.exe",
+                    "SubjectType": "tool",
+                    "Relation": "based-on",
+                    "Object": "mimikatz",
+                    "ObjectType": "tool",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1003-OS Credential Dumping"
+                    ],
+                    "id": 35
+                },
+                {
+                    "Subject": "run.exe",
+                    "SubjectType": "tool",
+                    "Relation": "dump",
+                    "Object": "passwords",
+                    "ObjectType": "artifacts",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1003-OS Credential Dumping"
+                    ],
+                    "id": 36
+                }
+            ]
+        },
+        "Reconnaissance": {
+            "T1595-Active Scanning": [
+                {
+                    "Subject": "APT28",
+                    "SubjectType": "threat-actor",
+                    "Relation": "scan",
+                    "Object": "IPs",
+                    "ObjectType": "ipv4-addr",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning"
+                    ],
+                    "id": 37
+                },
+                {
+                    "Subject": "python script",
+                    "SubjectType": "tool",
+                    "Relation": "generate",
+                    "Object": "random IPs",
+                    "ObjectType": "ipv4-addr",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning"
+                    ],
+                    "id": 39
+                },
+                {
+                    "Subject": "scan bots",
+                    "SubjectType": "tool",
+                    "Relation": "probe",
+                    "Object": "potential victims",
+                    "ObjectType": "identity",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1589-Gather Victim Identity Information"
+                    ],
+                    "id": 41
+                },
+                {
+                    "Subject": "bots",
+                    "SubjectType": "tool",
+                    "Relation": "locate at",
+                    "Object": "United States, United Kingdom, and Bulgaria",
+                    "ObjectType": "Location",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning"
+                    ],
+                    "id": 43
+                }
+            ],
+            "T1589-Gather Victim Identity Information": [
+                {
+                    "Subject": "scan bots",
+                    "SubjectType": "tool",
+                    "Relation": "probe",
+                    "Object": "potential victims",
+                    "ObjectType": "identity",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1595-Active Scanning",
+                        "T1589-Gather Victim Identity Information"
+                    ],
+                    "id": 41
+                }
+            ]
+        }
+    }
+}

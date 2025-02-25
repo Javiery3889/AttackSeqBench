@@ -1,0 +1,125 @@
+{
+    "file_name": "Plugx_Smoaler",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "The CTI report by SophosLabs, authored by Gabor Szappanos, details the infection vector of the Smoaler malware, which arrives via files with .DOC or .DOCX extensions, typically associated with Microsoft Word. However, these files are actually in Rich Text Format (RTF), likely chosen for its ease of manipulation to exploit the CVE-2012-0158 vulnerability. The files feature Tibetan-themed subject lines and are designed to execute shellcode upon opening on an unpatched system, leading to infection.",
+        "Execution": "The report describes the execution process of the Smoaler malware, which begins with the activation of shellcode embedded in the RTF file. This shellcode is identical to that used by the PlugX malware and utilizes LZNT1 compression for the embedded executable payload. The shellcode decompresses an embedded PE file, writes it to the %TEMP% folder as DW20.DLL, and executes it. This first-stage dropper then creates another program file, drops it to disk, and runs it.",
+        "Persistence": "Smoaler establishes persistence on the infected system by installing itself in two locations on the victim's computer and adding a registry value for automatic re-loading upon system reboot or user logon. The malware uses the Windows utility rundll32.exe to launch itself, as DLLs require a host program to execute.",
+        "Defense Evasion": "Smoaler employs defense evasion techniques by overwriting the infected RTF file with a decoy DOC file to remove evidence of infection. It also injects itself into the IEXPLORE.EXE process to make its traffic appear to originate from a browser, thus avoiding suspicion. Additionally, Smoaler avoids injecting into Internet Explorer if processes belonging to various security products are active, as a precaution to avoid detection by security software.",
+        "Command and Control": "The report identifies that Smoaler saves Command-and-Control (C&C) server names to the registry entry HKCU\\Software\\Microsoft\\Windows Media\\XC, which are obscured to avoid detection. The malware then attempts to connect to its C&C servers, which are known from earlier Tibet-related malware attacks.",
+        "Others": "The CTI report mentions that the Smoaler malware is a continuation of the PlugX malware family, sharing many features but following a different path after initial infection stages. It also notes that the malware's main DLL is deliberately bloated to disguise its original source and that the content fetched from C&C servers is variable, depending on what the attackers choose to serve up next. The report emphasizes the importance of proactivity and prevention in dealing with malware like Smoaler."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1091-Replication Through Removable Media": [
+                {
+                    "Subject": "SophosLabs",
+                    "SubjectType": "CTI vender",
+                    "Relation": "authored-by",
+                    "Object": "Gabor Szappanos",
+                    "ObjectType": "author",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1091-Replication Through Removable Media"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "Smoaler malware",
+                    "SubjectType": "Malware",
+                    "Relation": "arrive-via",
+                    "Object": "files",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1091-Replication Through Removable Media"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "files",
+                    "SubjectType": "file",
+                    "Relation": "exploit",
+                    "Object": "CVE-2012-0158",
+                    "ObjectType": "vulnerablity",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1091-Replication Through Removable Media"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "shellcode",
+                    "SubjectType": "artifact",
+                    "Relation": "execute",
+                    "Object": "unpatched system",
+                    "ObjectType": "infrastrcucture",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1091-Replication Through Removable Media"
+                    ],
+                    "id": 4
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1564-Hide Artifacts": [
+                {
+                    "Subject": "Smoaler",
+                    "SubjectType": "Malware",
+                    "Relation": "employs",
+                    "Object": "defense evasion techniques",
+                    "ObjectType": "Tactic",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1564-Hide Artifacts"
+                    ],
+                    "id": 9
+                }
+            ],
+            "T1055-Process Injection": [
+                {
+                    "Subject": "Smoaler",
+                    "SubjectType": "Malware",
+                    "Relation": "injects into",
+                    "Object": "IEXPLORE.EXE process",
+                    "ObjectType": "process",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1055-Process Injection"
+                    ],
+                    "id": 10
+                }
+            ]
+        },
+        "Persistence": {
+            "T1547-Boot or Logon Autostart Execution": [
+                {
+                    "Subject": "Smoaler",
+                    "SubjectType": "Malware",
+                    "Relation": "establishes persistence",
+                    "Object": "infected system",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "Smoaler",
+                    "SubjectType": "Malware",
+                    "Relation": "uses",
+                    "Object": "rundll32.exe",
+                    "ObjectType": "tool",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 14
+                }
+            ]
+        }
+    }
+}

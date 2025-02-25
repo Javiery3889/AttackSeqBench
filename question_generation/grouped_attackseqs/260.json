@@ -1,0 +1,267 @@
+{
+    "file_name": "APT_Blind_Eagles_Malware_Arsenal_Technical_Analysis_of_the_New",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "In the first stage, Blind Eagle utilizes a JavaScript downloader that employs ActiveXObject to execute PowerShell commands. The group leverages Discord CDNs to host the subsequent stage script, specifically downloading and executing a script from the URL 'hxxp://cdn.discordapp[.]com/attachments/940363101067411527/946390049979781130/cacha.pdf'.",
+        "Execution": "The second stage involves a PowerShell script that begins by loading a DLL into memory from an obfuscated and Base64 encoded string. This DLL, a .NET portable executable, contains a method named Bypass(), which serves as an AMSI (AntiMalware Scan Interface) bypasser. Upon successful bypass, the message 'bypass' is displayed in the console, while any exceptions during execution are caught and their messages are output to the console. The PowerShell script then checks for the presence of the registry key HKCU:\\software\\wow6432node\\Microsoft\\WindowsUpdate. If absent, the script creates the key and sets an obfuscated value without deobfuscation. It proceeds to drop two files: a PowerShell script named myScript.ps1 and a batch file named SystemLogin.bat. Finally, a VBScript named Login1.vbs is placed in the Startup folder to execute upon system start, which in turn executes the previously dropped SystemLogin.bat. The fourth stage reveals an obfuscated batch script that, when deobfuscated, executes the myScript.ps1 PowerShell script using the command 'mshta \"\"powershell 'C:\\Users\\Public\\myScript.ps1'\"\", 0:close')' and a VBScript execution command. The fifth stage involves another PowerShell script that loads the same AMSIBypasser DLL from the second stage and calls its method. It then loads a second DLL, an AES256 Decryptor, to decrypt the contents of the HKCU:\\software\\wow6432node\\Microsoft\\WindowsUpdate registry key using the passphrase '5456846176463687555'. The decrypted content is a new PowerShell script leading to njRAT, a remote access tool (RAT) known as Bladabindi, which allows the attacker to control the victim's computer.",
+        "Persistence": "The third stage involves a VBScript named Login1.vbs placed in the Startup folder, which ensures the execution of the SystemLogin.bat batch file upon system startup.",
+        "Defense Evasion": "The PowerShell script in the second stage includes an AMSI bypass method, which is a defense evasion technique. Additionally, the obfuscation of scripts and registry values serves as a means to evade detection.",
+        "Command and Control": "The final PowerShell script in the fifth stage leads to njRAT, which is a remote access tool (RAT) that establishes command and control over the victim's computer.",
+        "Others": "APT Blind Eagle, also known as APT-C-36, is a suspected South American espionage group active since at least 2018, targeting Colombian government institutions and corporations in the financial, petroleum, and professional manufacturing sectors. They employ sophisticated attack techniques, including custom malware, social engineering, spear-phishing, and zero-day exploits. Indicators of compromise (IoCs) and a YARA rule authored by 'seyitsec' on 2023-04-16 have been provided to detect and defend against Blind Eagle's attacks. The YARA rule includes hashes and strings to identify the malware stages, and the IoCs list includes SHA256 hashes of malicious files and a malicious URL hosted on Discord's CDN. The MITRE ATT&CK framework identifies the tactics used by Blind Eagle, including PowerShell (T1059.001), Scripting (T1064), Startup Folder (T1547.001), Process Injection (T1055), Masquerading (T1036), Sandbox Evasion (T1497), and Application Layer Protocol (T1071)."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "Blind Eagle",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "JavaScript downloader",
+                    "ObjectType": "tool",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "Blind Eagle",
+                    "SubjectType": "threat-actor",
+                    "Relation": "leverage",
+                    "Object": "Discord CDNs",
+                    "ObjectType": "infrastrcucture",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "Blind Eagle",
+                    "SubjectType": "threat-actor",
+                    "Relation": "download",
+                    "Object": "hxxp://cdn.discordapp[.]com/attachments/940363101067411527/946390049979781130/cacha.pdf",
+                    "ObjectType": "url",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 3
+                }
+            ]
+        },
+        "Persistence": {
+            "T1547-Boot or Logon Autostart Execution": [
+                {
+                    "Subject": "VBScript named Login1.vbs",
+                    "SubjectType": "file",
+                    "Relation": "placed in",
+                    "Object": "Startup folder",
+                    "ObjectType": "directory",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 4
+                },
+                {
+                    "Subject": "VBScript named Login1.vbs",
+                    "SubjectType": "file",
+                    "Relation": "ensure execution",
+                    "Object": "SystemLogin.bat",
+                    "ObjectType": "file",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 5
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1211-Exploitation for Defense Evasion": [
+                {
+                    "Subject": "PowerShell script",
+                    "SubjectType": "tool",
+                    "Relation": "include",
+                    "Object": "AMSI bypass method",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1211-Exploitation for Defense Evasion"
+                    ],
+                    "id": 6
+                }
+            ],
+            "T1564-Hide Artifacts": [
+                {
+                    "Subject": "PowerShell script",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "obfuscation",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1564-Hide Artifacts"
+                    ],
+                    "id": 7
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "PowerShell script",
+                    "SubjectType": "file",
+                    "Relation": "lead to",
+                    "Object": "njRAT",
+                    "ObjectType": "Malware",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 8
+                }
+            ]
+        },
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "PowerShell script",
+                    "SubjectType": "tool",
+                    "Relation": "load",
+                    "Object": "DLL",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "Bypass()",
+                    "SubjectType": "process",
+                    "Relation": "bypass",
+                    "Object": "AMSI",
+                    "ObjectType": "software",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 12
+                },
+                {
+                    "Subject": "PowerShell script",
+                    "SubjectType": "tool",
+                    "Relation": "check",
+                    "Object": "HKCU:\\software\\wow6432node\\Microsoft\\WindowsUpdate",
+                    "ObjectType": "registry",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "PowerShell script",
+                    "SubjectType": "tool",
+                    "Relation": "drop",
+                    "Object": "myScript.ps1",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 14
+                },
+                {
+                    "Subject": "PowerShell script",
+                    "SubjectType": "tool",
+                    "Relation": "drop",
+                    "Object": "SystemLogin.bat",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "VBScript",
+                    "SubjectType": "tool",
+                    "Relation": "execute",
+                    "Object": "SystemLogin.bat",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 16
+                },
+                {
+                    "Subject": "PowerShell script",
+                    "SubjectType": "tool",
+                    "Relation": "load",
+                    "Object": "AMSIBypasser DLL",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 17
+                },
+                {
+                    "Subject": "PowerShell script",
+                    "SubjectType": "tool",
+                    "Relation": "load",
+                    "Object": "AES256 Decryptor",
+                    "ObjectType": "tool",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 18
+                },
+                {
+                    "Subject": "AES256 Decryptor",
+                    "SubjectType": "tool",
+                    "Relation": "decrypt",
+                    "Object": "HKCU:\\software\\wow6432node\\Microsoft\\WindowsUpdate",
+                    "ObjectType": "registry",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 19
+                },
+                {
+                    "Subject": "njRAT",
+                    "SubjectType": "Malware",
+                    "Relation": "control",
+                    "Object": "victim's computer",
+                    "ObjectType": "infrastrcucture",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 20
+                }
+            ],
+            "T1129-Shared Modules": [
+                {
+                    "Subject": "DLL",
+                    "SubjectType": "file",
+                    "Relation": "contain",
+                    "Object": "Bypass()",
+                    "ObjectType": "process",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 11
+                }
+            ]
+        }
+    }
+}

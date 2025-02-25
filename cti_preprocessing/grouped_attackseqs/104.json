@@ -1,0 +1,298 @@
+{
+    "file_name": "GandCrab and Ursnif Campaign",
+    "tactic_label": true,
+    "rewrite": {
+        "Reconnaissance": "The Carbon Black ThreatSight team observed a campaign involving phishing emails with attached Word documents containing embedded macros. These emails were designed to deliver Ursnif malware and GandCrab ransomware upon successful execution. The campaign utilized various techniques favored by red teamers, espionage-focused adversaries, and large-scale criminal campaigns.",
+        "Initial Access": "The initial access to the target systems was achieved through phishing emails containing a Microsoft Word document with embedded VBS macros. The document, named 'Richard_Johnson.doc', was one of approximately 180 variants identified by Carbon Black, with differences primarily in metadata and junk data within the macros. The document's metadata indicated that the campaign's documents were first saved on December 17, 2018, and continued to be updated until January 21, 2019.",
+        "Execution": "Upon opening the malicious Word document, a VBS macro would execute, calling a shape box in the document to retrieve and run an encoded PowerShell script. This script would then download and execute payloads associated with both Ursnif and GandCrab malware.",
+        "Defense Evasion": "The PowerShell script executed by the macro would operate in memory, avoiding detection by not writing to the disk. It used the .Net Webclient class to download payloads and leveraged the DCOM object C08AFD90-F2A1-11D1-8455-00A0C91F3880 to execute the downloaded files without saving them to disk.",
+        "Command and Control": "The PowerShell script communicated with hardcoded command and control (C2) servers to request and download the payloads. The script would first attempt to use the DownloadString method to contact the C2 server and then the DownloadData method to download a resource from a second C2 server.",
+        "Impact": "The payloads downloaded and executed by the PowerShell script were GandCrab ransomware and Ursnif malware. GandCrab, a variant of version 5.0.4, would encrypt files on the compromised system, while Ursnif would perform actions such as credential harvesting, gathering system and process information, and potentially deploying additional malware.",
+        "Others": "The campaign was analyzed using VirusTotal Graph, which organized the variants into groups commonly associated by metadata or document structures. The analysis highlighted at least three different variants of Ursnif hosted on the bevendbrec[.]com site, as well as the PowerShell cradle and PS Empire script used to inject the Gandcrab sample into memory. Carbon Black's Threat Analysis Unit released this report to aid researchers and security practitioners in combating the campaign, as new samples were being discovered daily."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "phishing emails",
+                    "SubjectType": "Email Message",
+                    "Relation": "deliver",
+                    "Object": "Microsoft Word document",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing",
+                        "T1078-Valid Accounts"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "Microsoft Word document",
+                    "SubjectType": "file",
+                    "Relation": "contain",
+                    "Object": "VBS macros",
+                    "ObjectType": "artifact",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "Richard_Johnson.doc",
+                    "SubjectType": "file",
+                    "Relation": "variant-of",
+                    "Object": "Microsoft Word document",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "Carbon Black",
+                    "SubjectType": "CTI vender",
+                    "Relation": "identify",
+                    "Object": "approximately 180 variants",
+                    "ObjectType": "artifact",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 4
+                }
+            ],
+            "T1078-Valid Accounts": [
+                {
+                    "Subject": "phishing emails",
+                    "SubjectType": "Email Message",
+                    "Relation": "deliver",
+                    "Object": "Microsoft Word document",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing",
+                        "T1078-Valid Accounts"
+                    ],
+                    "id": 1
+                }
+            ]
+        },
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "malicious Word document",
+                    "SubjectType": "file",
+                    "Relation": "execute",
+                    "Object": "VBS macro",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter",
+                        "T1204-User Execution"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "VBS macro",
+                    "SubjectType": "file",
+                    "Relation": "retrieve and run",
+                    "Object": "encoded PowerShell script",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "PowerShell script",
+                    "SubjectType": "file",
+                    "Relation": "download and execute",
+                    "Object": "payloads",
+                    "ObjectType": "Malware",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 7
+                }
+            ],
+            "T1204-User Execution": [
+                {
+                    "Subject": "malicious Word document",
+                    "SubjectType": "file",
+                    "Relation": "execute",
+                    "Object": "VBS macro",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter",
+                        "T1204-User Execution"
+                    ],
+                    "id": 5
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1105-Ingress Tool Transfer": [
+                {
+                    "Subject": "PowerShell script",
+                    "SubjectType": "tool",
+                    "Relation": "communicate-with",
+                    "Object": "C2 servers",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1105-Ingress Tool Transfer"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "PowerShell script",
+                    "SubjectType": "tool",
+                    "Relation": "download",
+                    "Object": "payloads",
+                    "ObjectType": "file",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1105-Ingress Tool Transfer"
+                    ],
+                    "id": 14
+                }
+            ]
+        },
+        "Reconnaissance": {
+            "T1598-Phishing for Information": [
+                {
+                    "Subject": "Carbon Black ThreatSight team",
+                    "SubjectType": "author",
+                    "Relation": "observed",
+                    "Object": "campaign",
+                    "ObjectType": "campaign",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1598-Phishing for Information"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "phishing emails",
+                    "SubjectType": "Email Message",
+                    "Relation": "deliver",
+                    "Object": "Ursnif malware",
+                    "ObjectType": "Malware",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1598-Phishing for Information"
+                    ],
+                    "id": 16
+                },
+                {
+                    "Subject": "phishing emails",
+                    "SubjectType": "Email Message",
+                    "Relation": "deliver",
+                    "Object": "GandCrab ransomware",
+                    "ObjectType": "Malware",
+                    "tactic": "Reconnaissance",
+                    "technique": [
+                        "T1598-Phishing for Information"
+                    ],
+                    "id": 17
+                }
+            ]
+        },
+        "Impact": {
+            "T1486-Data Encrypted for Impact": [
+                {
+                    "Subject": "PowerShell script",
+                    "SubjectType": "tool",
+                    "Relation": "download",
+                    "Object": "GandCrab ransomware",
+                    "ObjectType": "Malware",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1486-Data Encrypted for Impact"
+                    ],
+                    "id": 18
+                },
+                {
+                    "Subject": "PowerShell script",
+                    "SubjectType": "tool",
+                    "Relation": "execute",
+                    "Object": "GandCrab ransomware",
+                    "ObjectType": "Malware",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1486-Data Encrypted for Impact"
+                    ],
+                    "id": 19
+                },
+                {
+                    "Subject": "GandCrab ransomware",
+                    "SubjectType": "Malware",
+                    "Relation": "encrypt",
+                    "Object": "files",
+                    "ObjectType": "artifacts",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1486-Data Encrypted for Impact"
+                    ],
+                    "id": 22
+                },
+                {
+                    "Subject": "GandCrab ransomware",
+                    "SubjectType": "Malware",
+                    "Relation": "variant-of",
+                    "Object": "version 5.0.4",
+                    "ObjectType": "software",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1486-Data Encrypted for Impact"
+                    ],
+                    "id": 23
+                }
+            ],
+            "T1565-Data Manipulation": [
+                {
+                    "Subject": "Ursnif malware",
+                    "SubjectType": "Malware",
+                    "Relation": "perform",
+                    "Object": "credential harvesting",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1565-Data Manipulation"
+                    ],
+                    "id": 24
+                },
+                {
+                    "Subject": "Ursnif malware",
+                    "SubjectType": "Malware",
+                    "Relation": "gather",
+                    "Object": "system and process information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1565-Data Manipulation"
+                    ],
+                    "id": 25
+                },
+                {
+                    "Subject": "Ursnif malware",
+                    "SubjectType": "Malware",
+                    "Relation": "deploy",
+                    "Object": "additional malware",
+                    "ObjectType": "Malware",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1565-Data Manipulation"
+                    ],
+                    "id": 26
+                }
+            ]
+        }
+    }
+}

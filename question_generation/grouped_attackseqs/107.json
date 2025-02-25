@@ -1,0 +1,217 @@
+{
+    "file_name": "New Adwind Campaign targets US Petroleum Industry",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "A new campaign spreading the Adwind RAT has been observed, specifically targeting the petroleum industry in the US. The campaign utilizes multi-layer obfuscation to evade detection, with multiple RAT samples hosted on the serving domain 'members[.]westnet[.]com[.]au/~joeven/'. The attacker has either used or compromised a Westnet user account to host the RAT. The payload is executed by the victim, involving multiple levels of JAR extractions.",
+        "Execution": "The Adwind RAT executes a dropped JAR payload, which creates a parent Java process and copies itself into the %User% directory. It then performs three actions: executes the copy, creates a registry entry in HKCU/CurrentVersion/Run for persistence, and creates WMI scripts in %temp% to disable firewall and antivirus services. Subsequent JARs perform AES decryption routines and execute as new Java threads, leading to the loading of the JRAT class responsible for major RAT functionality.",
+        "Persistence": "The Adwind RAT achieves persistence through registry modifications, specifically by creating a registry entry in HKCU/CurrentVersion/Run.",
+        "Defense Evasion": "The Adwind RAT employs multi-layer obfuscation techniques, including the use of multiple embedded JAR archives before unpacking the actual payload. It also uses WMI scripts to disable firewall and antivirus services. The RAT's obfuscation techniques have been successful in evading detection, as indicated by low VirusTotal detection ratios.",
+        "Collection": "The RAT's core functionalities include capturing webcam images, scanning the hard-drive for files based on extensions defined in the RAT's config, spinning up multiple process threads, and performing injection into known legitimate Windows processes.",
+        "Command and Control": "The JRAT class within the Adwind RAT tries connecting to its command and control server at the IP address 185[.]205[.]210[.]48. It encrypts and exfiltrates data to this server.",
+        "Exfiltration": "The Adwind RAT encrypts and exfiltrates data to its command and control server.",
+        "Others": "The URLs hosting the Adwind RAT were reported to Westnet on September 9th, 2019. The VirusTotal detection ratio for the top-level JAR was 5/56, while that of the final decrypted JAR was 49/58. The campaign has been active over the last couple of years, with the RAT supporting cross-platform functionality for Windows, Linux, and Mac."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1078-Valid Accounts": [
+                {
+                    "Subject": "attacker",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "Westnet user account",
+                    "ObjectType": "user-account",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1078-Valid Accounts"
+                    ],
+                    "id": 4
+                }
+            ]
+        },
+        "Execution": {
+            "T1569-System Services": [
+                {
+                    "Subject": "Adwind RAT",
+                    "SubjectType": "Malware",
+                    "Relation": "execute",
+                    "Object": "dropped JAR payload",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1569-System Services"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "JAR payload",
+                    "SubjectType": "file",
+                    "Relation": "create",
+                    "Object": "registry entry",
+                    "ObjectType": "registy",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1569-System Services"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "JAR payload",
+                    "SubjectType": "file",
+                    "Relation": "create",
+                    "Object": "WMI scripts",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1569-System Services"
+                    ],
+                    "id": 7
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1027-Obfuscated Files or Information": [
+                {
+                    "Subject": "Adwind RAT",
+                    "SubjectType": "Malware",
+                    "Relation": "employ",
+                    "Object": "multi-layer obfuscation techniques",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 8
+                }
+            ],
+            "T1562-Impair Defenses": [
+                {
+                    "Subject": "Adwind RAT",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "WMI scripts",
+                    "ObjectType": "tool",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1562-Impair Defenses"
+                    ],
+                    "id": 9
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1573-Encrypted Channel": [
+                {
+                    "Subject": "JRAT class",
+                    "SubjectType": "Malware",
+                    "Relation": "communicate-with",
+                    "Object": "command and control server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1573-Encrypted Channel"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "JRAT class",
+                    "SubjectType": "Malware",
+                    "Relation": "exfiltrate-to",
+                    "Object": "IP address 185[.]205[.]210[.]48",
+                    "ObjectType": "ipv4-addr",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1573-Encrypted Channel"
+                    ],
+                    "id": 11
+                }
+            ]
+        },
+        "Persistence": {
+            "T1547-Boot or Logon Autostart Execution": [
+                {
+                    "Subject": "Adwind RAT",
+                    "SubjectType": "Malware",
+                    "Relation": "achieve persistence through",
+                    "Object": "registry entry",
+                    "ObjectType": "registry",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 12
+                }
+            ]
+        },
+        "Collection": {
+            "T1125-Video Capture": [
+                {
+                    "Subject": "The RAT",
+                    "SubjectType": "Malware",
+                    "Relation": "have",
+                    "Object": "core functionalities",
+                    "ObjectType": "Tactic",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1125-Video Capture"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "core functionalities",
+                    "SubjectType": "Tactic",
+                    "Relation": "include",
+                    "Object": "capturing webcam images",
+                    "ObjectType": "Technique",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1125-Video Capture"
+                    ],
+                    "id": 14
+                }
+            ],
+            "T1005-Data from Local System": [
+                {
+                    "Subject": "core functionalities",
+                    "SubjectType": "Tactic",
+                    "Relation": "include",
+                    "Object": "scanning the hard-drive",
+                    "ObjectType": "Technique",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1005-Data from Local System"
+                    ],
+                    "id": 15
+                }
+            ]
+        },
+        "Exfiltration": {
+            "T1041-Exfiltration Over C2 Channel": [
+                {
+                    "Subject": "The Adwind RAT",
+                    "SubjectType": "Malware",
+                    "Relation": "encrypts and exfiltrates",
+                    "Object": "data",
+                    "ObjectType": "artifacts",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 18
+                },
+                {
+                    "Subject": "The Adwind RAT",
+                    "SubjectType": "Malware",
+                    "Relation": "exfiltrates to",
+                    "Object": "its command and control server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 19
+                }
+            ]
+        }
+    }
+}

@@ -1,0 +1,184 @@
+{
+    "triplets": [
+        {
+            "Subject": "The HTA file",
+            "SubjectType": "file",
+            "Relation": "execute",
+            "Object": "script",
+            "ObjectType": "process",
+            "tactic": "Execution",
+            "technique": [
+                "T1129-Shared Modules"
+            ],
+            "id": 1
+        },
+        {
+            "Subject": "script",
+            "SubjectType": "process",
+            "Relation": "stop",
+            "Object": "antivirus software",
+            "ObjectType": "software",
+            "tactic": "Execution",
+            "technique": [
+                "Others"
+            ],
+            "id": 2
+        },
+        {
+            "Subject": "FinalBot.exe",
+            "SubjectType": "file",
+            "Relation": "rename",
+            "Object": "Srvstr.exe",
+            "ObjectType": "file",
+            "tactic": "Execution",
+            "technique": [
+                "Others"
+            ],
+            "id": 3
+        },
+        {
+            "Subject": "backdoor",
+            "SubjectType": "Malware",
+            "Relation": "develop",
+            "Object": "VB",
+            "ObjectType": "software",
+            "tactic": "Execution",
+            "technique": [
+                "T1129-Shared Modules"
+            ],
+            "id": 4
+        },
+        {
+            "Subject": "msvbvm60.dll",
+            "SubjectType": "file",
+            "Relation": "rename",
+            "Object": "8EBECD7C.dll",
+            "ObjectType": "file",
+            "tactic": "Execution",
+            "technique": [
+                "T1129-Shared Modules"
+            ],
+            "id": 5
+        },
+        {
+            "Subject": "The backdoor",
+            "SubjectType": "Malware",
+            "Relation": "establish persistence by creating",
+            "Object": "Run key",
+            "ObjectType": "registry",
+            "tactic": "Persistence",
+            "technique": [
+                "T1547-Boot or Logon Autostart Execution"
+            ],
+            "id": 6
+        },
+        {
+            "Subject": "Sidewinder",
+            "SubjectType": "threat-actor",
+            "Relation": "avoid",
+            "Object": "PowerShell",
+            "ObjectType": "software",
+            "tactic": "Defense Evasion",
+            "technique": [
+                "T1036-Masquerading"
+            ],
+            "id": 7
+        },
+        {
+            "Subject": "Sidewinder",
+            "SubjectType": "threat-actor",
+            "Relation": "use",
+            "Object": "DLL sideloading",
+            "ObjectType": "technique",
+            "tactic": "Defense Evasion",
+            "technique": [
+                "T1574-Hijack Execution Flow"
+            ],
+            "id": 8
+        },
+        {
+            "Subject": "HTA file",
+            "SubjectType": "file",
+            "Relation": "communicate-with",
+            "Object": "C2 server",
+            "ObjectType": "infrastructure",
+            "tactic": "Command and Control",
+            "technique": [
+                "T1071-Application Layer Protocol"
+            ],
+            "id": 9
+        },
+        {
+            "Subject": "C2 server",
+            "SubjectType": "infrastructure",
+            "Relation": "use",
+            "Object": "webserv-redir.net",
+            "ObjectType": "domain-name",
+            "tactic": "Command and Control",
+            "technique": [
+                "T1071-Application Layer Protocol"
+            ],
+            "id": 10
+        },
+        {
+            "Subject": "APT Sidewinder",
+            "SubjectType": "threat-actor",
+            "Relation": "exploit",
+            "Object": "CVE-2017-11882",
+            "ObjectType": "vulnerability",
+            "tactic": "Initial Access",
+            "technique": [
+                "T1190-Exploit Public-Facing Application"
+            ],
+            "id": 11
+        },
+        {
+            "Subject": "HTA file",
+            "SubjectType": "file",
+            "Relation": "communicate-with",
+            "Object": "C2 server",
+            "ObjectType": "infrastructure",
+            "tactic": "Initial Access",
+            "technique": [
+                "T1190-Exploit Public-Facing Application"
+            ],
+            "id": 12
+        },
+        {
+            "Subject": "HTA file",
+            "SubjectType": "file",
+            "Relation": "use",
+            "Object": "WMI",
+            "ObjectType": "tool",
+            "tactic": "Discovery",
+            "technique": [
+                "T1082-System Information Discovery"
+            ],
+            "id": 13
+        },
+        {
+            "Subject": "HTA file",
+            "SubjectType": "file",
+            "Relation": "discover",
+            "Object": "installed antivirus products",
+            "ObjectType": "software",
+            "tactic": "Discovery",
+            "technique": [
+                "T1518-Software Discovery"
+            ],
+            "id": 14
+        }
+    ],
+    "file_name": "APT Sidewinder changes theirs TTPs to install their backdoor",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "APT Sidewinder exploited CVE-2017-11882 using an RTF document to download an HTA file from the domain webserv-redir.net. The HTA file, avoiding PowerShell to remain undetected, checked for installed antivirus software using WMI and communicated with the C2 server.",
+        "Execution": "The HTA file contained within the RTF document executed a script that stopped if certain antivirus software was detected. If not detected, it proceeded to run a backdoor named FinalBot.exe, which was extracted from a zip file and renamed to Srvstr.exe in the directory. The backdoor was developed in VB and utilized a modified msvbvm60.dll, renamed to 8EBECD7C.dll.",
+        "Persistence": "The backdoor established persistence by creating a Run key in the registry: HKEY_CURRENT_USER\\Software\\Microsoft\\Windows\\CurrentVersion\\Run\\WinSrv.",
+        "Defense Evasion": "Sidewinder's HTA file avoided using PowerShell, which is commonly monitored, and instead used VBS. The backdoor also employed a technique called DLL sideloading, using cmpbk32.dll to execute Srvstr.exe.",
+        "Discovery": "The HTA file used WMI to discover installed antivirus products on the victim's system.",
+        "Command and Control": "The HTA file communicated with the C2 server to send information about the installed antivirus software. The domain used for C2 communication was webserv-redir.net.",
+        "Others": "Indicators of compromise (IOCs) associated with the Sidewinder campaign include various hashes for files such as Test.Zip, FinalBot.exe, hj1.txt, hj.txt, and the domain webserv-redir.net with its associated IP address 185.106.120.43. Additional related domains include heartissuehigh.win, mail.webserv-redir.net, and www.webserv-redir.net. An RTF document was also identified as an IOC with the URL hxxp://www.webserv-redir.net/images/67381F0B/-1/5272/3cdc4fcb/main.RTF."
+    },
+    "technique_label": true
+}

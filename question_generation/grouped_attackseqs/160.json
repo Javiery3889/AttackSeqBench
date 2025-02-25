@@ -1,0 +1,247 @@
+{
+    "file_name": "Operation Poisoned News_ Hong Kong Users Targeted With Mobile Malware via Local News Links - TrendLabs Security Intelligence Blog",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "A watering hole attack targeting iOS users in Hong Kong was identified by Trend Micro on February 19. Malicious links posted on multiple forums led users to legitimate news sites while simultaneously loading and executing malicious code through a hidden iframe. This code exploited vulnerabilities in iOS 12.1 and 12.2, resulting in the download of a new iOS malware variant named lightSpy (IOS_LightSpy.A).",
+        "Execution": "The lightSpy malware, once executed, installs a modular backdoor capable of remote command execution and file manipulation on the infected iOS device. This allows the attacker to spy on the user and take full control of the device. The malware's modules are designed for data exfiltration, including WiFi history, contacts, GPS location, hardware information, iOS keychain, phone call history, Safari and Chrome browser history, and SMS messages. Network environment information such as available WiFi networks and local network IP addresses are also exfiltrated. Specific messenger applications like Telegram, QQ, and WeChat are targeted for data exfiltration.",
+        "Defense Evasion": "The lightSpy malware employs a sophisticated spyware that maintains control over the device and exfiltrates information. It uses a modular design with capabilities for module updates, remote command dispatch per module, and complete shell command execution. The malware's modules are explicitly designed for data exfiltration, targeting information from Telegram, WeChat, and other apps. The infection chain involves a silently patched Safari bug and a customized kernel exploit to gain root privileges, exploiting CVE-2019-8605. The payload.dylib file is signed with a legitimate Apple developer certificate, indicating the campaign's activity started around November 29, 2019.",
+        "Collection": "The lightSpy malware's modules are designed to collect and exfiltrate a wide range of data from the infected device, including hardware information, contacts, text messages, call history, saved WiFi information, browser history, and user location. Specific modules target data from messenger apps like WeChat, QQ, and Telegram.",
+        "Command and Control": "The lightSpy malware contains hardcoded locations of the C&C server within its modules. The main control module, light, is capable of loading and updating other modules, which are designed to extract and exfiltrate different types of data.",
+        "Others": "A similar campaign targeting Android devices, named dmsSpy (AndroidOS_dmsSpy.A.), was discovered in 2019. Malicious APK files were distributed via public Hong Kong-related Telegram channels, claiming to be legitimate apps but designed to exfiltrate device information, contacts, and SMS messages. The dmsSpy malware was advertised as a calendar app containing protest schedules in Hong Kong, requesting sensitive permissions and transmitting information to a C&C server. Debug mode left activated by the threat actors revealed additional capabilities, including screenshots and the ability to install APK files onto the device. The download and command-and-control servers for dmsSpy used the same domain name (hkrevolution[.]club) as one of the watering holes used by the iOS component of Poisoned News, suggesting the same threat actors are behind both campaigns."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1189-Drive-by Compromise": [
+                {
+                    "Subject": "Trend Micro",
+                    "SubjectType": "CTI vender",
+                    "Relation": "identify",
+                    "Object": "watering hole attack",
+                    "ObjectType": "campaign",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1189-Drive-by Compromise"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "Malicious links",
+                    "SubjectType": "url",
+                    "Relation": "lead",
+                    "Object": "users",
+                    "ObjectType": "identity",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1189-Drive-by Compromise"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "Malicious code",
+                    "SubjectType": "artifacts",
+                    "Relation": "exploit",
+                    "Object": "vulnerabilities in iOS 12.1 and 12.2",
+                    "ObjectType": "vulnerablity",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1189-Drive-by Compromise"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "Malicious code",
+                    "SubjectType": "artifacts",
+                    "Relation": "result in",
+                    "Object": "download of lightSpy",
+                    "ObjectType": "Malware",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1189-Drive-by Compromise"
+                    ],
+                    "id": 4
+                }
+            ]
+        },
+        "Execution": {
+            "T1072-Software Deployment Tools": [
+                {
+                    "Subject": "lightSpy malware",
+                    "SubjectType": "Malware",
+                    "Relation": "install",
+                    "Object": "modular backdoor",
+                    "ObjectType": "tool",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1072-Software Deployment Tools"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "lightSpy malware",
+                    "SubjectType": "Malware",
+                    "Relation": "exfiltrate-to",
+                    "Object": "attacker",
+                    "ObjectType": "threat-actor",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1072-Software Deployment Tools"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "lightSpy malware",
+                    "SubjectType": "Malware",
+                    "Relation": "target",
+                    "Object": "Telegram",
+                    "ObjectType": "software",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1072-Software Deployment Tools"
+                    ],
+                    "id": 9
+                }
+            ],
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "modular backdoor",
+                    "SubjectType": "tool",
+                    "Relation": "allow",
+                    "Object": "remote command execution",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "modular backdoor",
+                    "SubjectType": "tool",
+                    "Relation": "allow",
+                    "Object": "file manipulation",
+                    "ObjectType": "attack-pattern",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 7
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1218-System Binary Proxy Execution": [
+                {
+                    "Subject": "lightSpy malware",
+                    "SubjectType": "Malware",
+                    "Relation": "employ",
+                    "Object": "sophisticated spyware",
+                    "ObjectType": "Malware",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1218-System Binary Proxy Execution"
+                    ],
+                    "id": 12
+                }
+            ],
+            "T1070-Indicator Removal": [
+                {
+                    "Subject": "lightSpy malware",
+                    "SubjectType": "Malware",
+                    "Relation": "maintain-control-over",
+                    "Object": "device",
+                    "ObjectType": "infrastrcucture",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1070-Indicator Removal"
+                    ],
+                    "id": 13
+                }
+            ],
+            "T1211-Exploitation for Defense Evasion": [
+                {
+                    "Subject": "infection chain",
+                    "SubjectType": "attack-pattern",
+                    "Relation": "involve",
+                    "Object": "silently patched Safari bug",
+                    "ObjectType": "vulnerablity",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1211-Exploitation for Defense Evasion"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "infection chain",
+                    "SubjectType": "attack-pattern",
+                    "Relation": "exploit",
+                    "Object": "CVE-2019-8605",
+                    "ObjectType": "vulnerablity",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1211-Exploitation for Defense Evasion"
+                    ],
+                    "id": 16
+                }
+            ],
+            "T1553-Subvert Trust Controls": [
+                {
+                    "Subject": "payload.dylib file",
+                    "SubjectType": "file",
+                    "Relation": "signed-with",
+                    "Object": "legitimate Apple developer certificate",
+                    "ObjectType": "X.509 Certificate",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1553-Subvert Trust Controls"
+                    ],
+                    "id": 17
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "lightSpy malware",
+                    "SubjectType": "Malware",
+                    "Relation": "contain",
+                    "Object": "hardcoded locations of the C&C server",
+                    "ObjectType": "artifacts",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 18
+                },
+                {
+                    "Subject": "main control module, light",
+                    "SubjectType": "tool",
+                    "Relation": "capable-of",
+                    "Object": "loading and updating other modules",
+                    "ObjectType": "process",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 19
+                }
+            ]
+        },
+        "Collection": {
+            "T1560-Archive Collected Data": [
+                {
+                    "Subject": "lightSpy malware's modules",
+                    "SubjectType": "Malware",
+                    "Relation": "collect and exfiltrate",
+                    "Object": "data",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1560-Archive Collected Data"
+                    ],
+                    "id": 20
+                }
+            ]
+        }
+    }
+}

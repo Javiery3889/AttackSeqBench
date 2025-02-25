@@ -1,0 +1,164 @@
+{
+    "file_name": "North Korea's Lazarus APT leverages Windows Update client, GitHub in latest campaign _ Malwarebytes Labs",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "On January 18th, 2022, the Lazarus Group initiated a spear phishing campaign using two macro-embedded documents masquerading as job opportunities from Lockheed Martin. The documents, named 'Lockheed_Martin_JobOpportunities.docx' and 'Salary_Lockheed_Martin_job_opportunities_confidential.doc,' were designed to lure targets with the promise of new job positions. The documents contained malicious macros that, when executed, would start the attack process.",
+        "Execution": "The attack process began with the execution of malicious macros embedded in the Word document. These macros used a lesser-known technique involving the KernelCallbackTable to hijack control flow and execute malicious code. The malware retrieved the address of the 'WMIsAvailableOffline' function from 'wmvcore.dll,' modified memory protection permissions, and overwrote the code with malicious shellcode. The shellcode contained an encrypted DLL that was decrypted at runtime and manually mapped into memory, leading to further stages of the attack.",
+        "Persistence": "The malware achieved startup persistence by dropping a malicious LNK file named 'WindowsUpdateConf.lnk' into the startup folder. This LNK file was designed to execute 'C:\\Windows\\system32\\wuauclt.exe' with arguments to run a malicious DLL using the Windows Update Client, effectively bypassing security detection mechanisms.",
+        "Defense Evasion": "The Lazarus Group employed several techniques to evade detection, including the use of the KernelCallbackTable for control flow hijacking, execution of malicious code through the Windows Update client, and leveraging GitHub for command and control (C2) communication.",
+        "Discovery": "The 'GetBaseInfo.dll' module, which was one of the additional modules loaded by the core_module.dll, had limited capabilities. It retrieved the username, computer name, and a list of all running processes on the system.",
+        "Command and Control": "The core_module.dll communicated with a command and control (C2) server hosted on GitHub, a rare tactic observed in this campaign. The malware used a hardcoded username, repository name, directory, and token to make HTTP requests to GitHub and retrieve files from the 'images' directory of the repository. The retrieved files, such as 'readme.png,' contained malicious modules that were executed on the target system.",
+        "Others": "The Lazarus Group's campaign targeted individuals seeking job opportunities at Lockheed Martin, a known target for the group. The campaign was linked to past activities of Lazarus through document metadata and infrastructure overlap. The malicious documents used in the campaign were well-designed and contained large icons of known companies to appear legitimate. The campaign also used a GitHub account with the username 'DanielManwarningRep' created on January 17th, 2022, to operate the malware."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "initiate",
+                    "Object": "spear phishing campaign",
+                    "ObjectType": "campaign",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "macro-embedded documents",
+                    "ObjectType": "artifact",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 2
+                }
+            ]
+        },
+        "Persistence": {
+            "T1547-Boot or Logon Autostart Execution": [
+                {
+                    "Subject": "The malware",
+                    "SubjectType": "Malware",
+                    "Relation": "drop",
+                    "Object": "WindowsUpdateConf.lnk",
+                    "ObjectType": "file",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 3
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1574-Hijack Execution Flow": [
+                {
+                    "Subject": "Lazarus Group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "KernelCallbackTable",
+                    "ObjectType": "Technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1574-Hijack Execution Flow"
+                    ],
+                    "id": 5
+                }
+            ]
+        },
+        "Discovery": {
+            "T1057-Process Discovery": [
+                {
+                    "Subject": "The 'GetBaseInfo.dll' module",
+                    "SubjectType": "file",
+                    "Relation": "have",
+                    "Object": "username",
+                    "ObjectType": "artifact",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1057-Process Discovery",
+                        "T1033-System Owner/User Discovery"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "The 'GetBaseInfo.dll' module",
+                    "SubjectType": "file",
+                    "Relation": "have",
+                    "Object": "a list of all running processes",
+                    "ObjectType": "artifact",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1083-File and Directory Discovery",
+                        "T1057-Process Discovery"
+                    ],
+                    "id": 10
+                }
+            ],
+            "T1033-System Owner/User Discovery": [
+                {
+                    "Subject": "The 'GetBaseInfo.dll' module",
+                    "SubjectType": "file",
+                    "Relation": "have",
+                    "Object": "username",
+                    "ObjectType": "artifact",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1057-Process Discovery",
+                        "T1033-System Owner/User Discovery"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "The 'GetBaseInfo.dll' module",
+                    "SubjectType": "file",
+                    "Relation": "have",
+                    "Object": "computer name",
+                    "ObjectType": "artifact",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1033-System Owner/User Discovery"
+                    ],
+                    "id": 9
+                }
+            ],
+            "T1083-File and Directory Discovery": [
+                {
+                    "Subject": "The 'GetBaseInfo.dll' module",
+                    "SubjectType": "file",
+                    "Relation": "have",
+                    "Object": "a list of all running processes",
+                    "ObjectType": "artifact",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1083-File and Directory Discovery",
+                        "T1057-Process Discovery"
+                    ],
+                    "id": 10
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "core_module.dll",
+                    "SubjectType": "file",
+                    "Relation": "communicate-with",
+                    "Object": "C2 server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 13
+                }
+            ]
+        }
+    }
+}

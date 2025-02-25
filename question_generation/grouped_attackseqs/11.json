@@ -1,0 +1,280 @@
+{
+    "file_name": "Kimsuky",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "For several months, an ongoing cyber-espionage campaign has been targeting South Korean think-tanks. The initial Trojan dropper, functioning as a loader for further malware, is typically delivered by spear-phishing emails. This dropper is a Dynamic Link Library that delivers another encrypted library from its resource section, which performs espionage functions.",
+        "Execution": "Upon infection, the malware uses the Metasploit Framework's code to inject malicious code into explorer.exe on Windows 7 systems. It decrypts a spying library, saves it to disk with a hardcoded name in the user's temporary folder, and loads it as a library. This library then copies itself into the System32 directory and creates a service to ensure persistence.",
+        "Persistence": "The malware ensures its persistence by copying itself into the System32 directory and creating a service with varying names such as DriverManage, WebService, and WebClientManager. These services are initiated at system startup.",
+        "Defense Evasion": "The malware disables the system firewall and AhnLab firewall by modifying registry values. It also turns off the Windows Security Center service to prevent alerts about the disabled firewall. The attackers specifically target AhnLab security products, which are commonly used in South Korea, and do not bother evading foreign vendors' products.",
+        "Discovery": "The malware gathers information about the infected computer, including system and user names, and outputs of the systeminfo command. It also collects keystrokes and directory listings.",
+        "Collection": "The malware collects keystrokes, directory listings, and HWP documents. It sends this collected data to the attackers through encrypted emails.",
+        "Command and Control": "Communication between the malware and the attackers occurs through a Bulgarian web-based free email server, mail.bg. The malware uses hardcoded credentials to send and receive instructions via email.",
+        "Exfiltration": "The malware exfiltrates collected data, including system information, user-related info, and keystrokes, by encrypting it with RC4 and sending it to the attackers' email accounts.",
+        "Others": "The campaign, attributed to the threat actor 'Kimsuky,' is suspected to originate from North Korea, given the targeted entities and the attackers' IP addresses located in China's Jilin and Liaoning provinces, which maintain lines into North Korea. The malware uses various files and MD5 hashes, and it creates services with specific names to operate. The attackers use modified TeamViewer components for remote control, and the malware is detected as Trojan.Win32.Kimsuky, except for the TeamViewer components, which are detected as Trojan.Win32.Patched.ps."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "cyber-espionage campaign",
+                    "SubjectType": "campaign",
+                    "Relation": "target",
+                    "Object": "South Korean think-tanks",
+                    "ObjectType": "identity",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "Trojan dropper",
+                    "SubjectType": "Malware",
+                    "Relation": "deliver",
+                    "Object": "further malware",
+                    "ObjectType": "Malware",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "Trojan dropper",
+                    "SubjectType": "Malware",
+                    "Relation": "drop",
+                    "Object": "encrypted library",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "encrypted library",
+                    "SubjectType": "file",
+                    "Relation": "perform",
+                    "Object": "espionage functions",
+                    "ObjectType": "Tactic",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 4
+                }
+            ]
+        },
+        "Execution": {
+            "T1569-System Services": [
+                {
+                    "Subject": "malware",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "Metasploit Framework's code",
+                    "ObjectType": "tool",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1569-System Services"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "malware",
+                    "SubjectType": "Malware",
+                    "Relation": "inject",
+                    "Object": "malicious code",
+                    "ObjectType": "artifact",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1569-System Services"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "malware",
+                    "SubjectType": "Malware",
+                    "Relation": "decrypt",
+                    "Object": "spying library",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1569-System Services"
+                    ],
+                    "id": 7
+                },
+                {
+                    "Subject": "spying library",
+                    "SubjectType": "file",
+                    "Relation": "copy",
+                    "Object": "System32 directory",
+                    "ObjectType": "directory",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1569-System Services"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "spying library",
+                    "SubjectType": "file",
+                    "Relation": "create",
+                    "Object": "service",
+                    "ObjectType": "process",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1569-System Services"
+                    ],
+                    "id": 9
+                }
+            ]
+        },
+        "Persistence": {
+            "T1547-Boot or Logon Autostart Execution": [
+                {
+                    "Subject": "malware",
+                    "SubjectType": "Malware",
+                    "Relation": "copy",
+                    "Object": "System32 directory",
+                    "ObjectType": "directory",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "malware",
+                    "SubjectType": "Malware",
+                    "Relation": "create",
+                    "Object": "service",
+                    "ObjectType": "process",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 11
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1562-Impair Defenses": [
+                {
+                    "Subject": "The malware",
+                    "SubjectType": "Malware",
+                    "Relation": "disable",
+                    "Object": "system firewall",
+                    "ObjectType": "software",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1562-Impair Defenses"
+                    ],
+                    "id": 12
+                },
+                {
+                    "Subject": "The malware",
+                    "SubjectType": "Malware",
+                    "Relation": "disable",
+                    "Object": "AhnLab firewall",
+                    "ObjectType": "software",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1562-Impair Defenses"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "The malware",
+                    "SubjectType": "Malware",
+                    "Relation": "turn off",
+                    "Object": "Windows Security Center service",
+                    "ObjectType": "software",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1562-Impair Defenses"
+                    ],
+                    "id": 14
+                }
+            ]
+        },
+        "Discovery": {
+            "T1083-File and Directory Discovery": [
+                {
+                    "Subject": "The malware",
+                    "SubjectType": "Malware",
+                    "Relation": "gather",
+                    "Object": "information about the infected computer",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1083-File and Directory Discovery"
+                    ],
+                    "id": 16
+                }
+            ]
+        },
+        "Collection": {
+            "T1056-Input Capture": [
+                {
+                    "Subject": "The malware",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "keystrokes, directory listings, and HWP documents",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1056-Input Capture",
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 17
+                }
+            ],
+            "T1119-Automated Collection": [
+                {
+                    "Subject": "The malware",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "keystrokes, directory listings, and HWP documents",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1056-Input Capture",
+                        "T1119-Automated Collection"
+                    ],
+                    "id": 17
+                }
+            ],
+            "T1114-Email Collection": [
+                {
+                    "Subject": "The malware",
+                    "SubjectType": "Malware",
+                    "Relation": "send",
+                    "Object": "collected data",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1114-Email Collection"
+                    ],
+                    "id": 18
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1205-Traffic Signaling": [
+                {
+                    "Subject": "malware",
+                    "SubjectType": "Malware",
+                    "Relation": "communicate-with",
+                    "Object": "attackers",
+                    "ObjectType": "threat-actor",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1205-Traffic Signaling"
+                    ],
+                    "id": 19
+                }
+            ]
+        }
+    }
+}

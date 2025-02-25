@@ -1,0 +1,111 @@
+{
+    "file_name": "2020.09.11_Talos_-_The_art_and_science_of_detecting_Cobalt_Strike",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "Cobalt Strike is a paid penetration-testing tool that malicious actors have used to deploy \"Listeners\" on victim machines. Listeners are at the core of Cobalt Strike, allowing adversaries to configure the C2 method used in an attack. Every attack or payload generated in Cobalt Strike requires the targeted user to select a Listener to embed within it, determining how an infected host will reach out to the C2 server to retrieve additional payloads and instructions. Users can configure the payload type, name, C2 server and port, and other options such as named pipes or proxy servers. Listeners designed only to connect infected hosts laterally include the SMB and TCP beacons.",
+        "Execution": "Cobalt Strike generates raw, malicious payloads that an attacker could implement into other attacks. The payload can be generated as raw shell code or preformatted in almost any language desired, including PowerShell, Python, and Java, among many others. The generated payload can act as a staging payload for the Cobalt beacon, to be plugged into an exploit of the user's choice. The payload is only a bunch of raw bytes and won't just run if a user double-clicked the file. The adversary would have to load the shellcode and jump to the desired entry point.",
+        "Command and Control": "Cobalt Strike's C2 server responds with an HTTP 200 OK, containing a very large binary blob known as \"beacon.dll.\" This is the core functionality of Cobalt Strike, which will be used to control an infected host. After retrieving the DLL, it is loaded via a technique called Reflective DLL injection.",
+        "Others": "Cisco Talos has updated its SNORT and ClamAV signatures to detect Cobalt Strike, version 4.0. The research performed resulted in more than 50 signatures between Snort and ClamAV combined, covering over 400 Cobalt Strike samples. The detection is intended to provide robust coverage for Cobalt Strike at its core but is not exhaustive. Large-scale attack frameworks like Cobalt Strike are always evolving."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1091-Replication Through Removable Media": [
+                {
+                    "Subject": "Listeners",
+                    "SubjectType": "tool",
+                    "Relation": "control",
+                    "Object": "C2 method",
+                    "ObjectType": "technique",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1091-Replication Through Removable Media"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "Listeners",
+                    "SubjectType": "tool",
+                    "Relation": "connect",
+                    "Object": "infected hosts",
+                    "ObjectType": "identity",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1091-Replication Through Removable Media"
+                    ],
+                    "id": 4
+                }
+            ],
+            "T1566-Phishing": [
+                {
+                    "Subject": "Users",
+                    "SubjectType": "identity",
+                    "Relation": "configure",
+                    "Object": "payload type, name, C2 server and port",
+                    "ObjectType": "artifact",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 3
+                }
+            ]
+        },
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "Cobalt Strike",
+                    "SubjectType": "tool",
+                    "Relation": "generate",
+                    "Object": "malicious payloads",
+                    "ObjectType": "artifacts",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "malicious payloads",
+                    "SubjectType": "artifacts",
+                    "Relation": "act-as",
+                    "Object": "staging payload for the Cobalt beacon",
+                    "ObjectType": "artifacts",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 6
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "Cobalt Strike's C2 server",
+                    "SubjectType": "infrastrcucture",
+                    "Relation": "respond",
+                    "Object": "beacon.dll",
+                    "ObjectType": "file",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 7
+                },
+                {
+                    "Subject": "beacon.dll",
+                    "SubjectType": "file",
+                    "Relation": "control",
+                    "Object": "infected host",
+                    "ObjectType": "infrastrcucture",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 8
+                }
+            ]
+        }
+    }
+}

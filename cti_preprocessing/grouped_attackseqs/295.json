@@ -1,0 +1,239 @@
+{
+    "file_name": "New_ComboJack_Steal_Cryptocurrency",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "On February 25, 2018, Unit 42 and Proofpoint researchers observed a malspam campaign targeting Japanese and American users. The campaign used a lure PDF claiming to contain a scanned copy of a lost passport. The PDF contained an embedded RTF file which attacks CVE-2017-8579 by using an embedded remote object. The remote object is an HTA file located at a malicious URL, which contains encoded PowerShell commands to download and execute a file.",
+        "Execution": "The PowerShell command decoded from the HTA file downloads and executes a file from a malicious URL. The execution flow leads to the installation of ComboJack malware on the victim's system.",
+        "Persistence": "ComboJack copies itself to a location on the victim's system and uses attrib.exe to set hidden and system attributes to itself, executing with SYSTEM level privileges. It sets a registry key to ensure persistence.",
+        "Defense Evasion": "ComboJack uses attrib.exe to set hidden and system attributes to itself, hiding the file from the user and allowing it to execute with SYSTEM level privileges.",
+        "Collection": "ComboJack enters an infinite loop, checking the clipboard contents every half second for wallet information of various digital currencies. If a wallet of interest is discovered, ComboJack replaces it with a hardcoded wallet address that the attacker presumably owns.",
+        "Impact": "ComboJack alters clipboard contents to replace legitimate cryptocurrency wallet addresses with the attacker's wallet addresses, attempting to redirect funds to the attacker."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "PowerShell command",
+                    "SubjectType": "tool",
+                    "Relation": "decode-from",
+                    "Object": "HTA file",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "PowerShell command",
+                    "SubjectType": "tool",
+                    "Relation": "download",
+                    "Object": "file",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 11
+                },
+                {
+                    "Subject": "PowerShell command",
+                    "SubjectType": "tool",
+                    "Relation": "execute",
+                    "Object": "file",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 12
+                }
+            ]
+        },
+        "Persistence": {
+            "T1547-Boot or Logon Autostart Execution": [
+                {
+                    "Subject": "ComboJack",
+                    "SubjectType": "Malware",
+                    "Relation": "copy",
+                    "Object": "itself",
+                    "ObjectType": "Malware",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "ComboJack",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "attrib.exe",
+                    "ObjectType": "tool",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 16
+                },
+                {
+                    "Subject": "ComboJack",
+                    "SubjectType": "Malware",
+                    "Relation": "execute",
+                    "Object": "SYSTEM level privileges",
+                    "ObjectType": "privilege",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 17
+                },
+                {
+                    "Subject": "ComboJack",
+                    "SubjectType": "Malware",
+                    "Relation": "set",
+                    "Object": "a registry key",
+                    "ObjectType": "registry",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 18
+                },
+                {
+                    "Subject": "ComboJack",
+                    "SubjectType": "Malware",
+                    "Relation": "ensure",
+                    "Object": "persistence",
+                    "ObjectType": "Tactic",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 19
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1564-Hide Artifacts": [
+                {
+                    "Subject": "ComboJack",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "attrib.exe",
+                    "ObjectType": "file",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1564-Hide Artifacts"
+                    ],
+                    "id": 20
+                }
+            ]
+        },
+        "Collection": {
+            "T1115-Clipboard Data": [
+                {
+                    "Subject": "ComboJack",
+                    "SubjectType": "Malware",
+                    "Relation": "enter",
+                    "Object": "infinite loop",
+                    "ObjectType": "process",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1115-Clipboard Data"
+                    ],
+                    "id": 21
+                },
+                {
+                    "Subject": "ComboJack",
+                    "SubjectType": "Malware",
+                    "Relation": "check",
+                    "Object": "clipboard contents",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1115-Clipboard Data"
+                    ],
+                    "id": 22
+                },
+                {
+                    "Subject": "ComboJack",
+                    "SubjectType": "Malware",
+                    "Relation": "replace",
+                    "Object": "wallet address",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1115-Clipboard Data"
+                    ],
+                    "id": 23
+                },
+                {
+                    "Subject": "attacker",
+                    "SubjectType": "threat-actor",
+                    "Relation": "own",
+                    "Object": "hardcoded wallet address",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1115-Clipboard Data"
+                    ],
+                    "id": 24
+                }
+            ]
+        },
+        "Impact": {
+            "T1565-Data Manipulation": [
+                {
+                    "Subject": "ComboJack",
+                    "SubjectType": "Malware",
+                    "Relation": "alter",
+                    "Object": "clipboard contents",
+                    "ObjectType": "artifacts",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1565-Data Manipulation"
+                    ],
+                    "id": 25
+                },
+                {
+                    "Subject": "ComboJack",
+                    "SubjectType": "Malware",
+                    "Relation": "replace",
+                    "Object": "cryptocurrency wallet addresses",
+                    "ObjectType": "artifacts",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1565-Data Manipulation"
+                    ],
+                    "id": 26
+                },
+                {
+                    "Subject": "ComboJack",
+                    "SubjectType": "Malware",
+                    "Relation": "redirect",
+                    "Object": "funds",
+                    "ObjectType": "artifacts",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1565-Data Manipulation"
+                    ],
+                    "id": 27
+                },
+                {
+                    "Subject": "attacker's wallet addresses",
+                    "SubjectType": "artifacts",
+                    "Relation": "belong-to",
+                    "Object": "attacker",
+                    "ObjectType": "threat-actor",
+                    "tactic": "Impact",
+                    "technique": [
+                        "T1565-Data Manipulation"
+                    ],
+                    "id": 28
+                }
+            ]
+        }
+    }
+}

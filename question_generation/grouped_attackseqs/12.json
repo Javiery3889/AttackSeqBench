@@ -1,0 +1,304 @@
+{
+    "file_name": "Surtr_Malware_Tibetan",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "The Citizen Lab analyzed a malicious email sent to Tibetan organizations in June 2013, which appeared to be from a prominent member of the Tibetan community and contained repurposed content from a community mailing list. The email had three attachments that seemed to be Microsoft Word documents (.doc) but were actually trojaned with a malware family named 'Surtr'. All three attachments dropped the same malware, which has been used in attacks on Tibetan groups since November 2012.",
+        "Execution": "The 'Surtr' malware creates a new explorer or iexplore process and injects itself into this new process using the CreateRemoteThread function.",
+        "Persistence": "For persistence, 'Surtr' adds a key to the registry to ensure it runs when the infected computer is restarted. It also stores its command and control (C2) information and a campaign code in the registry. Depending on the configuration, 'Surtr' will either create multiple registry keys in Software\\Microsoft\\Windows Media in HKU (hkey users) with text data or a single key called XC consisting of binary data, usually xor encrypted with a key of 0x1.",
+        "Defense Evasion": "The 'Surtr' malware uses a vulnerability in Microsoft Word (CVE-2012-0158) to execute malicious code. Despite the vulnerability being known since April 2012 and a patch released by Microsoft, the malware was initially detected by only three antivirus engines, highlighting the need for up-to-date systems and applications. The malware also attempts to evade antivirus heuristics by padding the resource section with varying amounts of 00 bytes, resulting in a much larger file size (30-50mb).",
+        "Discovery": "'Surtr' has capabilities including listing file directories and contents on the victim computer and any USB drives connected, viewing web cache, executing remote commands, and logging keystrokes. It creates folders to store temporary information such as file and directory listings and keylogger output, which is disguised by adding a constant to the ordinal value of the character.",
+        "Command and Control": "'Surtr' connects to a command and control server (C2) and downloads a stage two component to a specific directory. The sample analyzed connects to internet.3-a.net on port 9696. In May 2012, this domain resolved to the same IP as another domain used in Android malware attacks targeting the Tibetan community.",
+        "Others": "The Citizen Lab's research into 'Surtr' malware targeting the Tibetan community reveals that the malware monitors mailing lists and discussion groups to repurpose content for targeted attacks. The malware can download additional components, such as 'GmRemote' or 'LURK0', which can provide attackers with further abilities like accessing the victim computer's webcam or microphone. 'Surtr' has been used in conjunction with the Gh0st RAT derived 'LURK0' malware. The Citizen Lab continues to monitor targeted malware campaigns using 'Surtr' and will post updates as available."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "malicious email",
+                    "SubjectType": "Email Message",
+                    "Relation": "contain",
+                    "Object": "Surtr",
+                    "ObjectType": "Malware",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 2
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1027-Obfuscated Files or Information": [
+                {
+                    "Subject": "Surtr",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "CVE-2012-0158",
+                    "ObjectType": "Vulnerability",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information",
+                        "T1211-Exploitation for Defense Evasion"
+                    ],
+                    "id": 4
+                },
+                {
+                    "Subject": "Surtr",
+                    "SubjectType": "Malware",
+                    "Relation": "evade",
+                    "Object": "antivirus heuristics",
+                    "ObjectType": "Technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 5
+                }
+            ],
+            "T1211-Exploitation for Defense Evasion": [
+                {
+                    "Subject": "Surtr",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "CVE-2012-0158",
+                    "ObjectType": "Vulnerability",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information",
+                        "T1211-Exploitation for Defense Evasion"
+                    ],
+                    "id": 4
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "Surtr",
+                    "SubjectType": "Malware",
+                    "Relation": "connects to",
+                    "Object": "command and control server (C2)",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1104-Multi-Stage Channels"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "Surtr",
+                    "SubjectType": "Malware",
+                    "Relation": "downloads",
+                    "Object": "stage two component",
+                    "ObjectType": "file",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1104-Multi-Stage Channels"
+                    ],
+                    "id": 7
+                },
+                {
+                    "Subject": "The sample",
+                    "SubjectType": "Malware",
+                    "Relation": "connects to",
+                    "Object": "internet.3-a.net",
+                    "ObjectType": "domain",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1104-Multi-Stage Channels"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "This domain",
+                    "SubjectType": "domain",
+                    "Relation": "resolved to",
+                    "Object": "the same IP",
+                    "ObjectType": "ipv4-addr",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 9
+                },
+                {
+                    "Subject": "Another domain",
+                    "SubjectType": "domain",
+                    "Relation": "used in",
+                    "Object": "Android malware attacks",
+                    "ObjectType": "campaign",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 10
+                }
+            ],
+            "T1104-Multi-Stage Channels": [
+                {
+                    "Subject": "Surtr",
+                    "SubjectType": "Malware",
+                    "Relation": "connects to",
+                    "Object": "command and control server (C2)",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1104-Multi-Stage Channels"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "Surtr",
+                    "SubjectType": "Malware",
+                    "Relation": "downloads",
+                    "Object": "stage two component",
+                    "ObjectType": "file",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1104-Multi-Stage Channels"
+                    ],
+                    "id": 7
+                },
+                {
+                    "Subject": "The sample",
+                    "SubjectType": "Malware",
+                    "Relation": "connects to",
+                    "Object": "internet.3-a.net",
+                    "ObjectType": "domain",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol",
+                        "T1104-Multi-Stage Channels"
+                    ],
+                    "id": 8
+                }
+            ]
+        },
+        "Execution": {
+            "T1106-Native API": [
+                {
+                    "Subject": "Surtr malware",
+                    "SubjectType": "Malware",
+                    "Relation": "create",
+                    "Object": "explorer or iexplore process",
+                    "ObjectType": "process",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1106-Native API"
+                    ],
+                    "id": 11
+                },
+                {
+                    "Subject": "Surtr malware",
+                    "SubjectType": "Malware",
+                    "Relation": "inject",
+                    "Object": "CreateRemoteThread function",
+                    "ObjectType": "tool",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1106-Native API"
+                    ],
+                    "id": 12
+                }
+            ]
+        },
+        "Persistence": {
+            "T1547-Boot or Logon Autostart Execution": [
+                {
+                    "Subject": "Surtr",
+                    "SubjectType": "Malware",
+                    "Relation": "add",
+                    "Object": "registry key",
+                    "ObjectType": "registry",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "Surtr",
+                    "SubjectType": "Malware",
+                    "Relation": "store",
+                    "Object": "command and control (C2) information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 14
+                },
+                {
+                    "Subject": "Surtr",
+                    "SubjectType": "Malware",
+                    "Relation": "store",
+                    "Object": "campaign code",
+                    "ObjectType": "campaign",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 15
+                }
+            ]
+        },
+        "Discovery": {
+            "T1083-File and Directory Discovery": [
+                {
+                    "Subject": "Surtr",
+                    "SubjectType": "Malware",
+                    "Relation": "have",
+                    "Object": "capabilities",
+                    "ObjectType": "Tactic",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1083-File and Directory Discovery"
+                    ],
+                    "id": 16
+                },
+                {
+                    "Subject": "Surtr",
+                    "SubjectType": "Malware",
+                    "Relation": "create",
+                    "Object": "folders",
+                    "ObjectType": "directory",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1083-File and Directory Discovery"
+                    ],
+                    "id": 17
+                },
+                {
+                    "Subject": "Surtr",
+                    "SubjectType": "Malware",
+                    "Relation": "store",
+                    "Object": "temporary information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1083-File and Directory Discovery"
+                    ],
+                    "id": 18
+                },
+                {
+                    "Subject": "Surtr",
+                    "SubjectType": "Malware",
+                    "Relation": "disguise",
+                    "Object": "keylogger output",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1083-File and Directory Discovery"
+                    ],
+                    "id": 19
+                }
+            ]
+        }
+    }
+}

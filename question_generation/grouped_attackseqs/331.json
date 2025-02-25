@@ -1,0 +1,373 @@
+{
+    "file_name": "VERMIN_ Quasar RAT and Custom Malware Used In Ukraine",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "The CTI report by Tom Lancaster and Juan Cortes from Palo Alto Networks' Unit 42 details the discovery of a new malware family named VERMIN, which is a Remote Access Tool (RAT) written using the Microsoft .NET Framework. The malware was initially identified through a tweet about a sample with a Ukrainian Ministry of Defense theme. The sample was an SFX executable that displayed a decoy document before executing the malware. The hash of the file is 31a1419d9121f55859ecf2d01f07da38bd37bb11d0ed9544a35d5d69472c358e. The malware uses HTTP encapsulated SOAP for command and control, which is uncommon in malware samples. The campaign using VERMIN dates back to late 2015 and also involves the use of Quasar RAT.",
+        "Execution": "The VERMIN malware, after initial execution, checks the installed input language on the system for Russian or Ukrainian. If neither is found, it attempts to exit but continues to run due to a coding error. It then decrypts an embedded resource using a brute force method to find a 6-byte array that matches a CRC32 sum, which is then hashed with MD5 to create a decryption key. The malware sets up a scheduled task to run every 30 minutes indefinitely and collects various information from the infected machine, such as machine name, username, OS name, architecture, local IP address, and installed anti-virus software. If any anti-virus is detected, the malware does not install its keylogger component.",
+        "Persistence": "The VERMIN malware establishes persistence by setting itself to run as a scheduled task every 30 minutes indefinitely. The task is created with various parameters, including server IP list, path, keylogger path, mutex, username, password, task names, process names, task descriptions, and task authors. The malware saves and encrypts these parameters to a predefined location on the infected system: C:\\Users\\Admin\\AppData\\Roaming\\Microsoft\\AddIns\\settings.dat.",
+        "Defense Evasion": "The VERMIN malware uses the popular .NET obfuscation tool ConfuserEx to pack and obfuscate its code. It also checks for the presence of anti-virus software on the infected machine and refrains from installing its keylogger component if any anti-virus is detected.",
+        "Discovery": "The VERMIN malware collects various information from the infected machine, including machine name, username, OS name via WMI query, architecture (x64 vs x86), local IP address, and checks for installed anti-virus software via WMI query.",
+        "Collection": "The VERMIN malware includes a keylogger component that collects all keystrokes and clipboard data. The data is encrypted and stored in the folder %appdata%\\Microsoft\\Proof\\Settings.{ED7BA470-8E54-465E-825C-99712043E01C}\\Profiles\\. Each file is saved with the format \"{0:dd-MM-yyyy}.txt\" and encrypted using 3-DES with a hardcoded key.",
+        "Command and Control": "The VERMIN malware communicates with its command and control (C2) servers using SOAP envelopes and the WSHttpBinding() API. It sets up 'Username' authentication for communication with its C2, allowing the author easier control over the various infected hosts. An example of a defanged request/response to the C2 server is provided in the report.",
+        "Others": "The CTI report concludes that the VERMIN malware is likely used in targeted attacks in Ukraine, given the limited number of samples, targeting themes, and the requirement for most of the malware's operations to have \"hands-on-keyboard\" interactions, except for keylogging. The report also mentions that Palo Alto Networks' Wildfire and Traps identify all samples mentioned as malicious, and the C2 domains used in the campaign are blocked via Threat Prevention. AutoFocus customers can track samples related to the blog via specific tags. The report includes appendices with C2 addresses, malware samples, and a Python script to decode VERMIN resources."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1659-Content Injection": [
+                {
+                    "Subject": "Palo Alto Networks' Unit 42",
+                    "SubjectType": "CTI vender",
+                    "Relation": "host",
+                    "Object": "CTI report",
+                    "ObjectType": "artifact",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1659-Content Injection"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "VERMIN",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "HTTP encapsulated SOAP",
+                    "ObjectType": "network traffic",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1659-Content Injection"
+                    ],
+                    "id": 4
+                }
+            ]
+        },
+        "Execution": {
+            "T1053-Scheduled Task/Job": [
+                {
+                    "Subject": "VERMIN",
+                    "SubjectType": "malware",
+                    "Relation": "set up",
+                    "Object": "scheduled task",
+                    "ObjectType": "technique",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1053-Scheduled Task/Job"
+                    ],
+                    "id": 8
+                }
+            ]
+        },
+        "Persistence": {
+            "T1053-Scheduled Task/Job": [
+                {
+                    "Subject": "VERMIN",
+                    "SubjectType": "Malware",
+                    "Relation": "establish persistence",
+                    "Object": "scheduled task",
+                    "ObjectType": "software",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1053-Scheduled Task/Job"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "VERMIN",
+                    "SubjectType": "Malware",
+                    "Relation": "save",
+                    "Object": "parameters",
+                    "ObjectType": "artifacts",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1053-Scheduled Task/Job"
+                    ],
+                    "id": 11
+                },
+                {
+                    "Subject": "VERMIN",
+                    "SubjectType": "Malware",
+                    "Relation": "encrypt",
+                    "Object": "parameters",
+                    "ObjectType": "artifacts",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1053-Scheduled Task/Job"
+                    ],
+                    "id": 12
+                },
+                {
+                    "Subject": "parameters",
+                    "SubjectType": "artifacts",
+                    "Relation": "locate at",
+                    "Object": "C:\\Users\\Admin\\AppData\\Roaming\\Microsoft\\AddIns\\settings.dat",
+                    "ObjectType": "file",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1053-Scheduled Task/Job"
+                    ],
+                    "id": 13
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1027-Obfuscated Files or Information": [
+                {
+                    "Subject": "VERMIN",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "ConfuserEx",
+                    "ObjectType": "tool",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 14
+                }
+            ],
+            "T1562-Impair Defenses": [
+                {
+                    "Subject": "VERMIN",
+                    "SubjectType": "Malware",
+                    "Relation": "check-for",
+                    "Object": "anti-virus software",
+                    "ObjectType": "software",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1562-Impair Defenses"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "VERMIN",
+                    "SubjectType": "Malware",
+                    "Relation": "refrain-from",
+                    "Object": "installing keylogger component",
+                    "ObjectType": "tool",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1562-Impair Defenses"
+                    ],
+                    "id": 16
+                }
+            ]
+        },
+        "Collection": {
+            "T1056-Input Capture": [
+                {
+                    "Subject": "VERMIN malware",
+                    "SubjectType": "Malware",
+                    "Relation": "include",
+                    "Object": "keylogger component",
+                    "ObjectType": "tool",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1056-Input Capture"
+                    ],
+                    "id": 17
+                },
+                {
+                    "Subject": "keylogger component",
+                    "SubjectType": "tool",
+                    "Relation": "collect",
+                    "Object": "keystrokes and clipboard data",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1056-Input Capture",
+                        "T1115-Clipboard Data"
+                    ],
+                    "id": 18
+                }
+            ],
+            "T1115-Clipboard Data": [
+                {
+                    "Subject": "keylogger component",
+                    "SubjectType": "tool",
+                    "Relation": "collect",
+                    "Object": "keystrokes and clipboard data",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1056-Input Capture",
+                        "T1115-Clipboard Data"
+                    ],
+                    "id": 18
+                }
+            ],
+            "T1560-Archive Collected Data": [
+                {
+                    "Subject": "data",
+                    "SubjectType": "artifacts",
+                    "Relation": "encrypt and store",
+                    "Object": "%appdata%\\Microsoft\\Proof\\Settings.{ED7BA470-8E54-465E-825C-99712043E01C}\\Profiles\\",
+                    "ObjectType": "directory",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1560-Archive Collected Data"
+                    ],
+                    "id": 19
+                },
+                {
+                    "Subject": "Each file",
+                    "SubjectType": "file",
+                    "Relation": "save with format",
+                    "Object": "{0:dd-MM-yyyy}.txt",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1560-Archive Collected Data"
+                    ],
+                    "id": 20
+                },
+                {
+                    "Subject": "Each file",
+                    "SubjectType": "file",
+                    "Relation": "encrypt using",
+                    "Object": "3-DES",
+                    "ObjectType": "tool",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1560-Archive Collected Data"
+                    ],
+                    "id": 21
+                },
+                {
+                    "Subject": "3-DES",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "hardcoded key",
+                    "ObjectType": "artifacts",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1560-Archive Collected Data"
+                    ],
+                    "id": 22
+                }
+            ]
+        },
+        "Discovery": {
+            "T1082-System Information Discovery": [
+                {
+                    "Subject": "VERMIN",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "machine name",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 27
+                },
+                {
+                    "Subject": "VERMIN",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "username",
+                    "ObjectType": "user-account",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery",
+                        "T1087-Account Discovery"
+                    ],
+                    "id": 28
+                },
+                {
+                    "Subject": "VERMIN",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "OS name",
+                    "ObjectType": "software",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery",
+                        "T1518-Software Discovery"
+                    ],
+                    "id": 29
+                },
+                {
+                    "Subject": "VERMIN",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "architecture",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 30
+                },
+                {
+                    "Subject": "VERMIN",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "local IP address",
+                    "ObjectType": "ipv4-addr",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery",
+                        "T1016-System Network Configuration Discovery"
+                    ],
+                    "id": 31
+                }
+            ],
+            "T1087-Account Discovery": [
+                {
+                    "Subject": "VERMIN",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "username",
+                    "ObjectType": "user-account",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery",
+                        "T1087-Account Discovery"
+                    ],
+                    "id": 28
+                }
+            ],
+            "T1518-Software Discovery": [
+                {
+                    "Subject": "VERMIN",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "OS name",
+                    "ObjectType": "software",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery",
+                        "T1518-Software Discovery"
+                    ],
+                    "id": 29
+                },
+                {
+                    "Subject": "VERMIN",
+                    "SubjectType": "Malware",
+                    "Relation": "check",
+                    "Object": "installed anti-virus software",
+                    "ObjectType": "software",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1518-Software Discovery"
+                    ],
+                    "id": 32
+                }
+            ],
+            "T1016-System Network Configuration Discovery": [
+                {
+                    "Subject": "VERMIN",
+                    "SubjectType": "Malware",
+                    "Relation": "collect",
+                    "Object": "local IP address",
+                    "ObjectType": "ipv4-addr",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery",
+                        "T1016-System Network Configuration Discovery"
+                    ],
+                    "id": 31
+                }
+            ]
+        }
+    }
+}

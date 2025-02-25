@@ -1,0 +1,284 @@
+{
+    "file_name": "New LNK attack tied to Higaisa APT discovered - Malwarebytes Labs _ Malwarebytes Labs",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "The Higaisa APT group, believed to be tied to the Korean peninsula, distributed malicious LNK files within RAR archives, likely via spear-phishing. Two variants of the campaign were identified, distributed between May 12th and 31st, with the LNK files disguised as a Curriculum Vitae and IELTS exam results, or targeting product teams using zeplin.io.",
+        "Execution": "Upon execution, the LNK file initiates a multi-stage attack involving several commands: copying the LNK content to a temporary directory, using 'certutil.exe' renamed to 'gosia.exe' to bypass security detection, decoding a base64 blob, decompressing content along with a decoy PDF document, and executing a JavaScript file. The JavaScript file then performs additional actions, including creating and executing 'd3reEW.exe', copying 'svchhast.exe' to the startup directory, and sending a POST request to a hardcoded URL.",
+        "Persistence": "The JavaScript file involved in the attack creates 'd3reEW.exe' in a public downloads directory, executes 'svchast.exe', copies 'svchhast.exe' to the startup directory as 'officeupdate.exe', and adds 'officeupdate.exe' to scheduled tasks to maintain persistence.",
+        "Defense Evasion": "The attack employs a list of commands executed by the LNK shortcut, similar to those reported in the Higasia Covid-19 campaign, with the only difference being the names of temporary files and the name of 'certutil.exe', which is renamed to 'gosia.exe' to bypass security detection.",
+        "Discovery": "The JavaScript file involved in the attack creates 'd3reEW.exe' with the command 'cmd /c ipconfig' to discover IP address information.",
+        "Command and Control": "The final shellcode within the attack resolves imports, allocates memory, and creates a thread to make HTTPS requests to a C&C server. However, the server was down at the time of analysis, preventing clear identification of the ultimate goal of the attack.",
+        "Others": "The Higaisa APT group's activities date back to at least 2016 and include the use of Trojans such as Gh0st and PlugX, as well as mobile malware. Their targets include government officials, human rights organizations, and other entities related to North Korea. Malwarebytes Labs, with authors Hossein Jazi and J\u00e9r\u00f4me Segura, identified the attack on May 29th and stopped the LNK file execution using the Nebula business version of their software. The attack was first disclosed by Tencent Security Threat Intelligence Center in early 2019."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "Higaisa APT group",
+                    "SubjectType": "threat-actor",
+                    "Relation": "distribute",
+                    "Object": "malicious LNK files",
+                    "ObjectType": "file",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "malicious LNK files",
+                    "SubjectType": "file",
+                    "Relation": "disguise",
+                    "Object": "Curriculum Vitae",
+                    "ObjectType": "artifact",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "malicious LNK files",
+                    "SubjectType": "file",
+                    "Relation": "disguise",
+                    "Object": "IELTS exam results",
+                    "ObjectType": "artifact",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "campaign",
+                    "SubjectType": "campaign",
+                    "Relation": "target",
+                    "Object": "product teams",
+                    "ObjectType": "identity",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 4
+                }
+            ]
+        },
+        "Persistence": {
+            "T1053-Scheduled Task/Job": [
+                {
+                    "Subject": "JavaScript file",
+                    "SubjectType": "file",
+                    "Relation": "create",
+                    "Object": "d3reEW.exe",
+                    "ObjectType": "file",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1053-Scheduled Task/Job"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "JavaScript file",
+                    "SubjectType": "file",
+                    "Relation": "execute",
+                    "Object": "svchast.exe",
+                    "ObjectType": "file",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1053-Scheduled Task/Job"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "JavaScript file",
+                    "SubjectType": "file",
+                    "Relation": "add",
+                    "Object": "officeupdate.exe",
+                    "ObjectType": "file",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1053-Scheduled Task/Job"
+                    ],
+                    "id": 8
+                }
+            ],
+            "T1547-Boot or Logon Autostart Execution": [
+                {
+                    "Subject": "JavaScript file",
+                    "SubjectType": "file",
+                    "Relation": "copy",
+                    "Object": "svchhast.exe",
+                    "ObjectType": "file",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 7
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1202-Indirect Command Execution": [
+                {
+                    "Subject": "attack",
+                    "SubjectType": "campaign",
+                    "Relation": "use",
+                    "Object": "LNK shortcut",
+                    "ObjectType": "file",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1202-Indirect Command Execution"
+                    ],
+                    "id": 9
+                }
+            ],
+            "T1036-Masquerading": [
+                {
+                    "Subject": "certutil.exe",
+                    "SubjectType": "tool",
+                    "Relation": "rename-to",
+                    "Object": "gosia.exe",
+                    "ObjectType": "file",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1036-Masquerading"
+                    ],
+                    "id": 10
+                }
+            ]
+        },
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "LNK file",
+                    "SubjectType": "file",
+                    "Relation": "initiate",
+                    "Object": "multi-stage attack",
+                    "ObjectType": "campaign",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 11
+                },
+                {
+                    "Subject": "multi-stage attack",
+                    "SubjectType": "campaign",
+                    "Relation": "use",
+                    "Object": "gosia.exe",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 12
+                },
+                {
+                    "Subject": "JavaScript file",
+                    "SubjectType": "file",
+                    "Relation": "create-and-execute",
+                    "Object": "d3reEW.exe",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 13
+                },
+                {
+                    "Subject": "JavaScript file",
+                    "SubjectType": "file",
+                    "Relation": "copy",
+                    "Object": "svchhast.exe",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 14
+                },
+                {
+                    "Subject": "JavaScript file",
+                    "SubjectType": "file",
+                    "Relation": "send",
+                    "Object": "POST request",
+                    "ObjectType": "network traffic",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 15
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "final shellcode",
+                    "SubjectType": "artifacts",
+                    "Relation": "makes",
+                    "Object": "HTTPS requests",
+                    "ObjectType": "network traffic",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 16
+                },
+                {
+                    "Subject": "final shellcode",
+                    "SubjectType": "artifacts",
+                    "Relation": "creates a thread to make",
+                    "Object": "HTTPS requests",
+                    "ObjectType": "network traffic",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 17
+                },
+                {
+                    "Subject": "HTTPS requests",
+                    "SubjectType": "network trafic",
+                    "Relation": "to",
+                    "Object": "a C&C server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 18
+                }
+            ]
+        },
+        "Discovery": {
+            "T1016-System Network Configuration Discovery": [
+                {
+                    "Subject": "JavaScript file",
+                    "SubjectType": "file",
+                    "Relation": "create",
+                    "Object": "d3reEW.exe",
+                    "ObjectType": "file",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1016-System Network Configuration Discovery"
+                    ],
+                    "id": 19
+                },
+                {
+                    "Subject": "JavaScript file",
+                    "SubjectType": "file",
+                    "Relation": "use",
+                    "Object": "cmd /c ipconfig",
+                    "ObjectType": "process",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1016-System Network Configuration Discovery"
+                    ],
+                    "id": 20
+                }
+            ]
+        }
+    }
+}

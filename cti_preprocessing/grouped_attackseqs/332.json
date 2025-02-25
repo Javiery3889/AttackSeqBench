@@ -1,0 +1,166 @@
+{
+    "file_name": "Threat Spotlight_ MenuPass_QuasarRAT Backdoor",
+    "tactic_label": true,
+    "rewrite": {
+        "Execution": "During the latter half of 2018, BlackBerry Cylance threat researchers tracked a campaign targeting companies across the EMEA region. The campaign was related to the MenuPass threat actor, which utilized an open-source backdoor named QuasarRAT to achieve persistence within organizations. The QuasarRAT loader typically arrives as a 64-bit service DLL, using the CppHostCLR technique to decrypt, load, and invoke an embedded .NET assembly in-memory. The assembly is obfuscated with ConfuserEx and is responsible for decrypting and executing a separate malicious .NET module stored in the %WINDOWS%\\Microsoft.NET directory. The final payload assembly is stored as an encrypted file under the Microsoft.NET Framework directory and is decrypted and loaded in-memory as \"Client\". Two versions of the Client were encountered: 2.0.0.0 and 1.3.0.0.",
+        "Persistence": "The QuasarRAT backdoor achieves persistence by installing the RAT as a service, known as DILLJUICE, in later variants. The encrypted QuasarRAT payload is stored in the Microsoft.NET directory, decrypted into memory, and instantiated using a CLR host application.",
+        "Defense Evasion": "The QuasarRAT loader uses several layers of obfuscation and encryption to evade detection. The payload and its immediate loader are .NET assemblies, with the initial loader using the CppHostCLR technique to inject and execute the .NET loader assembly. The payload is encrypted and stored under the Microsoft.NET directory. The .NET loader is obfuscated with ConfuserEx v1.0.0. Some samples of the loader are signed with a valid certificate from CONVENTION DIGITAL LTD, which is countersigned by Symantec.",
+        "Command and Control": "The QuasarRAT backdoor communicates with a command and control (C2) server, with the IP address provided in the HOSTS value of the configuration. All communication is encrypted with AES-128 in CBF mode using KEY and AUTHKEY values from the configuration.",
+        "Others": "The MenuPass campaign was tracked by BlackBerry Cylance threat researchers during the latter half of 2018, targeting companies from several verticals across the EMEA region. The campaign utilized QuasarRAT, a lightweight remote administration tool written in C#, to collect system information, download and execute applications, upload files, log keystrokes, grab screenshots/camera captures, retrieve system passwords, and run shell commands. The FBI indicted several members of the MenuPass group around the time when new QuasarRAT samples ceased to be observed in the wild. The threat actor modified the original QuasarRAT backdoor, adding their own field in the configuration, and code for checking Internet connectivity. If a valid URL address is specified in the last value of the configuration, the malware will try to download the content of that URL and proceed with connecting to the C2 server only once the download is successful. The threat actor also added a custom connectivity check to the backdoor. The YARA rules provided can be used to identify QuasarRAT loaders and possible high-entropy payloads stored within the %WINDOWS%\\Microsoft.NET\\Framework folder."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Execution": {
+            "T1129-Shared Modules": [
+                {
+                    "Subject": "QuasarRAT loader",
+                    "SubjectType": "tool",
+                    "Relation": "arrive-as",
+                    "Object": "64-bit service DLL",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "QuasarRAT loader",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "CppHostCLR technique",
+                    "ObjectType": "Technique",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 4
+                },
+                {
+                    "Subject": "assembly",
+                    "SubjectType": "file",
+                    "Relation": "obfuscate-with",
+                    "Object": "ConfuserEx",
+                    "ObjectType": "tool",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "Client",
+                    "SubjectType": "Malware",
+                    "Relation": "store-in",
+                    "Object": "Microsoft.NET Framework directory",
+                    "ObjectType": "directory",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1129-Shared Modules"
+                    ],
+                    "id": 6
+                }
+            ]
+        },
+        "Persistence": {
+            "T1543-Create or Modify System Process": [
+                {
+                    "Subject": "QuasarRAT backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "achieve",
+                    "Object": "persistence",
+                    "ObjectType": "Tactic",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 7
+                },
+                {
+                    "Subject": "QuasarRAT backdoor",
+                    "SubjectType": "Malware",
+                    "Relation": "install",
+                    "Object": "DILLJUICE",
+                    "ObjectType": "tool",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1543-Create or Modify System Process"
+                    ],
+                    "id": 8
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1027-Obfuscated Files or Information": [
+                {
+                    "Subject": "QuasarRAT loader",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "obfuscation and encryption",
+                    "ObjectType": "technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 12
+                },
+                {
+                    "Subject": "loader",
+                    "SubjectType": "Malware",
+                    "Relation": "obfuscate with",
+                    "Object": "ConfuserEx v1.0.0",
+                    "ObjectType": "tool",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 14
+                }
+            ],
+            "T1564-Hide Artifacts": [
+                {
+                    "Subject": "payload",
+                    "SubjectType": "Malware",
+                    "Relation": "store under",
+                    "Object": "Microsoft.NET directory",
+                    "ObjectType": "directory",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1564-Hide Artifacts"
+                    ],
+                    "id": 13
+                }
+            ],
+            "T1553-Subvert Trust Controls": [
+                {
+                    "Subject": "samples of the loader",
+                    "SubjectType": "Malware",
+                    "Relation": "sign with",
+                    "Object": "valid certificate from CONVENTION DIGITAL LTD",
+                    "ObjectType": "X.509 Certificate",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1553-Subvert Trust Controls"
+                    ],
+                    "id": 15
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1573-Encrypted Channel": [
+                {
+                    "Subject": "QuasarRAT",
+                    "SubjectType": "Malware",
+                    "Relation": "communicate-with",
+                    "Object": "command and control (C2) server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1573-Encrypted Channel"
+                    ],
+                    "id": 16
+                }
+            ]
+        }
+    }
+}

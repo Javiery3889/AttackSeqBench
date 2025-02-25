@@ -1,0 +1,344 @@
+{
+    "file_name": "quointelligence.eu-ReconHellcat Uses NIST Theme as Lure To Deliver New BlackSoul Malware",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "On November 27, QuoIntelligence detected a new malware campaign that likely originated with a spear phishing email delivering a CAB archive named 1-10-20-hb44_final, impersonating a document from the National Institute of Standards and Technology (NIST) website. The campaign is attributed to the threat actor ReconHellcat and delivers a previously undocumented remote access Trojan (RAT) named BlackSoul.",
+        "Execution": "The malware campaign involved a malicious loader named 1-10-20-hb44_final.exe, which uses obfuscation techniques similar to those observed in previous ReconHellcat campaigns delivering BlackWater malware. The loader utilizes C2 infrastructure hosted on the Cloudflare Workers service to retrieve two files: an executable named blacksoul and a Dynamic-Link Library (DLL) named blacksoulLib. The loader also opens a legitimate document from the NIST website as a decoy.",
+        "Defense Evasion": "BlackSoul uses various obfuscation techniques, including dynamic string construction on the stack and deobfuscation with fixed key XOR cipher and Caesar cipher using variable shift values. The malware's string obfuscation applies only to strings in the main program but excludes strings of third-party compiled-in libraries.",
+        "Credential Access": "The DLL named blacksoulLib, which is called by BlackSoul, searches the victim's machine for Firefox, Chrome, and Opera data. If browser data is not found, the program terminates early. It also decodes a C2 URL and a Cloudflare DNS-over-HTTPS (DoH) URL, generates further login information for the C2, and returns gathered data to BlackSoul in JSON format, including a username with three random appended characters and a password consisting of 24 random characters.",
+        "Collection": "BlackSoul is capable of file transfers and running arbitrary commands. It supports handling commands from its C2 server for executing commands and returning results, downloading files from a URL and storing them on the machine, retrieving specified files from the machine and uploading them to the C2, and updating the configuration file (UsrClass.json) which contains C2 server info and miscellaneous fields.",
+        "Command and Control": "BlackSoul communicates with the C2 server over the RESTful Strapi protocol and JSON-based data encoding. It uses Cloudflare Workers Service (*.workers[.]dev) to host C2 infrastructure and supports DNS-over-HTTPS (DoH) using cloudflare-dns.com.",
+        "Exfiltration": "BlackSoul is capable of exfiltrating data over the C2 channel and supports automated exfiltration."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "QuoIntelligence",
+                    "SubjectType": "CTI vender",
+                    "Relation": "detect",
+                    "Object": "malware campaign",
+                    "ObjectType": "campaign",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 1
+                }
+            ]
+        },
+        "Defense Evasion": {
+            "T1027-Obfuscated Files or Information": [
+                {
+                    "Subject": "BlackSoul",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "obfuscation techniques",
+                    "ObjectType": "Technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 3
+                },
+                {
+                    "Subject": "BlackSoul",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "dynamic string construction",
+                    "ObjectType": "Technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 4
+                },
+                {
+                    "Subject": "BlackSoul",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "fixed key XOR cipher",
+                    "ObjectType": "Technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "BlackSoul",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "Caesar cipher",
+                    "ObjectType": "Technique",
+                    "tactic": "Defense Evasion",
+                    "technique": [
+                        "T1027-Obfuscated Files or Information"
+                    ],
+                    "id": 6
+                }
+            ]
+        },
+        "Credential Access": {
+            "T1056-Input Capture": [
+                {
+                    "Subject": "blacksoulLib",
+                    "SubjectType": "file",
+                    "Relation": "search",
+                    "Object": "victim's machine",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1056-Input Capture"
+                    ],
+                    "id": 7
+                },
+                {
+                    "Subject": "blacksoulLib",
+                    "SubjectType": "file",
+                    "Relation": "decode",
+                    "Object": "C2 URL",
+                    "ObjectType": "url",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1056-Input Capture"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "blacksoulLib",
+                    "SubjectType": "file",
+                    "Relation": "decode",
+                    "Object": "Cloudflare DNS-over-HTTPS (DoH) URL",
+                    "ObjectType": "url",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1056-Input Capture"
+                    ],
+                    "id": 9
+                },
+                {
+                    "Subject": "blacksoulLib",
+                    "SubjectType": "file",
+                    "Relation": "generate",
+                    "Object": "login information for the C2",
+                    "ObjectType": "artifacts",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1056-Input Capture"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "blacksoulLib",
+                    "SubjectType": "file",
+                    "Relation": "return",
+                    "Object": "gathered data to BlackSoul",
+                    "ObjectType": "Malware",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1056-Input Capture"
+                    ],
+                    "id": 11
+                },
+                {
+                    "Subject": "gathered data",
+                    "SubjectType": "artifacts",
+                    "Relation": "include",
+                    "Object": "username",
+                    "ObjectType": "user-account",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1056-Input Capture"
+                    ],
+                    "id": 12
+                },
+                {
+                    "Subject": "gathered data",
+                    "SubjectType": "artifacts",
+                    "Relation": "include",
+                    "Object": "password",
+                    "ObjectType": "user-account",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1056-Input Capture"
+                    ],
+                    "id": 13
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1102-Web Service": [
+                {
+                    "Subject": "BlackSoul",
+                    "SubjectType": "Malware",
+                    "Relation": "communicate-with",
+                    "Object": "C2 server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1102-Web Service",
+                        "T1132-Data Encoding"
+                    ],
+                    "id": 14
+                },
+                {
+                    "Subject": "BlackSoul",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "Cloudflare Workers Service",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1102-Web Service"
+                    ],
+                    "id": 15
+                }
+            ],
+            "T1132-Data Encoding": [
+                {
+                    "Subject": "BlackSoul",
+                    "SubjectType": "Malware",
+                    "Relation": "communicate-with",
+                    "Object": "C2 server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1102-Web Service",
+                        "T1132-Data Encoding"
+                    ],
+                    "id": 14
+                }
+            ]
+        },
+        "Exfiltration": {
+            "T1020-Automated Exfiltration": [
+                {
+                    "Subject": "BlackSoul",
+                    "SubjectType": "Malware",
+                    "Relation": "exfiltrate-to",
+                    "Object": "C2 channel",
+                    "ObjectType": "network traffic",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1020-Automated Exfiltration",
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 16
+                }
+            ],
+            "T1041-Exfiltration Over C2 Channel": [
+                {
+                    "Subject": "BlackSoul",
+                    "SubjectType": "Malware",
+                    "Relation": "exfiltrate-to",
+                    "Object": "C2 channel",
+                    "ObjectType": "network traffic",
+                    "tactic": "Exfiltration",
+                    "technique": [
+                        "T1020-Automated Exfiltration",
+                        "T1041-Exfiltration Over C2 Channel"
+                    ],
+                    "id": 16
+                }
+            ]
+        },
+        "Execution": {
+            "T1204-User Execution": [
+                {
+                    "Subject": "1-10-20-hb44_final.exe",
+                    "SubjectType": "file",
+                    "Relation": "open",
+                    "Object": "document",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1204-User Execution"
+                    ],
+                    "id": 21
+                }
+            ]
+        },
+        "Collection": {
+            "T1005-Data from Local System": [
+                {
+                    "Subject": "BlackSoul",
+                    "SubjectType": "Malware",
+                    "Relation": "capable of",
+                    "Object": "file transfers",
+                    "ObjectType": "artifact",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1005-Data from Local System",
+                        "T1560-Archive Collected Data"
+                    ],
+                    "id": 22
+                },
+                {
+                    "Subject": "BlackSoul",
+                    "SubjectType": "Malware",
+                    "Relation": "store",
+                    "Object": "files on the machine",
+                    "ObjectType": "artifact",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1005-Data from Local System"
+                    ],
+                    "id": 26
+                },
+                {
+                    "Subject": "BlackSoul",
+                    "SubjectType": "Malware",
+                    "Relation": "retrieve",
+                    "Object": "specified files from the machine",
+                    "ObjectType": "artifact",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1005-Data from Local System"
+                    ],
+                    "id": 27
+                },
+                {
+                    "Subject": "BlackSoul",
+                    "SubjectType": "Malware",
+                    "Relation": "update",
+                    "Object": "the configuration file (UsrClass.json)",
+                    "ObjectType": "file",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1005-Data from Local System"
+                    ],
+                    "id": 29
+                }
+            ],
+            "T1560-Archive Collected Data": [
+                {
+                    "Subject": "BlackSoul",
+                    "SubjectType": "Malware",
+                    "Relation": "capable of",
+                    "Object": "file transfers",
+                    "ObjectType": "artifact",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1005-Data from Local System",
+                        "T1560-Archive Collected Data"
+                    ],
+                    "id": 22
+                },
+                {
+                    "Subject": "BlackSoul",
+                    "SubjectType": "Malware",
+                    "Relation": "upload",
+                    "Object": "files to the C2",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Collection",
+                    "technique": [
+                        "T1560-Archive Collected Data"
+                    ],
+                    "id": 28
+                }
+            ]
+        }
+    }
+}

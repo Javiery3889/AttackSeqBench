@@ -1,0 +1,133 @@
+{
+    "file_name": "19-2013-acalltoharm",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "The CTI report describes two attacks targeting the Syrian opposition. The first attack involves a malicious installer for the circumvention tool Freegate, which was distributed via a download link on MediaFire. The file, named VPN-Pro.zip, contained a malicious executable that, when run, displayed the Freegate end-user license agreement and launched a legitimate copy of Freegate. However, it also installed a fake 'svchost.exe' in the victim's Application Data directory, which was identified as the ShadowTech RAT, a Remote Access Trojan. The second attack was initiated through phishing emails, chat messages, and Facebook posts, using a Windows Shortcut file that led victims to malicious links while displaying a decoy YouTube video or news website. A PHP file fetched a hex-encoded malicious binary that installed malware persistent across reboots and communicated with a C2 server at tn5.linkpc.net.",
+        "Persistence": "The malware from the second attack described in the CTI report adds a registry key to ensure persistence across reboots. The key added to 'HKEY_CURRENT_USER\\Software\\Microsoft\\Windows NT\\CurrentVersion\\Winlogon' sets the 'Shell' value to run 'C:\\WINDOWS\\explorer.exe' along with the malicious 'atiapfxx.exe' from the Temp directory.",
+        "Command and Control": "The CTI report identifies the domain thejoe.publicvm.com as the command and control (C2) server for the malware installed via the malicious Freegate installer. This domain resolves to an IP address within Syrian IP space. Additionally, the malware from the second attack communicates with a C2 server at tn5.linkpc.net, which has been active since at least October 2012 and has pointed to various addresses in Syrian IP space.",
+        "Others": "The CTI report provides an overview of the digital campaigns targeting the Syrian opposition, highlighting the use of social engineering and prior intelligence about the opposition. It also includes recommendations for Freegate and its users to mitigate threats, such as raising awareness and implementing HTTPS by default on their website. Acknowledgements are given to those who brought the malware samples to the researchers' attention."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "phishing emails",
+                    "SubjectType": "Email Message",
+                    "Relation": "initiate",
+                    "Object": "attack",
+                    "ObjectType": "campaign",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 3
+                }
+            ]
+        },
+        "Persistence": {
+            "T1547-Boot or Logon Autostart Execution": [
+                {
+                    "Subject": "The malware",
+                    "SubjectType": "Malware",
+                    "Relation": "add",
+                    "Object": "registry key",
+                    "ObjectType": "registry",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 4
+                },
+                {
+                    "Subject": "registry key",
+                    "SubjectType": "registry",
+                    "Relation": "ensure",
+                    "Object": "persistence",
+                    "ObjectType": "Tactic",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "registry key",
+                    "SubjectType": "registry",
+                    "Relation": "set",
+                    "Object": "Shell value",
+                    "ObjectType": "registry",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 6
+                },
+                {
+                    "Subject": "Shell value",
+                    "SubjectType": "registry",
+                    "Relation": "run",
+                    "Object": "C:\\WINDOWS\\explorer.exe",
+                    "ObjectType": "file",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 7
+                },
+                {
+                    "Subject": "Shell value",
+                    "SubjectType": "registry",
+                    "Relation": "run",
+                    "Object": "atiapfxx.exe",
+                    "ObjectType": "file",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 8
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1105-Ingress Tool Transfer": [
+                {
+                    "Subject": "thejoe.publicvm.com",
+                    "SubjectType": "domain",
+                    "Relation": "host",
+                    "Object": "C2 server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1105-Ingress Tool Transfer"
+                    ],
+                    "id": 9
+                },
+                {
+                    "Subject": "thejoe.publicvm.com",
+                    "SubjectType": "domain",
+                    "Relation": "resolve-to",
+                    "Object": "Syrian IP space",
+                    "ObjectType": "Location",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1105-Ingress Tool Transfer"
+                    ],
+                    "id": 10
+                },
+                {
+                    "Subject": "tn5.linkpc.net",
+                    "SubjectType": "domain",
+                    "Relation": "host",
+                    "Object": "C2 server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1105-Ingress Tool Transfer"
+                    ],
+                    "id": 11
+                }
+            ]
+        }
+    }
+}

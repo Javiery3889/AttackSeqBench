@@ -1,0 +1,244 @@
+{
+    "file_name": "Russian-language actor exploits hype over Telegram ban in Central Asia",
+    "tactic_label": true,
+    "rewrite": {
+        "Initial Access": "In April 2018, a new Octopus sample was discovered, masquerading as communication software for a Kazakh opposition political group. The malware, named Octopus, was packed in a ZIP file called dvkmailer.zip, with a timestamp indicating it was created between February and March 2018. The ZIP file contained a fake Telegram Messenger with a Russian interface, designed to exploit the potential Telegram ban in Kazakhstan. The dropper, which pretends to be legitimate software, was found to use third-party Delphi libraries for JSON-based C2 communications and TurboPower Abbrevia for compression. The malware achieves persistence through the system registry, and the server side utilizes commercial hosting with .php scripts deployed. The distribution method of the malware is unclear, but it likely involves social engineering, as the actor previously used spear phishing.",
+        "Execution": "Upon execution, the Octopus launcher checks for the presence of a file named TelegramApi.dll in the same directory. If found, it copies the network module to the startup directory as Java.exe and runs it. The launcher, which is a Delphi Visual Component Library (VCL) program, has only three programmer-defined handlers for controlling elements, with no handler for the 'Send mailing' button, suggesting the malware may be unfinished or created in haste without communication features.",
+        "Persistence": "The Octopus malware achieves persistence by copying the network module to the startup directory and running it as Java.exe. This is done through the FormCreate() function of the launcher before any user interaction.",
+        "Credential Access": "The Octopus developers utilized the password dumping utility fgdump as part of their operations.",
+        "Discovery": "The network module of Octopus gathers JSON-formatted system data, including disk name and size, computer and user name, Windows directory, host IP, and more. It uses the Windows Management Instrumentation mechanism to fingerprint the victim by running WMIC.exe with specific arguments to collect system information, which is then hashed using MD5 to create a unique victim ID.",
+        "Command and Control": "The Octopus network module communicates with C2 servers using JSON-formatted data and the HTTP protocol. It consists of hardcoded IP addresses of commercial web-hosting services and deploys first-stage .php scripts to check connections and obtain the actual C2 server domain name. The malware receives commands from the C2 server, including uploading/downloading files and taking screenshots.",
+        "Others": "The CTI report by GReAT from Kaspersky Lab details the activities of a Russian-language cyberespionage actor named DustSquad, which has been targeting Central Asian users and diplomatic entities since 2014. The actor's malware, Octopus, is related to DustSquad and uses Delphi as the programming language. The report includes technical details of the malware, its infrastructure, and indicators of compromise, including file hashes, domains, IPs, and auxiliary URLs for file upload/download. The report also mentions other threat actors such as IndigoZebra and Sofacy (with Zebrocy malware) targeting the region. The interest in Central Asia by threat actors is noted to be high, with DustSquad being a relatively new local player."
+    },
+    "technique_label": true,
+    "triplet_groups": {
+        "Initial Access": {
+            "T1566-Phishing": [
+                {
+                    "Subject": "Octopus",
+                    "SubjectType": "Malware",
+                    "Relation": "masquerade",
+                    "Object": "communication software",
+                    "ObjectType": "software",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 1
+                },
+                {
+                    "Subject": "Octopus",
+                    "SubjectType": "Malware",
+                    "Relation": "use",
+                    "Object": "third-party Delphi libraries",
+                    "ObjectType": "software",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 2
+                },
+                {
+                    "Subject": "Octopus",
+                    "SubjectType": "Malware",
+                    "Relation": "achieve",
+                    "Object": "persistence",
+                    "ObjectType": "Tactic",
+                    "tactic": "Initial Access",
+                    "technique": [
+                        "T1566-Phishing"
+                    ],
+                    "id": 3
+                }
+            ]
+        },
+        "Persistence": {
+            "T1547-Boot or Logon Autostart Execution": [
+                {
+                    "Subject": "Octopus malware",
+                    "SubjectType": "Malware",
+                    "Relation": "achieve",
+                    "Object": "persistence",
+                    "ObjectType": "Tactic",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 4
+                },
+                {
+                    "Subject": "Octopus malware",
+                    "SubjectType": "Malware",
+                    "Relation": "copy",
+                    "Object": "network module",
+                    "ObjectType": "artifact",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 5
+                },
+                {
+                    "Subject": "network module",
+                    "SubjectType": "artifact",
+                    "Relation": "run as",
+                    "Object": "Java.exe",
+                    "ObjectType": "tool",
+                    "tactic": "Persistence",
+                    "technique": [
+                        "T1547-Boot or Logon Autostart Execution"
+                    ],
+                    "id": 6
+                }
+            ]
+        },
+        "Credential Access": {
+            "T1003-OS Credential Dumping": [
+                {
+                    "Subject": "The Octopus developers",
+                    "SubjectType": "threat-actor",
+                    "Relation": "use",
+                    "Object": "fgdump",
+                    "ObjectType": "tool",
+                    "tactic": "Credential Access",
+                    "technique": [
+                        "T1003-OS Credential Dumping"
+                    ],
+                    "id": 7
+                }
+            ]
+        },
+        "Command and Control": {
+            "T1071-Application Layer Protocol": [
+                {
+                    "Subject": "Octopus network module",
+                    "SubjectType": "tool",
+                    "Relation": "communicate with",
+                    "Object": "C2 servers",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 8
+                },
+                {
+                    "Subject": "Octopus network module",
+                    "SubjectType": "tool",
+                    "Relation": "consist of",
+                    "Object": "hardcoded IP addresses",
+                    "ObjectType": "ipv4-addr",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 9
+                },
+                {
+                    "Subject": "Malware",
+                    "SubjectType": "Malware",
+                    "Relation": "receive",
+                    "Object": "commands from the C2 server",
+                    "ObjectType": "infrastructure",
+                    "tactic": "Command and Control",
+                    "technique": [
+                        "T1071-Application Layer Protocol"
+                    ],
+                    "id": 10
+                }
+            ]
+        },
+        "Execution": {
+            "T1059-Command and Scripting Interpreter": [
+                {
+                    "Subject": "Octopus launcher",
+                    "SubjectType": "tool",
+                    "Relation": "check-for",
+                    "Object": "TelegramApi.dll",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 11
+                },
+                {
+                    "Subject": "Octopus launcher",
+                    "SubjectType": "tool",
+                    "Relation": "copy",
+                    "Object": "network module",
+                    "ObjectType": "file",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 12
+                },
+                {
+                    "Subject": "Octopus launcher",
+                    "SubjectType": "tool",
+                    "Relation": "run",
+                    "Object": "Java.exe",
+                    "ObjectType": "process",
+                    "tactic": "Execution",
+                    "technique": [
+                        "T1059-Command and Scripting Interpreter"
+                    ],
+                    "id": 13
+                }
+            ]
+        },
+        "Discovery": {
+            "T1082-System Information Discovery": [
+                {
+                    "Subject": "network module of Octopus",
+                    "SubjectType": "tool",
+                    "Relation": "gather",
+                    "Object": "JSON-formatted system data",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 14
+                },
+                {
+                    "Subject": "network module of Octopus",
+                    "SubjectType": "tool",
+                    "Relation": "use",
+                    "Object": "Windows Management Instrumentation",
+                    "ObjectType": "tool",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 15
+                },
+                {
+                    "Subject": "network module of Octopus",
+                    "SubjectType": "tool",
+                    "Relation": "run",
+                    "Object": "WMIC.exe",
+                    "ObjectType": "file",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 16
+                },
+                {
+                    "Subject": "network module of Octopus",
+                    "SubjectType": "tool",
+                    "Relation": "hash",
+                    "Object": "system information",
+                    "ObjectType": "artifacts",
+                    "tactic": "Discovery",
+                    "technique": [
+                        "T1082-System Information Discovery"
+                    ],
+                    "id": 17
+                }
+            ]
+        }
+    }
+}
