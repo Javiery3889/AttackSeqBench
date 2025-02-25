@@ -1,0 +1,55 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Reconnaissance:**
+- TeamTNT uses the image `pause-amd64:3.4` to conduct reconnaissance.
+- The image is deployed on Kubernetes clusters and uses a shell script as its entry point.
+- The script downloads a coin miner from a server in Germany.
+- The script scans for open Docker API endpoints using the `masscan` tool.
+- The script attempts to kill competitor images using `docker rm` commands.
+
+**Initial Access:**
+- TeamTNT spreads malware via exposed Docker API servers.
+- A new access vector involves the use of an open Weave Scope service.
+- Weave Scope, when exposed to the Internet without authentication, allows attackers to run shell commands on the pods or nodes in the cluster, leading to compromise.
+
+**Discovery:**
+- The script performs discovery by scanning IP ranges for open Docker API endpoints.
+- The script uses `iplogger.org` to track the number of infected hosts and obtain their details.
+
+**Others:**
+- Azure Security Center (ASC) detects the attack by monitoring the behavior of the AKS management layer and the containers.
+- Recommendations include using Azure Policy for Kubernetes to restrict and audit sensitive actions and deploying images from trusted registries only.
+
+#### 2. Analyze the Question
+
+The question asks if TeamTNT is likely to execute a coin miner by downloading it as `/usr/sbin/docker-update` and running it for cryptocurrency mining before gaining initial access to the victim's environment by exploiting an exposed Weave Scope service.
+
+#### 3. Compare and Evaluate
+
+**Attack Sequence from the CTI Report:**
+1. **Reconnaissance:**
+   - Scans for open Docker API endpoints.
+   - Kills competitor images using `docker rm` commands.
+   - Downloads a coin miner from a server in Germany.
+2. **Initial Access:**
+   - Exploits an exposed Weave Scope service to gain initial access.
+3. **Discovery:**
+   - Scans IP ranges for open Docker API endpoints.
+   - Uses `iplogger.org` to track infected hosts.
+
+**Sequence in the Question:**
+- Executes a coin miner by downloading it as `/usr/sbin/docker-update` and running it for cryptocurrency mining.
+- Gains initial access to the victim's environment by exploiting an exposed Weave Scope service.
+
+**Evaluation:**
+- The CTI report indicates that the coin miner is downloaded and executed as part of the reconnaissance phase, not after gaining initial access.
+- The initial access is gained by exploiting an exposed Weave Scope service, which happens after the reconnaissance phase.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The CTI report clearly states that the coin miner is downloaded and executed during the reconnaissance phase, which is before gaining initial access.
+- The question suggests that the coin miner is executed after gaining initial access, which contradicts the sequence described in the CTI report.
+
+**Final Answer: B: No**

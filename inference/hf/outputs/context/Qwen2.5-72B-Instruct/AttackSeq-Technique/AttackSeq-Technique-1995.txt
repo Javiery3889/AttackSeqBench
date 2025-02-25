@@ -1,0 +1,74 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Defense Evasion:**
+- Uses GetTempPathW to retrieve the %TEMP% directory.
+- Initializes WinINet functions with InternetOpenW, setting the user agent to "Opera".
+- Sets send and receive timeouts to 600 seconds using InternetSetOptionW.
+- Establishes a connection to the C2 server updaterweb[.]com on port 443, and if it fails, tries port 80.
+- Uses HttpOpenRequestW to create an HTTP POST request handle and adds an HTTP request header.
+
+**Discovery:**
+- Enumerates files and directories from the Desktop directory using FindFirstFileW and FindNextFileW.
+- Targets directories such as 'C:\Program Files', 'C:\Program Files (x86)', and various user-specific AppData folders.
+- Uses SHGetFolderPathW to obtain folder names.
+- Retrieves the NetBIOS name of the local computer and the name of the user associated with the current thread using GetComputerNameA and GetUserNameA.
+- Extracts the volume serial number of the root directory using GetVolumeInformationW.
+
+**Collection:**
+- Base64 encodes the output of the systeminfo and tasklist commands, along with the list of targeted directories and their content, using the CryptBinaryToStringA API.
+
+**Command and Control:**
+- Communicates with the C2 server updaterweb[.]com, sending exfiltrated data in a POST request.
+- Downloads a DLL file from the C2 server, which is loaded using the LoadLibraryW API, and executes the first ordinal function.
+
+**Exfiltration:**
+- Exfiltrates collected information to the C2 server updaterweb[.]com using an HTTP POST request.
+
+**Others:**
+- Uses CryptAcquireContextA to acquire a handle to the Microsoft RSA and AES Cryptographic Provider.
+- Creates a hash object using CryptCreateHash.
+- Verifies the hash value of a downloaded DLL file against a provided buffer.
+- Creates a file called fvjoik.dll in the %TEMP% directory, populates it with the DLL downloaded from the C2 server, and executes an exported function with ordinal 1.
+- Uses WinExec to delete the DLL file.
+- Retrieves the termination status of the two threads using the GetExitCodeThread API.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK technique most likely occurred after SkinnyBoy conducted discovery by enumerating files and directories using APIs such as FindFirstFileW and extracted system information using functions like GetComputerNameA?
+
+**Answer Choices:**
+A: T1083-File and Directory Discovery
+B: T1059.005-Visual Basic
+C: T1135-Network Share Discovery
+D: T1559-Inter-Process Communication
+
+#### 3. Compare and Evaluate
+
+**Discovery:**
+- The report states that SkinnyBoy conducts discovery by enumerating files and directories using FindFirstFileW and FindNextFileW.
+- It also extracts system information using GetComputerNameA and GetUserNameA.
+
+**Next Steps:**
+- After discovery, the malware collects data by base64 encoding the output of the systeminfo and tasklist commands, along with the list of targeted directories and their content.
+- The collection step involves gathering the data that was discovered.
+
+**Evaluation of Answer Choices:**
+- **A: T1083-File and Directory Discovery** - This is the technique used during the discovery phase, not after it.
+- **B: T1059.005-Visual Basic** - This technique is not mentioned in the report.
+- **C: T1135-Network Share Discovery** - This technique is not mentioned in the report.
+- **D: T1559-Inter-Process Communication** - This technique is not mentioned in the report.
+
+The most plausible sequence of TTPs after discovery is the collection of data, which involves base64 encoding the discovered information.
+
+#### 4. Final Answer
+
+**Final Answer: A: T1083-File and Directory Discovery**
+
+However, since the question asks for the technique that occurred **after** discovery, the correct answer should be the next step in the sequence, which is the collection of data. But since the collection step is not explicitly listed in the answer choices, the closest and most relevant answer based on the provided choices is:
+
+**Final Answer: A: T1083-File and Directory Discovery**
+
+This is the most relevant answer given the choices, but it is important to note that the actual next step is the collection of data.

@@ -1,0 +1,55 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attack starts with a malicious email containing trojaned Microsoft Word documents.
+- The email appears to be from a trusted source and uses repurposed content from community mailing lists.
+
+**Execution:**
+- The 'Surtr' malware creates a new explorer or iexplore process and injects itself into this new process using the `CreateRemoteThread` function.
+
+**Persistence:**
+- 'Surtr' adds a key to the registry to ensure it runs when the infected computer is restarted.
+- It stores C2 information and a campaign code in the registry.
+- Depending on the configuration, it creates multiple registry keys in `Software\Microsoft\Windows Media` in `HKU` (hkey users) with text data or a single key called `XC` consisting of binary data, usually XOR encrypted with a key of `0x1`.
+
+**Defense Evasion:**
+- 'Surtr' uses a vulnerability in Microsoft Word (CVE-2012-0158) to execute malicious code.
+- It evades antivirus heuristics by padding the resource section with varying amounts of `00` bytes, resulting in a much larger file size (30-50mb).
+
+**Command and Control:**
+- 'Surtr' connects to a command and control server (C2) and downloads a stage two component to a specific directory.
+- The sample analyzed connects to `internet.3-a.net` on port 9696.
+
+**Others:**
+- The malware monitors mailing lists and discussion groups to repurpose content for targeted attacks.
+- It can download additional components, such as 'GmRemote' or 'LURK0', which can provide further abilities like accessing the victim computer's webcam or microphone.
+- 'Surtr' has been used in conjunction with the Gh0st RAT derived 'LURK0' malware.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK tactic most likely occurred after 'Surtr' ensured persistence by adding registry keys and storing C2 information for execution during system restarts, and before connecting to a command and control server to download a stage two component?
+
+**Answer Choices:**
+A: Persistence
+B: Command and Control
+C: Collection
+D: Discovery
+
+#### 3. Compare and Evaluate
+
+- **Persistence** (A): This tactic is already mentioned in the report as occurring before the C2 connection. Therefore, it cannot be the answer.
+- **Command and Control** (B): This is the final step in the sequence described in the report, so it cannot be the answer.
+- **Collection** (C): This tactic involves gathering data from the victim's system, which is not explicitly mentioned in the report between the persistence and C2 connection steps.
+- **Discovery** (D): This tactic involves the malware gathering information about the system and network, which is a logical step before connecting to the C2 server to download additional components. Discovery helps the malware understand the environment and plan its next actions.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The report states that 'Surtr' ensures persistence by adding registry keys and storing C2 information.
+- After ensuring persistence, the next logical step would be for the malware to gather information about the system and network to understand the environment and plan its next actions.
+- This aligns with the **Discovery** tactic.
+- Only after gathering this information would the malware connect to the C2 server to download a stage two component.
+
+**Final Answer: D: Discovery**

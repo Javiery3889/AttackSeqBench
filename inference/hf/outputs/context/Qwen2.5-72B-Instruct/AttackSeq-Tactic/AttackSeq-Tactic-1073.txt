@@ -1,0 +1,70 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attackers compromised a website and added code to redirect visitors to the infecting code, exploiting CVE-2018-8174, a VBScript engine vulnerability.
+
+**Execution:**
+- The malware exploits the VBScript engine vulnerability to download a DLL, which is then run in PowerShell.
+- The downloader checks for antivirus software processes and exits if any are found.
+- It also exploits CVE-2015-1701 for Local Privilege Escalation.
+- The second stage involves downloading and executing a backdoor, named SLUB.
+
+**Persistence:**
+- The SLUB backdoor achieves persistence by copying itself to ProgramData\update\ and creating a Run registry key with a typo in the ValueName, 'Microsoft Setup Initializazion', to call the export function UpdateMPUnits with rundll32.exe.
+
+**Privilege Escalation:**
+- The downloader exploits the CVE-2015-1701 vulnerability to acquire Local Privilege Escalation.
+
+**Discovery:**
+- The SLUB backdoor performs discovery by downloading a 'gist' snippet from GitHub and parsing it for commands to execute.
+- It looks for lines starting with '^' and ending with '$', ignoring other lines.
+- The backdoor also retrieves the username and computer name as part of its discovery process.
+
+**Collection:**
+- The backdoor supports various commands for data collection, including taking screenshots, listing files, copying files, and uploading files to the file.io website.
+- It also collects information from registry keys and creates archives of user's Desktop folders for exfiltration.
+
+**Command and Control:**
+- The backdoor communicates with the attackers via Slack, using two hardcoded authentication tokens to post messages and command results to a private Slack channel.
+- It also uses the Slack API to post messages.
+
+**Exfiltration:**
+- The attackers exfiltrate data by uploading files to the file.io website and posting download links to the Slack channel.
+- They also create archive files of user's Desktop folders and build CAB files containing the file tree for exfiltration.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK tactic most likely occurred after the malware exited upon detecting antivirus software processes but before SLUB achieved persistence by creating a Run registry key with a typo in the ValueName?
+
+**Answer Choices:**
+A: Defense Evasion
+B: Credential Access
+C: Discovery
+D: Initial Access
+
+#### 3. Compare and Evaluate
+
+- **Initial Access (D):** This tactic is already completed before the malware checks for antivirus software processes.
+- **Credential Access (B):** There is no mention of the malware attempting to access credentials between the antivirus check and achieving persistence.
+- **Discovery (C):** The discovery process involves downloading a 'gist' snippet from GitHub and parsing it for commands, which happens after the backdoor is executed and before persistence is established.
+- **Defense Evasion (A):** The malware checks for antivirus software processes and exits if any are found, which is a form of defense evasion. However, the question asks for the tactic that occurs after this check but before persistence.
+
+Given the sequence of events:
+1. The malware checks for antivirus software processes (Defense Evasion).
+2. The malware downloads and executes the backdoor (Execution).
+3. The backdoor performs discovery (Discovery).
+4. The backdoor achieves persistence (Persistence).
+
+The most plausible sequence is that the malware performs discovery after checking for antivirus software processes and before achieving persistence.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The malware checks for antivirus software processes (Defense Evasion).
+- The malware downloads and executes the backdoor (Execution).
+- The backdoor performs discovery (Discovery).
+- The backdoor achieves persistence (Persistence).
+
+**Final Answer: C: Discovery**

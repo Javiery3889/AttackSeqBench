@@ -1,0 +1,77 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Reconnaissance:**
+- The attack targets user credentials of Mexican banking institutions.
+- The campaign is linked to another campaign targeting users from Brazil's banking institutions.
+- The final phase executable contains specific Portuguese comments, suggesting a link with the Banload malware.
+
+**Initial Access:**
+- The attack begins with an email impersonating Mexico's tax department (SAT).
+- The email includes a link to download a malicious attachment, COMPROBANTE FISCAL.zip.
+- The zip file contains a malicious .bat file and a folder with a legitimate file (GoogleUpdate.exe) and another .bat file.
+- Clicking either .bat file triggers the attack.
+
+**Execution:**
+- The .bat file executes a PowerShell script from the Internet to run at memory level.
+- The script downloads md.zip, which includes the main malware library DLL, the executable loader part of the Autolt toolkit, and other services.
+- The script creates a random variable and a folder in %Public%, extracts files from md.zip, renames them, and creates a file with specific contents.
+
+**Persistence:**
+- The PowerShell script includes base64 coded text strings associated with startup persistence features.
+- It creates shortcuts in the startup folder and manipulates scheduled tasks.
+
+**Defense Evasion:**
+- The main malicious file 12.dll is protected with the VMProtect packer, making static analysis difficult.
+- The malware also uses VMProtect to make analysis harder.
+
+**Collection:**
+- The malware accesses Microsoft Outlook MAPI to try to access contacts' email accounts and sends them to the cyber actors through a POST web request.
+
+**Command and Control:**
+- The PowerShell script communicates with the following domains to download the malware and send collected data: h1m2en.ddns.net and dgi1b2n3m4.ddns.net.
+
+**Exfiltration:**
+- The collected email accounts are exfiltrated to the cyber actors through a POST web request to the resource hxxp://dgi1b2n3m4.ddns.net/lists/kk/index.php?list.
+
+**Others:**
+- SCILabs created a YARA rule to identify files that might belong to the same Cosmic Banker campaign.
+- Additional malware was found in a private source with the YARA rule.
+- The malware detection rate fluctuates from 9 to 27 antivirus search engines, making the detection rate a little low.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After executing a malicious batch file to run a PowerShell script at memory level and enabling persistence through creating shortcuts and manipulating scheduled tasks, is the Cosmic Banker malware likely to target Mexican financial institution users to steal credentials by displaying text related to an alleged data update request before accessing victim's Outlook information to collect email accounts?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Extracted Attack Sequence:**
+1. **Initial Access:** Email impersonating SAT with a link to download a malicious attachment.
+2. **Execution:** Malicious .bat file executes a PowerShell script from the Internet.
+3. **Persistence:** PowerShell script creates shortcuts in the startup folder and manipulates scheduled tasks.
+4. **Defense Evasion:** Main malicious file 12.dll is protected with VMProtect.
+5. **Collection:** Malware accesses Microsoft Outlook MAPI to collect email accounts.
+6. **Command and Control:** Communication with C2 domains.
+7. **Exfiltration:** Collected email accounts are exfiltrated.
+
+**Question Sequence:**
+- After executing a malicious batch file to run a PowerShell script at memory level and enabling persistence through creating shortcuts and manipulating scheduled tasks, the Cosmic Banker malware is likely to target Mexican financial institution users to steal credentials by displaying text related to an alleged data update request before accessing victim's Outlook information to collect email accounts.
+
+**Evaluation:**
+- The CTI report does not mention any text related to an alleged data update request. The initial access is through an email impersonating the tax department, which is a common phishing technique.
+- The report does mention that the malware accesses Microsoft Outlook MAPI to collect email accounts, which aligns with the question.
+- The sequence of TTPs in the question (execution, persistence, and collection) matches the sequence in the CTI report.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The CTI report confirms the execution of a malicious batch file, enabling persistence, and accessing Outlook to collect email accounts.
+- However, the report does not mention any text related to an alleged data update request.
+- The question's sequence of TTPs (execution, persistence, and collection) is consistent with the CTI report, but the additional detail about the data update request is not supported by the report.
+
+**Final Answer: B: No**

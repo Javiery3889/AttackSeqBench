@@ -1,0 +1,75 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attack started with the delivery of an ISO file containing a zip file with malicious scripts.
+
+**Execution:**
+- Various VBScripts and batch files were executed.
+- 'install.vbs' executed 'resolve.dns'.
+- 'update.vbs' executed 'stopedge.bat'.
+- 'activate.vbs' sent an HTTP request and saved the retrieved content.
+- 'unactivate.vbs' exfiltrated data through a POST request.
+- 'stopedge.bat' scheduled 'install.vbs' to run every 33 minutes and managed file deletions.
+- 'resolvedns.bat' initiated the download of a file from the C2 server.
+- 'versioninfo.bat' collected information about the user's computer and exfiltrated data using 'unactivate.vbs'.
+
+**Persistence:**
+- 'stopedge.bat' scheduled 'install.vbs' to run every 33 minutes if 'paycom.ini' was present.
+
+**Defense Evasion:**
+- Scripts were heavily obfuscated.
+- 'stopedge.bat' managed the deletion of 'versioninfo.bat' and 'update.vbs' after execution.
+
+**Collection:**
+- 'versioninfo.bat' collected information from the user's computer.
+
+**Command and Control:**
+- 'activate.vbs' communicated with a C2 server.
+- 'resolvedns.bat' facilitated communication with the C2 server to download a file.
+
+**Exfiltration:**
+- 'unactivate.vbs' exfiltrated data through a POST request.
+- 'versioninfo.bat' exfiltrated collected information using 'unactivate.vbs'.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK technique most likely occurred after the execution of scripts such as 'install.vbs' and 'update.vbs' that scheduled tasks or managed file deletions as part of Persistence but before collecting system information for Exfiltration?
+
+**Answer Choices:**
+A: T1053-Scheduled Task/Job
+B: T1055.012-Process Hollowing
+C: T1083-File and Directory Discovery
+D: T1654-Log Enumeration
+
+#### 3. Compare and Evaluate
+
+**Sequence of TTPs:**
+1. **Initial Access** - Delivery of ISO file.
+2. **Execution** - Execution of VBScripts and batch files.
+3. **Persistence** - Scheduling tasks and managing file deletions.
+4. **Collection** - Collecting system information.
+5. **Exfiltration** - Exfiltrating collected information.
+
+**Key Points:**
+- **Persistence** is established by scheduling tasks and managing file deletions.
+- **Collection** involves gathering system information.
+- **Exfiltration** follows the collection of information.
+
+**Evaluation of Answer Choices:**
+- **A: T1053-Scheduled Task/Job** - This technique is part of the Persistence phase, which is already established by 'stopedge.bat' scheduling 'install.vbs'.
+- **B: T1055.012-Process Hollowing** - This technique is not mentioned in the report and is not relevant to the sequence described.
+- **C: T1083-File and Directory Discovery** - This technique involves discovering files and directories, which is a logical step before collecting system information.
+- **D: T1654-Log Enumeration** - This technique involves enumerating logs, which is not mentioned in the report and is not a necessary step before collecting system information.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The attack sequence involves initial access, execution, persistence, and then collection of system information.
+- After establishing persistence by scheduling tasks and managing file deletions, the next logical step is to discover files and directories to collect system information.
+- The technique T1083-File and Directory Discovery fits this sequence as it is a necessary step before collecting system information for exfiltration.
+
+**Final Answer:**
+C: T1083-File and Directory Discovery

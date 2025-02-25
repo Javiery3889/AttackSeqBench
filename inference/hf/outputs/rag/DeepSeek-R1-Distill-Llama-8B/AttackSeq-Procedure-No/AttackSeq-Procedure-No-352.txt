@@ -1,0 +1,24 @@
+Okay, so I'm trying to figure out whether the MSIL/Crimson malware will execute native Windows functions like GetFileAttributesW and GetSystemInfo before setting up command and control using a custom TCP protocol. The initial access was through RTF documents exploiting CVE-2012-0158, which drops a downloader file. 
+
+First, I need to understand the attack sequence. The initial exploit uses a known vulnerability in Microsoft Office (CVE-2012-0158) to drop a malicious file. This file is likely a downloader, which probably installs more malicious components onto the system. 
+
+Looking at the related TTPs, there are three: T1106-Native API, T1218.011-Rundll32, and T1203-Exploitation for Client Execution. 
+
+T1106 is about using native API functions, which would involve calls to Windows system functions. GetFileAttributesW is an example of such a function. T1203 is about exploiting a client to execute something, which could be the initial execution of the downloader. T1218.011 is about using Rundll32, which is a legitimate tool for dynamically loading DLLs, but it's also used in some attacks to execute malicious code.
+
+So, the initial step is the exploitation of the RTF document, which drops a downloader. The next step would be the execution of this downloader. Since the question is about whether the malware uses native functions before establishing C2, I think the execution of the downloader would involve either T1203 or T1106 or T1218.011.
+
+T1203 is about exploiting a client to execute, which might involve using a vulnerability in a client application to execute a payload. T1106 is about using native APIs, which could be part of the payload's behavior after it's on the system. T1218.011 uses Rundll32, which is a tool that can be used to execute malicious code.
+
+So, after the initial exploit, the downloader is dropped. The execution of this downloader would likely involve one of these techniques. If the downloader is a malicious executable, it might use native functions to perform actions like checking its own version, gathering system information, or evading detection.
+
+GetFileAttributesW is a function that retrieves file attributes, so if the malware needs to check something about the file it just dropped, it might use this function. Similarly, GetSystemInfo could be used to gather system details, which might be part of the initial setup before establishing C2.
+
+So, the sequence would be: initial exploit, then execution of the downloader, which uses native functions to do things like check its own existence or gather info, and then sets up a C2 connection.
+
+Looking at the answer choices, the question is whether it's likely that the malware uses these functions before setting up C2. So, the answer would be yes, because after dropping the downloader, it needs to do some operations on the system, which would involve native functions.
+</think>
+
+The malware likely uses native functions like GetFileAttributesW and GetSystemInfo after dropping the downloader to gather information and prepare for establishing command and control.
+
+Final Answer: A: Yes

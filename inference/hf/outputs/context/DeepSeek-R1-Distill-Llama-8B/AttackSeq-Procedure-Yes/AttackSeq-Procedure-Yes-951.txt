@@ -1,0 +1,24 @@
+Okay, so I need to figure out whether the file paths that Sednit's malware gathered were hex-encoded and encrypted using a known or custom algorithm before sending to the C&C server. Let me break this down step by step.
+
+First, I'll look at the CTI outline provided. The outline describes the attack sequence by the Sednit group, also known as APT28. The attack started with a spearphishing email campaign in August 2018. The initial payload was a URL that led to an IP-based URL, which then delivered an executable and a decoy PDF. The executable prompted for a password and opened the PDF, while a Delphi downloader ran in the background.
+
+After execution, the backdoor was established, and the operators began sending commands. These included taking screenshots, gathering system info, network scanning, and executing commands. The Stage-1 downloader was a C++ file that downloaded a Delphi backdoor. The backdoor's configuration was stored in four hex-encoded, encrypted blobs.
+
+Looking at the Persistence section, they used COM object hijacking to add registry keys for a custom backdoor, which was executed via CMD_EXECUTE. This backdoor was temporary and removed after use.
+
+For Defense Evasion, the malware deleted files and killed security processes. Credential Access involved using dumpers on browsers and Outlook versions to extract credentials from software like Firefox, The Bat!, and Opera.
+
+In the Discovery phase, they gathered info on the victim's computer, including registry keys, running processes, and system commands. Then, during Collection, the malware scanned for files with specific extensions on local drives, network shares, and removable media. It staged data by creating a file with all file paths to exfiltrate and had features for input capture and screen capture.
+
+Command and Control: The downloaders and backdoors used ports 80 or 443 to communicate with the C&C server. The data sent were hex-encoded and encrypted with AES or a custom algorithm. They also had a fallback C&C server embedded in the configuration.
+
+Now, the question is about whether the file paths were hex-encoded and encrypted before exfiltration. From the outline, under the Collection section, it says the malware created a file with paths of all files to exfiltrate. It also mentions that data sent to C&C was hex-encoded and encrypted with AES or a custom algorithm.
+
+So, the file paths were included in the data that was sent to C&C. Since the data was hex-encoded and encrypted, that implies that the file paths were part of the data being sent, and thus were likely hex-encoded and encrypted as part of the communication process.
+
+Therefore, the answer should be A: Yes.
+</think>
+
+The CTI outline explicitly states that the data sent to the C&C server was hex-encoded and encrypted. Since the file paths were part of the data collected and exfiltrated, they were indeed hex-encoded and encrypted.
+
+Final Answer: A

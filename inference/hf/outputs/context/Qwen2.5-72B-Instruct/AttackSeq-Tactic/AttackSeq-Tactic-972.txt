@@ -1,0 +1,73 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- CosmicDuke infections start by tricking victims into opening a PDF file containing an exploit or a Windows executable disguised as a document or image file.
+- The exploit involves a malicious Flash object embedded in a PDF file that exploits the CVE-2011-0611 vulnerability.
+- Social engineering tactics are used to disguise the executable file as an image or document and display a decoy document or image to distract the user while the malware installs silently.
+
+**Execution:**
+- The CosmicDuke samples use the same loader as MiniDuke's stage 3 samples.
+- The loader was first seen with a compilation date of March 24, 2011, and was updated in mid-April 2014.
+
+**Persistence:**
+- CosmicDuke achieves persistence by creating a scheduled task named 'Watchmon Service' and installing a Windows service with the name 'javamtsup' and the display name 'Java(TM) Virtual Machine Support Service.'
+- The service opens a handle to the explorer.exe process, duplicates its process token, reads the path of the actual malware binary from the registry, and starts the malware using the duplicated token.
+
+**Credential Access:**
+- CosmicDuke targets a variety of software to steal credentials, including Skype, Google Talk, MSN Messenger, Google Chrome, Internet Explorer, Firefox, Thunderbird, Bat email client, Outlook Express, Outlook, and Google Desktop.
+- It also steals Windows credentials such as LM and NT hashes, cached domain passwords, LSA secrets, and plain text keys for WLANs.
+- It exports certificates and associated private keys from the system store using the password 'saribas' to encrypt the exported data.
+
+**Collection:**
+- CosmicDuke collects information using a keylogger, screenshotter, and clipboard stealer.
+- It searches removable drives for files, skipping certain file types and drives with the volume name 'trandescend.'
+
+**Command and Control:**
+- CosmicDuke communicates with remote servers via HTTP GET requests and uses FTP and WebDav servers for exfiltrating collected data and updating the malware.
+- The configuration, which includes server IPs, URLs, and credentials, is embedded in the info-stealer and compressed using an algorithm similar to LZNT-1.
+
+**Exfiltration:**
+- The information collected by CosmicDuke is automatically uploaded to remote servers via FTP.
+
+#### 2. Analyze the Question
+
+**Question:**
+After gaining access to various credentials from targeted software and Windows systems and before collecting information via a keylogger and clipboard stealer, which ATT&CK tactic most likely occurred?
+
+**Answer Choices:**
+A: Discovery
+B: Persistence
+C: Execution
+D: Credential Access
+
+#### 3. Compare and Evaluate
+
+- **Initial Access** is the first step where the malware gains entry into the system.
+- **Execution** follows, where the malware is run on the system.
+- **Persistence** is established to ensure the malware remains on the system.
+- **Credential Access** involves stealing credentials from various software and Windows systems.
+- **Collection** involves using keyloggers, screenshotters, and clipboard stealers to gather information.
+
+The question asks what happens after **Credential Access** and before **Collection**. 
+
+- **Discovery** (A) involves the adversary attempting to map the network and understand the environment, which is not mentioned in the report as occurring between Credential Access and Collection.
+- **Persistence** (B) is established earlier in the attack sequence and is not a step that occurs after Credential Access.
+- **Execution** (C) is a step that occurs before Credential Access.
+- **Credential Access** (D) is the step that is already mentioned in the question.
+
+Given the sequence of events in the report, the most logical step that occurs after Credential Access and before Collection is **Discovery**. The adversary would likely need to understand the environment and identify what information to collect before actually collecting it.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+1. **Initial Access** - The malware gains entry.
+2. **Execution** - The malware runs on the system.
+3. **Persistence** - The malware ensures it remains on the system.
+4. **Credential Access** - The malware steals credentials.
+5. **Discovery** - The malware maps the network and understands the environment.
+6. **Collection** - The malware uses keyloggers, screenshotters, and clipboard stealers to gather information.
+7. **Command and Control** - The malware communicates with remote servers.
+8. **Exfiltration** - The malware uploads collected data to remote servers.
+
+**Final Answer: A: Discovery**

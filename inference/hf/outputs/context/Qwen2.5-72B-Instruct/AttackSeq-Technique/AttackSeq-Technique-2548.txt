@@ -1,0 +1,75 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Resource Development:**
+- Deep Panda exploited the Log4Shell vulnerability in VMware Horizon servers.
+- They used a stolen digital certificate to sign their tools.
+
+**Initial Access:**
+- Gained initial access through the Log4Shell vulnerability.
+- Spawned new PowerShell processes to download and execute a chain of scripts, culminating in the installation of a malicious DLL.
+
+**Execution:**
+- Executed PowerShell scripts and a batch file to download and run additional files, including syn.exe and 1.dll (Milestone backdoor).
+- The Milestone backdoor is based on Gh0st RAT/Netbot Attacker's leaked source code and packed with Themida.
+- Creates a service named msupdate2 and masquerades as the legitimate Microsoft newdev.dll.
+
+**Persistence:**
+- Ensures persistence by copying itself to %APPDATA%\newdev.dll and creating a service named msupdate2 directly in the registry.
+
+**Privilege Escalation:**
+- Creates a new administrator user with the username ANONYMOUS and password MileSt0ne2@16.
+- Executes another instance of itself with CreateProcessAsUser and then removes the user from the system.
+
+**Defense Evasion:**
+- Uses a novel kernel rootkit, Fire Chili, which hides and protects malicious artifacts.
+- The rootkit uses Direct Kernel Object Modification (DKOM) and is signed with stolen certificates.
+- Employs Themida for software packing and masquerading techniques to evade detection.
+
+**Discovery:**
+- The Milestone backdoor has capabilities for system information discovery, file and directory discovery, and screen capture.
+
+**Exfiltration:**
+- The Milestone backdoor exfiltrates data over the C2 channel.
+
+**Others:**
+- Attribution to Deep Panda and Winnti based on the use of the Milestone backdoor and Fire Chili rootkit.
+- Use of stolen certificates and C2 infrastructure suggests possible resource sharing between the groups.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK technique most likely occurred before the Milestone backdoor sent session information to the C2 server over an uncompressed communication channel?
+
+**Answer Choices:**
+A: T1659-Content Injection
+B: T1518-Software Discovery
+C: T1071-Application Layer Protocol
+D: T1014-Rootkit
+
+#### 3. Compare and Evaluate
+
+**T1659-Content Injection:**
+- This technique involves injecting data into a protocol stream to manipulate the content.
+- It is not directly related to the exfiltration of session information over a C2 channel.
+
+**T1518-Software Discovery:**
+- This technique involves discovering software installed on the system.
+- While the Milestone backdoor has discovery capabilities, this is not a necessary step before exfiltration.
+
+**T1071-Application Layer Protocol:**
+- This technique involves using common application layer protocols to communicate with a C2 server.
+- The Milestone backdoor exfiltrates data over a C2 channel, which implies the use of an application layer protocol.
+
+**T1014-Rootkit:**
+- This technique involves using rootkits to hide and protect malicious artifacts.
+- While the Fire Chili rootkit is used for defense evasion, it is not directly related to the exfiltration of session information.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The Milestone backdoor exfiltrates data over a C2 channel.
+- Exfiltration over a C2 channel typically involves the use of an application layer protocol to communicate with the C2 server.
+- The most relevant technique for this step is T1071-Application Layer Protocol.
+
+**Final Answer: C: T1071-Application Layer Protocol**

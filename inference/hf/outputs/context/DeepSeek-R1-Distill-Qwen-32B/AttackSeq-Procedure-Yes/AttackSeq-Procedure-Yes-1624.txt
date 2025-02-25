@@ -1,0 +1,18 @@
+Okay, so I'm trying to figure out whether APT28 is likely to deploy additional modules like pr.dll to upload stolen data to the C&C server after their discovery phase. Let me go through the CTI report step by step to understand the attack sequence and see if this makes sense.
+
+First, the report outlines the MITRE ATT&CK tactics in order. Starting with Reconnaissance, APT28 scans IPs in Ukraine and Spain using various tools like a Python script, scan bots, and a Django app. Then, during Initial Access, they use spear phishing with malicious documents and iFrames to deliver a dropper called runrun.exe. This dropper then downloads the second stage component, winloat.exe.
+
+In the Execution phase, winloat.exe installs key components, including a password dumper (run.exe), a privilege escalation tool (xp.exe), and a proxy tool (svehost.exe). So, they're already deploying several tools here. Persistence is achieved by changing file timestamps to hide them. For Privilege Escalation, they use a tool exploiting CVE-2014-4076. Defense Evasion includes changing timestamps and using the proxy tool to access internal systems.
+
+Credential Access uses run.exe, which is based on mimikatz, to dump passwords. Discovery involves scanning IP ranges and identifying vulnerable systems using bots that report back to a central server. Command and Control uses HTTP on ports 443 or 80, sometimes encrypted with 3DES and RSA. Exfiltration involves sending emails and files like .pst and .dbx to the server.
+
+The question is about whether, after discovery, APT28 would deploy pr.dll for data collection. From the report, during Exfiltration, they do exfiltrate data, but the specific modules mentioned are the ones in the Execution phase: run.exe, xp.exe, and svehost.exe. There's no mention of pr.dll in the report. However, the question is about whether they are likely to deploy such a module as part of data collection.
+
+APT28's modus operandi seems to involve using various tools for different stages. They have a dropper, then a second stage that deploys several tools. Since they're already exfiltrating data, it's plausible that they might use additional modules for this purpose. The report doesn't explicitly mention pr.dll, but it's possible that they use other modules not detailed here for data exfiltration.
+
+So, considering their use of multiple tools and the fact that they do exfiltrate data, it's likely they would deploy additional modules like pr.dll to handle data collection and upload. Therefore, the answer would be Yes.
+</think>
+
+The CTI report details APT28's attack sequence, which includes using various tools for different stages, including exfiltration. While pr.dll isn't explicitly mentioned, the group's use of multiple modules suggests they might deploy additional ones for data collection. 
+
+Final Answer: A

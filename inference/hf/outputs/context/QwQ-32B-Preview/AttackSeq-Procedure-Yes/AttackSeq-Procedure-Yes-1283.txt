@@ -1,0 +1,109 @@
+Alright, I have this CTI outline about an attack attributed to Tropic Trooper, also known as KeyBoy. They're using some pretty specific tactics, and I need to understand the sequence of events to answer this question about whether they execute a FakeRun loader to launch dllhost.exe and inject a malicious DLL backdoor into it.
+
+First, I need to break down the CTI outline step by step.
+
+**Initial Access:**
+
+- They're exploiting CVE-2017-11882 or CVE-2018-0802, which are vulnerabilities in Microsoft Office's Equation Editor.
+
+- Through these exploits, they execute commands to download and install an .msi package from a specific URL.
+
+So, the initial entry point is through malicious Office documents that contain these Equation Editor exploits, which allow them to run arbitrary code on the target system.
+
+**Execution:**
+
+- The .msi package installs some files. Specifically, it drops a backdoor installer called UserInstall.exe and then deletes itself.
+
+- UserInstall.exe drops a normal sidebar.exe file, which is a Windows Gadget tool, a malicious loader (wab32res.dll), and an encrypted configuration file.
+
+- UserInstall.exe uses the BITSadmin command-line tool to create a job and launch sidebar.exe.
+
+- The malicious loader (wab32res.dll) uses DLL hijacking on sidebar.exe to launch dllhost.exe.
+
+- Then, the loader injects a DLL backdoor into dllhost.exe.
+
+Additionally, it mentions that some malicious documents don't need to download anything from the internet because the backdoor dropper is already embedded in the document.
+
+**Persistence:**
+
+- The backdoor loads and decrypts the configuration file.
+
+- It uses SSL to connect to C&C servers.
+
+**Command and Control:**
+
+- The backdoor, TClient, uses SSL to communicate with the C&C server.
+
+- C&C server addresses and other configurations are not hardcoded, allowing for easy updates.
+
+- TClient uses symmetric encryption to decrypt its configuration with a 16-byte key.
+
+- It uses custom SSL libraries to connect to the C&C server.
+
+**Others:**
+
+- Tropic Trooper uses exploit-laden Office documents, often themed around job vacancies in sensitive organizations.
+
+- The MSI file has PDB strings indicating development paths and versions.
+
+- They use DLL hijacking to load the malicious wab32res.dll through a benign file (sidebar.exe) to evade AV detection.
+
+- The backdoor's C&C information can be decrypted through reverse engineering.
+
+- The C&C server certificate is recently registered and set to expire in a year, suggesting they use time-limited components to minimize traces.
+
+Now, the question is: After using Equation Editor exploits to execute an installer package with malicious payloads, is Tropic Trooper likely to execute the FakeRun loader to launch dllhost.exe before injecting a malicious DLL backdoor into the same process to facilitate their attack?
+
+Answer choices are A: Yes and B: No.
+
+First, I need to understand what "FakeRun" is. I'm not immediately familiar with it, so I should look it up.
+
+Upon checking, FakeRun is a technique used by some malware to load a legitimate executable and then inject malicious code into it. It's a way to execute malicious activities under the guise of a trusted process.
+
+In the CTI outline, it describes a similar process:
+
+- UserInstall.exe uses BITSadmin to launch sidebar.exe.
+
+- The malicious loader (wab32res.dll) is dropped and uses DLL hijacking on sidebar.exe to launch dllhost.exe.
+
+- Then, the loader injects a DLL backdoor into dllhost.exe.
+
+So, the sequence is:
+
+1. Exploit Equation Editor to execute commands.
+
+2. Download and install an .msi package.
+
+3. The .msi package drops UserInstall.exe, which in turn drops sidebar.exe, wab32res.dll, and an encrypted config file.
+
+4. UserInstall.exe uses BITSadmin to launch sidebar.exe.
+
+5. The malicious loader (wab32res.dll) hijacks the loading of a DLL in sidebar.exe, leading to the execution of dllhost.exe.
+
+6. The loader injects a DLL backdoor into dllhost.exe.
+
+Comparing this to the question:
+
+"Execute the FakeRun loader to launch dllhost.exe before injecting a malicious DLL backdoor into the same process."
+
+From my understanding, FakeRun is a technique to load a legitimate executable and inject malicious code into it. In this case, sidebar.exe is a legitimate Windows Gadget tool, and wab32res.dll is the malicious loader that injects a DLL backdoor into dllhost.exe.
+
+So, the sequence described in the CTI outline aligns with the FakeRun technique: launching a legitimate executable (sidebar.exe) and then injecting malicious code (via DLL hijacking) into another process (dllhost.exe).
+
+Therefore, it seems likely that Tropic Trooper is using a FakeRun-like technique to achieve persistence and execute their malicious activities.
+
+Given that, the answer should be A: Yes.
+
+But I should consider if there's any information in the CTI outline that contradicts this.
+
+Looking back, the outline explicitly mentions DLL hijacking on sidebar.exe to launch dllhost.exe and then injecting a DLL backdoor into dllhost.exe.
+
+This matches the FakeRun technique of executing a legitimate process and injecting malicious code into it.
+
+Moreover, the outline mentions that this is done to evade AV detection, which is a common reason for using such techniques.
+
+Therefore, there's no contradiction; in fact, it supports the notion that Tropic Trooper is using a FakeRun-like method.
+
+Hence, the most plausible answer is A: Yes.
+
+**Final Answer: A**

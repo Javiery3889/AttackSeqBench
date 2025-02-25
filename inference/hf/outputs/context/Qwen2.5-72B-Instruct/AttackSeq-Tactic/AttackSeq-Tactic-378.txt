@@ -1,0 +1,62 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The PIVY variant uses DLL sideloading.
+- It drops a decoy document, a DLL named ActiveUpdate.dll, and the PIVY shellcode file as Active.dat in a directory named ActiveUpdate_[0-9]{3}.
+- It copies rundll32.exe to ActiveFlash.exe and executes the new file with the path to the DLL.
+- It installs itself for automatic startup via a .lnk in the Windows Startup folder.
+
+**Execution:**
+- The PIVY variant copies rundll32.exe to ActiveFlash.exe and executes the new file with the path to the DLL to perform its malicious actions.
+
+**Defense Evasion:**
+- The PIVY variant uses DLL sideloading to load the dropped DLL and perform its malicious actions.
+- The malware's configuration has been modified to confuse some publicly available tools.
+- The C2s are no longer null-padded, and each hostname ends with a null-byte followed by a string that changes slightly with each C2 server.
+
+**Command and Control:**
+- The PIVY samples communicate with C2 servers such as webserver.servehttp[.]com and admin.nslookupdns[.]com.
+- The IP resolved to by these hostnames overlapped with fileshare.serveftp[.]com, which was used in an earlier PIVY sample.
+
+**Others:**
+- PIVY samples were observed targeting Myanmar and several other countries in Asia.
+- The targeting of post-election Myanmar appears to be following the same style as what was mentioned in the "Uncovering the Seven Pointed Dagger" paper by ASERT.
+- A possible connection exists given that the C2 for these samples resolved to an IP contained within 103.240.203.0/22, as did a 9002 RAT sample in the Seven Pointed Dagger exploitation campaign.
+- A "LURK0" Gh0strat and another PIVY domain were also observed to have resolved to IPs contained within this range, making this subnet more suspicious from a targeted attack perspective.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After the PIVY variant executes the copied rundll32.exe as ActiveFlash.exe with the path to the DLL to perform its actions, which ATT&CK tactic most likely follows?
+
+**Answer Choices:**
+- A: Persistence
+- B: Exfiltration
+- C: Reconnaissance
+- D: Execution
+
+#### 3. Compare and Evaluate
+
+**Execution:**
+- The PIVY variant copies rundll32.exe to ActiveFlash.exe and executes the new file with the path to the DLL to perform its malicious actions.
+
+**Next Step:**
+- The report mentions that the PIVY variant installs itself for automatic startup via a .lnk in the Windows Startup folder. This is a clear indication of the **Persistence** tactic.
+
+**Evaluation of Answer Choices:**
+- **A: Persistence** - This is the most likely next step as the malware ensures it can run automatically on system startup.
+- **B: Exfiltration** - This is not mentioned immediately after the execution in the report.
+- **C: Reconnaissance** - This is not mentioned as a next step in the report.
+- **D: Execution** - This is the current step, not the next step.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The PIVY variant executes the copied rundll32.exe as ActiveFlash.exe with the path to the DLL.
+- After execution, the next logical step is to ensure persistence by installing itself for automatic startup via a .lnk in the Windows Startup folder.
+- The report explicitly mentions this persistence mechanism.
+
+**Final Answer:**
+- Final Answer: A: Persistence

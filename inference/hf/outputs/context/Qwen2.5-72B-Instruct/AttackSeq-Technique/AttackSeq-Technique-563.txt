@@ -1,0 +1,76 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attack used a backdoor malware that leveraged the legitimate Windows Defender Core Process (MsMpEng.exe) to load a malicious DLL.
+- The infection process involved different loader filenames in C:\ProgramData\Microsoft, which called the function ServiceCrtMain from mpsvc.dll.
+- The older variant of mpsvc.dll read shellcode from an English.rtf payload file, while the newer variant had hardcoded shellcode that would inject and execute to load additional shellcode from mpsvc.mui, ultimately releasing a fully functional backdoor executable.
+
+**Execution:**
+- The final malicious executable had upgraded features, including the ability to interact with Dropbox API.
+- It could bypass User Account Control (UAC) using a .NET technique disclosed in 2017.
+- It had persistence mechanisms, either by registering as a startup program or as a system service.
+
+**Persistence:**
+- The malware ensured persistence by registering as a startup program in the registry path HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run if it lacked privileges, or as a system service if it had higher privileges.
+
+**Defense Evasion:**
+- The malware employed a UAC bypass technique using .NET, which was not new but had been disclosed in 2017. The threat actor only changed the GUID to evade detection.
+
+**Collection:**
+- The malware had recording features that included keylogging, clipboard logging, and screen recording.
+- The screen recording files were named with the format [%y-%m-%d]%H-%M-%S.avi, while the key-log and clipboard log were encoded and saved with the filenames <hash>.pas and <hash>.log, respectively.
+
+**Command and Control:**
+- The malware could connect to a specific C&C server and send back data using fake HTTP POST requests.
+- It also interacted with Dropbox, uploading and downloading files using the Dropbox API.
+- The malware checked for a fake GIF file header in the bin.asc file downloaded from Dropbox before proceeding to a custom decoding phase to release the inject payload.
+
+**Others:**
+- The Dropbox API token was hardcoded in the malware.
+- The Dropbox folder structure included a unique hash for each infected victim, log files, and payload files such as bin.asc.
+- The malware's second stage involved establishing a connection to the C&C server and Dropbox, with Dropbox becoming a secondary C&C server with full remote control features if the primary C&C server's IP address was blocked.
+- The malware could execute various commands, including listing drives, managing files, and opening terminals.
+- The threat actor's approximate working hours were inferred from the decoded command files.
+- Monitoring of the Dropbox tokens showed nearly 200 infected computers at the peak, with a drop in activity on August 21, 2019, when the threat actor cleared the Dropbox folder.
+- The monitoring ended on September 20, 2019, when all tokens were revoked by the threat actor.
+
+#### 2. Analyze the Question
+
+**Question:**
+After the malware ensured persistence by registering as a startup program or system service, which ATT&CK technique most likely occurred before the information including IP address, hostname, username, OS version, and Bitcoin wallet addresses from the registry key was uploaded to Dropbox?
+
+**Answer Choices:**
+A: T1129-Shared Modules
+B: T1012-Query Registry
+C: T1125-Video Capture
+D: T1135-Network Share Discovery
+
+#### 3. Compare and Evaluate
+
+**Persistence:**
+- The malware ensured persistence by registering as a startup program or system service.
+
+**Information Collection:**
+- The information including IP address, hostname, username, OS version, and Bitcoin wallet addresses from the registry key was uploaded to Dropbox.
+
+**Relevant ATT&CK Techniques:**
+- **T1129-Shared Modules:** This technique involves using shared libraries or modules to load malicious code. This is not directly related to collecting and uploading information.
+- **T1012-Query Registry:** This technique involves querying the Windows registry to gather information. This is directly related to collecting information from the registry.
+- **T1125-Video Capture:** This technique involves capturing video from the victim's screen. This is not directly related to collecting and uploading information from the registry.
+- **T1135-Network Share Discovery:** This technique involves discovering network shares. This is not directly related to collecting and uploading information from the registry.
+
+**Evaluation:**
+- The most relevant technique for collecting information from the registry before uploading it to Dropbox is **T1012-Query Registry**.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Step-by-Step Reasoning:**
+1. The malware ensures persistence by registering as a startup program or system service.
+2. The malware needs to collect information from the registry, including IP address, hostname, username, OS version, and Bitcoin wallet addresses.
+3. The most likely technique used to collect this information is **T1012-Query Registry**.
+4. After collecting the information, it is uploaded to Dropbox.
+
+**Final Answer:**
+B: T1012-Query Registry

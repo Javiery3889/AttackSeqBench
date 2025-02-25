@@ -1,0 +1,20 @@
+Okay, so I'm trying to figure out whether the threat actors in this scenario will use the sp_addlinkedsrvlogin command in MS-SQL to create a link between a created account and other servers before attempting to kill the rundll32.exe process. Let me break this down step by step.
+
+First, I'll look at the CTI outline provided. The attack starts with a spear-phishing campaign using a legitimate remote administration tool called RMS. The phishing emails contain malicious MS Office documents that use social engineering tactics. When the victim opens the document, a macro is executed, which tells them to disable security controls to allow a macro to run. This macro then downloads malicious payloads from the threat actor's C2 infrastructure.
+
+The initial payload is a malware downloader that gathers more components, including the RMS tool itself, shell scripts, and configuration files. The RMS tool is used for remote administration, which helps the threat actors perform malicious activities and evade detection.
+
+Looking at the defense evasion part, the RMS tool allows the threat actors to do reconnaissance and lateral movement within the network. It's mentioned that the RMS executable tries to connect to a C2 server in Germany, and some of these C2 domains and IPs are linked to TA505, a known threat group active since 2014. They've been involved in campaigns using RMS against US-based retailers and the financial industry.
+
+Now, the question is about persistence after the RMS tool is downloaded. The options are whether they'll use sp_addlinkedsrvlogin to create a link between a new account and other servers before killing rundll32.exe.
+
+I know that sp_addlinkedsrvlogin is an SQL Server function used to add a linked server. It can create a link to another server, allowing for remote access. If the threat actors use this, it would allow them to control more systems within the network, which fits with their lateral movement and persistence goals.
+
+The next part is about killing rundll32.exe. Rundll32.exe is a legitimate Windows tool used by various applications, so stopping it might not be directly harmful, but in this context, it's likely that the threat actors are using it for malicious purposes, so they might want to terminate it to avoid detection or to ensure it doesn't interfere with their operations.
+
+Putting it together, the sequence would involve using the RMS tool to gain access and then using legitimate admin tools like sp_addlinkedsrvlogin to establish persistence and access across the network. Therefore, it's likely they would use this command before attempting to terminate rundll32.exe to ensure they can maintain control and avoid detection.
+</think>
+
+The threat actors are likely to use the sp_addlinkedsrvlogin command to create a linked server, enabling persistence and network access, before terminating rundll32.exe to maintain control and evade detection.
+
+Final Answer: A: Yes

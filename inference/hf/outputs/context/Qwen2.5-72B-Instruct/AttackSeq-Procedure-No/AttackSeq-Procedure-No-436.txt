@@ -1,0 +1,61 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- APT Sidewinder exploited CVE-2017-11882 using an RTF document.
+- The RTF document downloaded an HTA file from the domain webserv-redir.net.
+
+**Execution:**
+- The HTA file contained a script that checked for installed antivirus software using WMI.
+- If no antivirus was detected, it proceeded to run a backdoor named FinalBot.exe.
+- FinalBot.exe was extracted from a zip file and renamed to Srvstr.exe.
+- The backdoor was developed in VB and utilized a modified msvbvm60.dll, renamed to 8EBECD7C.dll.
+
+**Persistence:**
+- The backdoor established persistence by creating a Run key in the registry: HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run\WinSrv.
+
+**Defense Evasion:**
+- The HTA file avoided using PowerShell and instead used VBS.
+- The backdoor employed DLL sideloading using cmpbk32.dll to execute Srvstr.exe.
+
+**Discovery:**
+- The HTA file used WMI to discover installed antivirus products on the victim's system.
+
+**Others:**
+- IOCs include various hashes for files and domains such as webserv-redir.net, heartissuehigh.win, mail.webserv-redir.net, and www.webserv-redir.net.
+- An RTF document was identified as an IOC with the URL hxxp://www.webserv-redir.net/images/67381F0B/-1/5272/3cdc4fcb/main.RTF.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After exploiting CVE-2017-11882 via an RTF document to drop an HTA file, will the HTA file communicate with Dropbox, Amazon S3, or Google Drive for Command and Control before executing the FinalBot backdoor with DLL sideloading for defense evasion?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- The HTA file communicates with the C2 server (webserv-redir.net).
+- The HTA file avoids using PowerShell and uses VBS.
+- The backdoor uses DLL sideloading for defense evasion.
+
+**Evaluation of Answer Choices:**
+- **Choice A: Yes**
+  - The question asks if the HTA file communicates with Dropbox, Amazon S3, or Google Drive for C2.
+  - The CTI report mentions that the HTA file communicates with the C2 server at webserv-redir.net, not Dropbox, Amazon S3, or Google Drive.
+- **Choice B: No**
+  - The CTI report does not mention any communication with Dropbox, Amazon S3, or Google Drive.
+  - The communication is specifically with webserv-redir.net.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The CTI report clearly states that the HTA file communicates with the C2 server at webserv-redir.net.
+- There is no mention of communication with Dropbox, Amazon S3, or Google Drive.
+- The sequence of TTPs described in the report does not include any interaction with these cloud services.
+
+**Final Answer:**
+B: No

@@ -1,0 +1,62 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attackers used a watering hole attack to compromise a website.
+- They added code to redirect visitors to the infecting code, exploiting CVE-2018-8174 (VBScript engine vulnerability).
+
+**Execution:**
+- The malware exploits the VBScript engine vulnerability to download a DLL.
+- The DLL is run in PowerShell.
+- The downloader checks for antivirus software processes and exits if any are found.
+- It also exploits CVE-2015-1701 for Local Privilege Escalation.
+- The second stage involves downloading and executing a backdoor named SLUB.
+
+**Persistence:**
+- The SLUB backdoor achieves persistence by copying itself to ProgramData\update\ and creating a Run registry key with a typo in the ValueName, 'Microsoft Setup Initializazion', to call the export function UpdateMPUnits with rundll32.exe.
+
+**Defense Evasion:**
+- The first stage downloader exits if it detects any antivirus software processes.
+
+**Discovery:**
+- The SLUB backdoor performs discovery by downloading a 'gist' snippet from GitHub and parsing it for commands.
+- It retrieves the username and computer name.
+
+**Collection:**
+- The backdoor supports various commands for data collection, including taking screenshots, listing files, copying files, and uploading files to the file.io website.
+- It collects information from registry keys and creates archives of user's Desktop folders for exfiltration.
+
+**Command and Control:**
+- The backdoor communicates with the attackers via Slack, using hardcoded authentication tokens to post messages and command results to a private Slack channel.
+
+**Exfiltration:**
+- The attackers exfiltrate data by uploading files to the file.io website and posting download links to the Slack channel.
+- They create archive files of user's Desktop folders and build CAB files containing the file tree for exfiltration.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK tactic most likely occurred before the attackers achieved persistence by creating a Run registry key with a typo in the ValueName 'Microsoft Setup Initializazion' to call the export function UpdateMPUnits with rundll32.exe?
+
+**Answer Choices:**
+A: Persistence
+B: Exfiltration
+C: Defense Evasion
+D: Privilege Escalation
+
+#### 3. Compare and Evaluate
+
+- **Persistence (A):** This is the tactic that is being described in the question. It cannot occur before itself.
+- **Exfiltration (B):** Exfiltration typically occurs after the attackers have established a foothold and collected data. It is not a prerequisite for achieving persistence.
+- **Defense Evasion (C):** The downloader checks for antivirus software processes and exits if any are found, which is a defense evasion technique. This occurs before the persistence mechanism is set up.
+- **Privilege Escalation (D):** The malware exploits CVE-2015-1701 for Local Privilege Escalation, which is necessary to achieve persistence by creating a Run registry key. This occurs before the persistence mechanism is set up.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The malware first exploits the VBScript engine vulnerability to download a DLL.
+- The DLL is run in PowerShell and checks for antivirus software processes (Defense Evasion).
+- The malware then exploits CVE-2015-1701 for Local Privilege Escalation (Privilege Escalation).
+- After gaining higher privileges, the malware sets up persistence by creating a Run registry key with a typo in the ValueName (Persistence).
+
+**Final Answer: D: Privilege Escalation**

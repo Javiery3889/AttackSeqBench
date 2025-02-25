@@ -1,0 +1,61 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- Actors sent emails with a malicious Excel file attachment.
+- The Excel file contained a macro that, when enabled, would display a decoy invoice and run malicious code in the background.
+
+**Execution:**
+- The macro installed the ISMAgent payload to `%PUBLIC%\Libraries\servicereset.exe`.
+- A VBScript named `%PUBLIC%\Libraries\OfficeServicesStatus.vbs` was created to execute `servicereset.exe`.
+- A scheduled task named `OfficeServicesStatus` was set to run every three minutes for persistence.
+
+**Defense Evasion:**
+- The attack used a fake compatibility warning and a decoy invoice to minimize suspicion.
+- The macro silently installed the ISMAgent payload while displaying the decoy document.
+
+**Command and Control:**
+- The ISMAgent Trojan used HTTP requests and DNS tunneling to communicate with its C2 server.
+- The C2 server issued commands for system information gathering and network configuration discovery.
+- The Trojan executed these commands using `cmd.exe` and sent the output back to the C2 server via HTTP POST requests.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After the Trojan communicates with its C2 server via HTTP requests and DNS tunneling, is it likely that OilRig will create a scheduled task named 'OfficeServicesStatus' to ensure the persistence of the ISMAgent payload before executing the ISMAgent payload via the VBScript named `%PUBLIC%\Libraries\OfficeServicesStatus.vbs`?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Sequence of TTPs in the CTI Report:**
+1. **Initial Access:** Sending emails with a malicious Excel file.
+2. **Execution:**
+   - The macro installs the ISMAgent payload to `%PUBLIC%\Libraries\servicereset.exe`.
+   - A VBScript named `%PUBLIC%\Libraries\OfficeServicesStatus.vbs` is created to execute `servicereset.exe`.
+   - A scheduled task named `OfficeServicesStatus` is set to run every three minutes for persistence.
+3. **Defense Evasion:** Using a fake compatibility warning and a decoy invoice.
+4. **Command and Control:** Communicating with the C2 server via HTTP requests and DNS tunneling.
+
+**Sequence of TTPs in the Question:**
+- The Trojan communicates with its C2 server.
+- Creating a scheduled task named `OfficeServicesStatus` for persistence.
+- Executing the ISMAgent payload via the VBScript named `%PUBLIC%\Libraries\OfficeServicesStatus.vbs`.
+
+**Evaluation:**
+- The CTI report clearly states that the scheduled task `OfficeServicesStatus` is created to run every three minutes for persistence.
+- The VBScript `%PUBLIC%\Libraries\OfficeServicesStatus.vbs` is created to execute the ISMAgent payload.
+- The sequence in the CTI report indicates that the scheduled task and VBScript are set up during the initial execution phase, not after the Trojan communicates with the C2 server.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The CTI report indicates that the scheduled task and VBScript are created during the initial execution phase to ensure persistence and to execute the ISMAgent payload.
+- The question asks if these steps are likely to occur after the Trojan communicates with the C2 server.
+- Based on the CTI report, the creation of the scheduled task and the execution of the payload via the VBScript are part of the initial setup, not a subsequent action after C2 communication.
+
+**Final Answer:**
+B: No

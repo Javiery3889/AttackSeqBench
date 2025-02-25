@@ -1,0 +1,74 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- Creates an unnamed event object and two new threads.
+- Uses GetMessage to process messages and breaks the loop if the message is WM_ENDSESSION.
+- Creates an anonymous pipe and uses GetStartupInfoA to retrieve the STARTUPINFO structure.
+- Creates a new process to run the systeminfo command and reads the output via ReadFile.
+- Retrieves the list of processes by running the tasklist command and reading the output.
+
+**Defense Evasion:**
+- Uses GetTempPathW to retrieve the %TEMP% directory.
+- Initializes WinINet functions with InternetOpenW, setting the user agent to "Opera".
+- Sets send and receive timeouts to 600 seconds using InternetSetOptionW.
+- Establishes a connection to the C2 server updaterweb[.]com on port 443 (or port 80 if it fails).
+- Uses HttpOpenRequestW to create an HTTP POST request handle and adds an HTTP request header.
+
+**Discovery:**
+- Enumerates files and directories from the Desktop directory using FindFirstFileW and FindNextFileW.
+- Targets directories such as 'C:\Program Files', 'C:\Program Files (x86)', and user-specific AppData folders.
+- Uses SHGetFolderPathW to obtain folder names.
+- Retrieves the NetBIOS name of the local computer and the name of the user associated with the current thread using GetComputerNameA and GetUserNameA.
+- Extracts the volume serial number of the root directory using GetVolumeInformationW.
+
+**Command and Control:**
+- Communicates with the C2 server updaterweb[.]com, sending exfiltrated data in a POST request with the structure "id=<hostname>#Username#<Serial number in decimal>&current=1&total=1&data=<base-64 encoded data>".
+- Downloads a DLL file from the C2 server, loads it using LoadLibraryW, and executes the first ordinal function.
+
+**Exfiltration:**
+- Exfiltrates collected information to the C2 server updaterweb[.]com using an HTTP POST request with the structure "id=<hostname>#Username#<Serial number in decimal>&current=1&total=1&data=<base-64 encoded data>".
+
+**Others:**
+- Uses CryptAcquireContextA to acquire a handle to the Microsoft RSA and AES Cryptographic Provider.
+- Uses CryptCreateHash to create a hash object.
+- Verifies the hash value of a downloaded DLL file against a provided buffer.
+- Creates a file called fvjoik.dll in the %TEMP% directory, populates it with the DLL downloaded from the C2 server, and executes an exported function with ordinal 1.
+- Uses WinExec to delete the DLL file.
+- Retrieves the termination status of the two threads using GetExitCodeThread.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After SkinnyBoy conducts discovery activities by extracting the volume serial number and enumerating user-specific directories and AppData folders, is it likely to automate the collection of data using the CryptBinaryToStringA API for encoding before sending the collected information to the C2 server via an HTTP POST request?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- **Discovery:** SkinnyBoy extracts the volume serial number and enumerates user-specific directories and AppData folders.
+- **Exfiltration:** The collected information is sent to the C2 server using an HTTP POST request with the structure "id=<hostname>#Username#<Serial number in decimal>&current=1&total=1&data=<base-64 encoded data>".
+
+**Analysis:**
+- The report mentions that the data is sent in a base-64 encoded format.
+- The CryptBinaryToStringA API is used to convert binary data to a string, which is a common step in encoding data for transmission.
+- However, the report does not explicitly mention the use of CryptBinaryToStringA. Instead, it focuses on the base-64 encoding of the data.
+
+**Evaluation:**
+- While the report does not explicitly state the use of CryptBinaryToStringA, the base-64 encoding of the data suggests that some form of binary-to-string conversion is necessary.
+- Given the context of the report, it is reasonable to infer that a function like CryptBinaryToStringA could be used to perform this conversion.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The CTI report indicates that the data is base-64 encoded before being sent to the C2 server.
+- Base-64 encoding is a common method for converting binary data to a string format suitable for transmission.
+- The CryptBinaryToStringA API is a standard function used for this purpose in Windows.
+- Although the report does not explicitly mention CryptBinaryToStringA, the need for base-64 encoding strongly suggests that a similar function is used.
+
+**Final Answer:**
+A: Yes

@@ -1,0 +1,67 @@
+Alright, I've got this CTI outline about FIN13, a cyber threat group that's been active since 2016, mainly targeting organizations in Mexico, especially in finance, retail, and hospitality. They're known for long-term intrusions, mapping networks, capturing credentials, and stealing sensitive documents to facilitate fraudulent money transfers. Unlike typical ransomware groups, they use custom passive backdoors and tools to stay in the network for extended periods.
+
+First, I need to understand the attack sequence based on the MITRE ATT&CK tactics mentioned in the outline. Let's break it down:
+
+1. **Reconnaissance**: FIN13 has been tracking targets since 2017, with activities dating back to 2016. They focus on Mexico and specific industries.
+
+2. **Initial Access**: They exploit external servers to deploy web shells and custom malware like BLUEAGAVE and SIXPACK. The specific vulnerabilities aren't clear, but web shells are a consistent entry point.
+
+3. **Execution**: They use JSPRAT for command execution, file operations, and proxying network traffic. Also, they have passive backdoors like BLUEAGAVE that listen for HTTP requests and execute commands.
+
+4. **Persistence**: They use various methods to maintain access, such as replacing legitimate KeePass binaries with trojanized versions to log passwords, and deploying malware like SIXPACK, SWEARJAR, and MAILSLOT for email-based command and control.
+
+5. **Privilege Escalation**: They use common techniques, including ProcDump to dump LSASS process memory and Mimikatz to extract credentials. They also use certutil to launch obfuscated utilities and trojanized KeePass for credential harvesting.
+
+6. **Defense Evasion**: They employ passive backdoors for stealth, chain web shells for complex pivots, and use legitimate utilities like certutil to evade detection. They also use custom droppers and malware with recon functionality.
+
+7. **Credential Access**: They obtain credentials through process memory dumping of LSASS and network sniffing. They target unsecured credentials and use trojanized KeePass to log passwords.
+
+8. **Lateral Movement**: They use WMI to remotely execute commands and move laterally, employing utilities like Invoke-WMIExec and custom web shells like BUSTEDPIPE. They also use Invoke-SMBExec and NIGHTJAR for lateral movement and cross-platform operations.
+
+9. **Collection**: They collect data from network shared drives and stage it locally or remotely, archiving collected data using utilities and libraries, focusing on data that aids in fraudulent transactions.
+
+10. **Command and Control**: They use proxies, application layer protocols, and non-application layer protocols for command and control. They transfer tools into the environment and encode data for communication.
+
+11. **Exfiltration**: They exfiltrate data over web services, using tools like web shells and JSP tools in web-accessible directories to steal targeted data for fraudulent transactions.
+
+Now, the question is: After gaining credentials via memory dumping LSASS and network sniffing, is FIN13 likely to leverage native OS binaries and scripts for gathering information on user accounts as part of their internal reconnaissance before using WMI for lateral movement across the victim network?
+
+Answer choices are A: Yes and B: No.
+
+To answer this, I need to see if the outline suggests that FIN13 uses native OS tools for reconnaissance after obtaining credentials.
+
+Looking back at the outline:
+
+- Under **Privilege Escalation**, it mentions they use ProcDump to dump LSASS process memory and Mimikatz to extract credentials. ProcDump and Mimikatz are not native OS tools; ProcDump is a sysinternals tool, and Mimikatz is a well-known credential extraction tool.
+
+- Under **Defense Evasion**, it mentions they use legitimate utilities like certutil to launch obfuscated utilities. Certutil is a native OS binary.
+
+- Under **Lateral Movement**, they use WMI for remote command execution and lateral movement, employing utilities like Invoke-WMIExec, which is a PowerShell script, and custom web shells.
+
+But specifically for internal reconnaissance after credential access, the outline doesn't explicitly mention using native OS binaries or scripts to gather information on user accounts.
+
+However, in cyber operations, it's common practice after gaining credentials to use those credentials to enumerate user accounts and gather more information about the network before moving laterally. Using native OS tools like net.exe, whoami, systeminfo, etc., is a stealthy way to do this, as these tools are already present on the system and less likely to trigger security alerts.
+
+Given that FIN13 is known for using defense evasion tactics and leveraging legitimate utilities, it's plausible that they would use native OS binaries for reconnaissance.
+
+But to confirm, let's see if the outline provides any information about their use of native tools for reconnaissance.
+
+Looking back:
+
+- Under **Defense Evasion**, it mentions "leveraging legitimate utilities like certutil for detection evasion." This suggests they do use native tools for evasion purposes.
+
+- Also, under **Execution**, they use JSPRAT, which can be used for executing commands, including potentially using native OS tools.
+
+- Under **Lateral Movement**, they use WMI and PowerShell scripts like Invoke-WMIExec, which are built into the OS.
+
+So, while not explicitly stated, there is indication that they use native tools for various activities. Therefore, it's reasonable to infer that they might use native OS binaries and scripts for internal reconnaissance as well.
+
+Given this, the answer would be A: Yes.
+
+But let's consider the alternative.
+
+If I choose B: No, that would imply that FIN13 does not use native OS binaries and scripts for gathering information on user accounts after obtaining credentials. However, given their use of native tools for other activities and the stealth advantages of using such tools, this seems less likely.
+
+Therefore, based on the information provided and logical inference, the most plausible answer is A: Yes.
+
+**Final Answer: A**

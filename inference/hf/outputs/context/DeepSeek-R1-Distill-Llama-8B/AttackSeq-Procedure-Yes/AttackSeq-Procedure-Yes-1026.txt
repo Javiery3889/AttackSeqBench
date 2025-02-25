@@ -1,0 +1,46 @@
+Okay, so I need to figure out whether Gamaredon's malware will scan all drives, including network shared drives, for sensitive data as part of data collection. Let me break this down step by step.
+
+First, I'll look at the CTI outline provided. The outline describes the attack sequence using MITRE ATT&CK tactics. Let's go through each part to understand the group's behavior.
+
+Initial Access: They use spearphishing emails with malicious attachments. So, they start by tricking someone into opening an email with an attachment, which then compromises the system.
+
+Execution: They use various scripts like Batch and VBScript, and they use rundll32 to launch malicious DLLs, which are backdoors. They also execute payloads from C&C servers and rely on users opening email attachments for initial compromise. So, once the backdoor is in place, they can do more.
+
+Persistence: They register modules as scheduled tasks, use Registry Run keys, and the Startup folder to ensure their modules run on each reboot. They also insert malicious macros into documents, so when those documents are opened again, the macros execute, maintaining persistence.
+
+Defense Evasion: They use obfuscation, modify registry keys to disable security mechanisms in Microsoft Office related to macros, use code signing with valid certificates, deobfuscate and decrypt strings in their modules, and add remote templates to documents. They also have a C# compiler module that's obfuscated with csc.exe and then executed.
+
+Discovery: The backdoors automatically list interesting files, like Office documents, found on a system for future exfiltration. So, after compromising a system, the backdoor scans for files that are interesting, such as Office documents, which they can then use for exfiltration.
+
+Lateral Movement: They inject malicious macros into all Word and Excel documents reachable by the compromised system and use Outlook VBA macros to send emails with malicious attachments to other targets within the same organization. So, they spread laterally by using the compromised system to send more emails to other users, infecting more machines.
+
+Command and Control: Uses both HTTP and HTTPS for C&C communication.
+
+Exfiltration: Uploads harvested documents to the C&C server.
+
+Others: They've been active since 2013, targeting Ukrainian institutions, using various tools, not very stealthy, focus on quick data exfiltration. They use many domains for C&C, both free and paid, and change them often. They also use separate domains for different victim groups. They install multiple scripts and executables on each system and keep updating them, making it hard for defenders.
+
+Now, the question is about whether, after inserting malicious macros into existing documents for persistence and using a backdoor to list interesting files like Office documents during discovery, the malware will scan all drives, including network shared drives, for sensitive data.
+
+Looking at the CTI outline, during the Discovery phase, the backdoor lists interesting files, specifically Office documents. So, the backdoor is looking for these files to exfiltrate them. But does this mean it scans all drives, including network shares?
+
+In the Execution phase, they use CreateProcess to launch additional components from C&C servers. This suggests they might be using some form of lateral movement, but in the lateral movement phase, they inject macros into documents and send emails to other targets. So, they might be moving laterally within the network, but does that involve scanning all drives?
+
+In the Persistence phase, they use scheduled tasks and registry entries, but that's more about ensuring their modules run on each boot, not about scanning drives.
+
+The question is about whether the malware scans all drives, including network shares. The CTI outline doesn't explicitly mention scanning all drives, but during discovery, the backdoor lists interesting files, which could imply that it's scanning the local system for specific file types. However, network shares might be a different story.
+
+Wait, in the lateral movement phase, they inject macros into documents and send emails, which suggests they are moving to other systems, but it's not clear if they're scanning all network drives. The CTI doesn't mention scanning network drives, but the question is about whether it's likely.
+
+Given that they use Outlook VBA macros to send emails, they might be using the compromised system's email client to send to other users, but that's internal to the network, not necessarily scanning all network shares. However, during discovery, the backdoor is listing files on the compromised system, but not necessarily network shares.
+
+But the question is about whether they scan all drives, including network shares. The CTI doesn't explicitly state that, but the fact that they're using a backdoor to list files suggests they might be scanning the local system. Network shares would require some form of network scanning, which isn't mentioned here. So, maybe the answer is no, they don't scan all drives, including network shares, because the CTI doesn't mention that.
+
+Alternatively, if the backdoor is on a compromised system, it might have access to network shares if the system is part of a network. But the CTI doesn't specify that they're scanning all network drives, just that they're listing files on the system.
+
+So, based on the CTI, there's no mention of scanning network shares, so the answer is probably No.
+</think>
+
+The CTI outline does not explicitly mention that Gamaredon's malware scans all drives, including network shared drives, for sensitive data. While the backdoor lists interesting files on the compromised system during discovery, there is no indication that it scans network shares. Therefore, it is unlikely that the malware scans all drives, including network shared drives.
+
+Final Answer: B: No

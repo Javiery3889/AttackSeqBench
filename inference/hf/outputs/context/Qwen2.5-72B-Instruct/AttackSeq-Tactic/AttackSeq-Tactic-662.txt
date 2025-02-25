@@ -1,0 +1,70 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- The malicious Office document contains an image file with a message in Vietnamese, asking the victim to enable macros to view the contents.
+- The document has two different base64 blobs inserted in separate tables, with the font size changed to 1 to potentially evade detection.
+- Depending on the victim's system architecture (32-bit or 64-bit), the appropriate base64 encoded blob is decoded and executed.
+
+**Defense Evasion:**
+- The actors reused a VBS decode function published by Motobit to decode base64 blobs.
+- The KerrDown DLL is dropped in the directory 'Users\Administrator\AppData\Roaming\' as 'main_background.png'.
+- The DLL retrieves the payload from a URL, decrypts it using the DES algorithm, and executes it in memory, ensuring that only the KerrDown DLL downloader is saved on the system and the payload is executed directly in memory without being written to the system.
+
+**Command and Control:**
+- The final payload of KerrDown, which was active during the time of analysis, turned out to be a variant of Cobalt Strike Beacon.
+- The KerrDown downloader attempts to download the payload from a URL depending on the OS architecture of the victim machine.
+
+**Others:**
+- Analysis of compile timestamps of KerrDown samples suggests that OceanLotus has been using the downloader since at least March 2018 and continues to actively use it.
+- A pattern in the group's working hours was discerned, indicating a typical 9 AM to 6 PM working pattern in GMT+7, with most samples compiled during this period and on weekdays, suggesting formal working hours and operations likely out of Vietnam or nearby countries.
+- The group's broader geographic and industry-wide target base may indicate the use of similar tools and playbooks against other targets.
+- Palo Alto Networks customers are protected via Indicators of Compromise provided in the report.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK tactic most likely occurred after OceanLotus delivered KerrDown to targets using malicious Office documents with macros and RAR archives containing DLL side-loading?
+
+**Answer Choices:**
+A: Execution
+B: Initial Access
+C: Resource Development
+D: Privilege Escalation
+
+#### 3. Compare and Evaluate
+
+**Sequence of TTPs in the CTI Report:**
+1. **Initial Access:** The attack starts with a malicious Office document that tricks the victim into enabling macros.
+2. **Execution:** The macros decode and execute the base64 blobs.
+3. **Defense Evasion:** The KerrDown DLL is dropped and used to retrieve and execute the payload in memory.
+4. **Command and Control:** The final payload (Cobalt Strike Beacon) is downloaded and executed.
+
+**Question Context:**
+- The question asks about the ATT&CK tactic that occurred after the delivery of KerrDown using malicious Office documents with macros and RAR archives containing DLL side-loading.
+
+**Evaluation of Answer Choices:**
+- **A: Execution:** This is the initial step where the macros in the Office document are executed to decode and run the base64 blobs.
+- **B: Initial Access:** This is the first step where the malicious Office document is delivered to the target.
+- **C: Resource Development:** This is not directly relevant to the sequence described in the report.
+- **D: Privilege Escalation:** This is not explicitly mentioned in the report, but it could be a subsequent step after the initial execution and command and control are established.
+
+Given the sequence described in the report, the most logical next step after the initial access and execution of the malicious Office document would be the **Command and Control** phase, where the final payload (Cobalt Strike Beacon) is downloaded and executed.
+
+However, the question specifically asks for the ATT&CK tactic that occurred after the delivery of KerrDown. The delivery of KerrDown itself is part of the **Execution** phase, and the next logical step is the **Command and Control** phase.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The initial access is achieved through the malicious Office document.
+- The execution phase involves the macros decoding and running the base64 blobs.
+- The defense evasion phase involves the KerrDown DLL being dropped and used to retrieve and execute the payload in memory.
+- The command and control phase involves the final payload (Cobalt Strike Beacon) being downloaded and executed.
+
+Since the question asks about the ATT&CK tactic that occurred after the delivery of KerrDown, the most plausible answer is the **Command and Control** phase.
+
+**Final Answer: A: Execution** (This is incorrect based on the sequence, the correct answer should be Command and Control, but since it is not an option, the closest logical step is Execution, which is the next step after the initial access and delivery of KerrDown).
+
+However, the correct answer based on the sequence and the options provided is:
+
+**Final Answer: D: Privilege Escalation** (This is the closest logical step after the initial access and execution, though not explicitly mentioned in the report).

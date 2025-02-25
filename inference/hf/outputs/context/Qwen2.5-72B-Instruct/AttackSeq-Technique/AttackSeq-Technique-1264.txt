@@ -1,0 +1,59 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- Blind Eagle uses a JavaScript downloader with ActiveXObject to execute PowerShell commands.
+- The script is hosted on Discord CDNs and downloaded from a specific URL.
+
+**Execution:**
+- A PowerShell script loads a DLL from an obfuscated and Base64 encoded string.
+- The DLL contains a method named Bypass() for AMSI bypass.
+- The script checks for and creates a registry key if it doesn't exist.
+- It drops two files: myScript.ps1 and SystemLogin.bat.
+- A VBScript named Login1.vbs is placed in the Startup folder to execute SystemLogin.bat on startup.
+- Another PowerShell script loads the AMSIBypasser DLL and an AES256 Decryptor to decrypt a registry key and execute a new PowerShell script leading to njRAT.
+
+**Persistence:**
+- A VBScript named Login1.vbs is placed in the Startup folder to ensure the execution of SystemLogin.bat upon system startup.
+
+**Command and Control:**
+- The final PowerShell script leads to njRAT, a remote access tool (RAT) that establishes command and control over the victim's computer.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After leveraging an AMSI bypass method using a DLL in PowerShell and before establishing command and control through njRAT, which ATT&CK technique most likely occurred as part of the Defense Evasion tactic?
+
+**Answer Choices:**
+- A: T1565-Data Manipulation
+- B: T1564-Hide Artifacts
+- C: T1036.003-Rename System Utilities
+- D: T1566-Phishing
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- The PowerShell script uses an AMSI bypass method.
+- The script checks for and creates a registry key.
+- It drops files and places a VBScript in the Startup folder.
+- It decrypts a registry key and executes a new PowerShell script leading to njRAT.
+
+**Defense Evasion Techniques:**
+- **T1565-Data Manipulation:** Involves altering data to manipulate the behavior of applications or systems.
+- **T1564-Hide Artifacts:** Involves hiding files, system artifacts, or network traffic to avoid detection.
+- **T1036.003-Rename System Utilities:** Involves renaming system utilities to avoid detection.
+- **T1566-Phishing:** Involves tricking users into providing sensitive information or executing malicious actions.
+
+**Evaluation:**
+- **T1565-Data Manipulation:** Not directly mentioned in the report.
+- **T1564-Hide Artifacts:** The script places a VBScript in the Startup folder and drops files, which could be considered hiding artifacts to avoid detection.
+- **T1036.003-Rename System Utilities:** Not directly mentioned in the report.
+- **T1566-Phishing:** Initial access involves a JavaScript downloader, but the question is about the sequence after AMSI bypass and before C2.
+
+**Most Plausible Sequence:**
+- After the AMSI bypass, the script checks for and creates a registry key, drops files, and places a VBScript in the Startup folder. These actions are consistent with hiding artifacts to avoid detection.
+
+#### 4. Final Answer
+
+**Final Answer: B: T1564-Hide Artifacts**

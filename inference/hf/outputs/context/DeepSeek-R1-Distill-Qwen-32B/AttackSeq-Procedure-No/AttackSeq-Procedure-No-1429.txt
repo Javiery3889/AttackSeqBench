@@ -1,0 +1,22 @@
+Okay, so I'm trying to figure out whether Smooth Operator performs HTTPS-based communication with its C2 servers before or after collecting the domain and account name values from the 3CX config.json file. Let me break this down step by step.
+
+First, I'll look at the CTI report to understand the attack sequence. The report mentions that during the Discovery phase, Smooth Operator collects information from the victim machine. Specifically, it gathers the OS version from SystemVersion.plist and the domain and account name from config.json. Then, during Command and Control, it communicates over HTTPS using a custom encoding. Exfiltration happens via a separate HTTP GET request, not over the C2 channel.
+
+So, the question is about the timing: does it communicate with C2 before or after collecting the domain and account info? The answer choices are Yes or No, where Yes would mean it does communicate first, and No would mean it doesn't.
+
+Looking at the report, the Discovery phase comes before Command and Control. That makes sense because the malware needs to gather information before it can send it out. So, during Discovery, it collects the OS version and the domain/account info. Then, in Command and Control, it starts communicating with the C2 servers.
+
+Wait, but the question is phrased a bit differently. It asks if, after collecting the OS version, Smooth Operator is likely to perform HTTPS-based communication before parsing the config.json. So, does it send data to C2 before or after getting the domain and account info?
+
+From the report, the Discovery phase includes both collecting the OS version and the domain/account info. It doesn't specify the order within the Discovery phase, but it's logical that it would collect all necessary data before sending it. So, it probably collects both pieces of information first and then communicates with C2.
+
+But the question is specifically about whether it communicates before parsing the config.json. If the communication happens after collecting all data, then the answer would be No. If it communicates before, then Yes.
+
+Wait, the report says that during Discovery, it collects the OS version and the domain/account info. Then, during Command and Control, it communicates. So, the communication happens after the data collection. Therefore, it doesn't communicate before parsing the config.json; it does so after.
+
+So, the answer should be No, because it collects all the data first and then communicates.
+</think>
+
+The Smooth Operator malware first collects information during the Discovery phase, including the OS version and domain/account info from config.json. Communication with C2 servers occurs afterward during the Command and Control phase. Therefore, it does not communicate before parsing the config.json.
+
+Final Answer: B: No

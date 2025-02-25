@@ -1,0 +1,77 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- Creates an unnamed event object and two new threads.
+- Uses GetMessage to process messages and breaks the loop if the message is WM_ENDSESSION.
+- Creates an anonymous pipe and uses GetStartupInfoA to retrieve the STARTUPINFO structure.
+- Creates a new process to run the systeminfo command and reads the output via ReadFile.
+- Retrieves the list of processes by running the tasklist command and reading the output.
+
+**Defense Evasion:**
+- Uses GetTempPathW to retrieve the %TEMP% directory.
+- Initializes WinINet functions with InternetOpenW, setting the user agent to "Opera".
+- Sets send and receive timeouts to 600 seconds using InternetSetOptionW.
+- Establishes a connection to the C2 server updaterweb[.]com on port 443 (or port 80 if it fails).
+- Uses HttpOpenRequestW to create an HTTP POST request handle and adds an HTTP request header.
+
+**Discovery:**
+- Enumerates files and directories from the Desktop directory using FindFirstFileW and FindNextFileW.
+- Targets directories such as 'C:\Program Files', 'C:\Program Files (x86)', and user-specific AppData folders.
+- Uses SHGetFolderPathW to obtain folder names.
+- Retrieves the NetBIOS name of the local computer and the name of the user associated with the current thread using GetComputerNameA and GetUserNameA.
+- Extracts the volume serial number of the root directory using GetVolumeInformationW.
+
+**Command and Control:**
+- Communicates with the C2 server updaterweb[.]com, sending exfiltrated data in a POST request with the structure "id=<hostname>#Username#<Serial number in decimal>&current=1&total=1&data=<base-64 encoded data>".
+- Downloads a DLL file from the C2 server, loads it using LoadLibraryW, and executes the first ordinal function.
+
+**Exfiltration:**
+- Exfiltrates collected information to the C2 server updaterweb[.]com using an HTTP POST request with the structure "id=<hostname>#Username#<Serial number in decimal>&current=1&total=1&data=<base-64 encoded data>".
+
+**Others:**
+- Uses CryptAcquireContextA to acquire a handle to the Microsoft RSA and AES Cryptographic Provider.
+- Uses CryptCreateHash to create a hash object.
+- Verifies the hash value of a downloaded DLL file against a provided buffer.
+- Creates a file called fvjoik.dll in the %TEMP% directory, populates it with the DLL downloaded from the C2 server, and executes an exported function with ordinal 1.
+- Uses WinExec to delete the DLL file.
+- Retrieves the termination status of the two threads using GetExitCodeThread.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After SkinnyBoy conducts discovery activities by extracting the volume serial number and enumerating user-specific directories and AppData folders, is it likely to send the collected information to the C2 server via an HTTP POST request only before automating the collection of data using the CryptBinaryToStringA API for encoding?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Discovery Activities:**
+- Extracts the volume serial number using GetVolumeInformationW.
+- Enumerates user-specific directories and AppData folders using FindFirstFileW, FindNextFileW, and SHGetFolderPathW.
+
+**Exfiltration:**
+- Sends collected information to the C2 server using an HTTP POST request with the structure "id=<hostname>#Username#<Serial number in decimal>&current=1&total=1&data=<base-64 encoded data>".
+
+**Cryptographic Activities:**
+- Uses CryptAcquireContextA and CryptCreateHash for cryptographic operations.
+- Verifies the hash value of a downloaded DLL file.
+- Creates a file called fvjoik.dll in the %TEMP% directory and executes an exported function with ordinal 1.
+- Uses WinExec to delete the DLL file.
+
+**Analysis:**
+- The CTI report clearly states that SkinnyBoy exfiltrates collected information to the C2 server using an HTTP POST request after conducting discovery activities.
+- The report does not mention the use of CryptBinaryToStringA for encoding data before exfiltration. Instead, it mentions the use of base-64 encoding in the POST request structure.
+- The cryptographic activities described in the "Others" section are related to verifying the hash of a downloaded DLL and not to encoding the exfiltrated data.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- SkinnyBoy conducts discovery activities by extracting the volume serial number and enumerating user-specific directories and AppData folders.
+- It then exfiltrates the collected information to the C2 server using an HTTP POST request.
+- The report does not indicate that it uses CryptBinaryToStringA for encoding data before exfiltration.
+- The exfiltration uses base-64 encoding, as specified in the POST request structure.
+
+**Final Answer: B: No**

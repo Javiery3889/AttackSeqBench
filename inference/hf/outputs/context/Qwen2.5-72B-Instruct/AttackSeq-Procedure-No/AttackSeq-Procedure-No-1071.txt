@@ -1,0 +1,38 @@
+### Step-by-Step Analysis
+
+1. **Analyze the CTI Report:**
+   - **Initial Access:**
+     - Tropic Trooper used exploits for CVE-2017-11882 or CVE-2018-0802 to execute commands.
+     - They downloaded and installed an installer package (.msi) from a remote server.
+   - **Execution:**
+     - The installer dropped a backdoor installer (UserInstall.exe) and deleted itself.
+     - UserInstall.exe dropped a normal sidebar.exe, a malicious loader (wab32res.dll), and an encrypted configuration file.
+     - UserInstall.exe used BITSadmin to create a job and launch sidebar.exe.
+     - The malicious loader used DLL hijacking on sidebar.exe to launch dllhost.exe and inject a DLL backdoor into it.
+   - **Persistence:**
+     - The backdoor decrypts the configuration file and uses SSL to connect to C&C servers.
+   - **Defense Evasion:**
+     - Tropic Trooper used DLL hijacking to evade antivirus detection.
+     - The installer dropped files into the Apple/Update directory and created a hidden directory (UFile).
+     - The loader executed dllhost.exe and injected a malicious DLL file (the backdoor) into this process.
+
+2. **Analyze the Question:**
+   - The question asks whether TClient will use SSL to connect to Tropic Trooper's C&C server only before the Defense Evasion phase.
+
+3. **Compare and Evaluate:**
+   - **Sequence of TTPs:**
+     - **Initial Access:** Exploits CVE-2017-11882 or CVE-2018-0802 to download and install the .msi file.
+     - **Execution:** The installer drops and executes the backdoor installer, which in turn drops and launches the malicious loader and sidebar.exe.
+     - **Persistence:** The backdoor decrypts the configuration file and uses SSL to connect to C&C servers.
+     - **Defense Evasion:** DLL hijacking is used to load the malicious wab32res.dll through a benign file (sidebar.exe) to evade detection.
+   - **Critical Context:**
+     - The backdoor uses SSL to connect to C&C servers, which is part of the Persistence phase.
+     - The Defense Evasion phase involves DLL hijacking to load the malicious DLL and evade detection.
+
+4. **Reasoning:**
+   - The use of SSL to connect to the C&C server is described in the Persistence phase, not before the Defense Evasion phase.
+   - The Defense Evasion phase involves techniques to avoid detection, such as DLL hijacking, which occurs after the backdoor is already installed and operational.
+   - Therefore, TClient will use SSL to connect to the C&C server after the Defense Evasion phase, not before it.
+
+### Final Answer
+Final Answer: B: No

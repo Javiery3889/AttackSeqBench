@@ -1,0 +1,27 @@
+Okay, so I'm trying to figure out whether the Milestone backdoor will communicate with a C2 server over a non-standard port before exfiltrating data through the same C2 channel. Let me break this down step by step.
+
+First, I'll look at the CTI report provided. The report details an attack by Deep Panda, a Chinese APT group, using the Log4Shell vulnerability in VMware Horizon servers. They deployed a backdoor called Milestone, which is based on Gh0st RAT and packed with Themida. The backdoor creates a service named msupdate2 and masquerades as newdev.dll.
+
+Looking at the MITRE ATT&CK tactics mentioned in the report:
+
+1. **Resource Development**: They used a stolen digital certificate from another group, Winnti, to sign their tools.
+2. **Initial Access**: Exploited Log4Shell to gain access, using PowerShell scripts to download and execute more files.
+3. **Execution**: They ran PowerShell scripts and a batch file to download syn.exe and 1.dll (Milestone backdoor).
+4. **Persistence**: The backdoor copies itself to %APPDATA%\newdev.dll and creates a service in the registry.
+5. **Privilege Escalation**: The backdoor creates a new admin user and escalates privileges.
+6. **Defense Evasion**: They used a kernel rootkit called Fire Chili, which hides malicious artifacts using DKOM and is signed with stolen certificates. They also used Themida for packing and masquerading.
+7. **Discovery**: The backdoor can gather system info, discover files/directories, and capture screens.
+8. **Exfiltration**: Data is exfiltrated over the C2 channel.
+
+The question is about whether, after using system info discovery and screen capture, the backdoor will communicate over a non-standard port before exfiltration.
+
+From the report, under Exfiltration, it says the data is exfiltrated over the C2 channel. It doesn't specify the port used. However, in the Defense Evasion section, it mentions that the rootkit hides network connections. Typically, APT groups use non-standard ports to avoid detection because standard ports are more likely to be monitored.
+
+Also, the use of a kernel rootkit suggests they are trying to hide their activities, which would include using non-standard ports. Additionally, the fact that they used stolen certificates and packed their tools with Themida indicates a focus on evading detection, which often involves non-standard communication channels.
+
+So, putting this together, it's likely that the C2 communication uses non-standard ports to avoid being detected by network monitoring tools that might be watching standard ports like 80 or 443. Therefore, the Milestone backdoor would probably communicate over a non-standard port before exfiltrating data.
+</think>
+
+The analysis of the CTI report indicates that the Milestone backdoor likely uses non-standard ports for C2 communication to evade detection, as evidenced by the use of a kernel rootkit and other evasion techniques. Therefore, the answer is:
+
+Final Answer: A: Yes

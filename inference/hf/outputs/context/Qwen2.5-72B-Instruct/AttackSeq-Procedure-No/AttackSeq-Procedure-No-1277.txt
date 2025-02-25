@@ -1,0 +1,61 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- APT10 used DLL Side-Loading to load a malicious DLL (jli.dll) using a legitimate executable (jjs.exe).
+- This method was used to inject a shellcode into svchost.exe.
+
+**Execution:**
+- The malicious DLL (jli.dll) mapped svchost.bin to memory and decrypted it, revealing the shellcode.
+- The shellcode was injected into svchost.exe.
+- The injection process involved creating a process in a suspended state, allocating memory, writing the shellcode, and executing it remotely.
+
+**Defense Evasion:**
+- APT10's loader used a decryption and injection mechanism to evade defenses.
+- The PlugX payload replaced the DOS and NT headers' magic values with 'VX' to prevent detection.
+- Dummy calls to GetForegroundWindow API function were used to generate noise and evade detection.
+
+**Command and Control:**
+- APT10 used C&C servers located in South Korea.
+- The domains used for C&C were registered in Hong Kong and resolved to IP addresses associated with other domains used by APT10.
+
+**Others:**
+- APT10 delivered different payloads, including PlugX and Quasar RATs.
+- The group used typosquatting domain names and targeted Southeast Asia.
+- The threat actor is still active and may be testing or conducting short-lived attacks.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After using the Run registry key to ensure persistence, is APT10 likely to inject decrypted shellcode into svchost.exe using DLL Side-Loading for execution only after this persistence step?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Extracted Attack Sequence:**
+1. **Initial Access:** DLL Side-Loading to load a malicious DLL (jli.dll) using jjs.exe.
+2. **Execution:** Decryption and injection of shellcode into svchost.exe.
+3. **Defense Evasion:** Use of decryption and injection mechanisms, and dummy API calls to evade detection.
+4. **Command and Control:** Use of C&C servers in South Korea.
+
+**Persistence:**
+- The report does not explicitly mention the use of the Run registry key for persistence. However, it is a common technique used by APT groups to ensure persistence.
+
+**Sequence Analysis:**
+- The report describes the initial access and execution steps in detail, but it does not specify the order of these steps relative to persistence.
+- The question asks if the injection of decrypted shellcode into svchost.exe using DLL Side-Loading happens only after ensuring persistence via the Run registry key.
+
+**Reasoning:**
+- The report does not provide a clear sequence indicating that the injection of shellcode happens only after ensuring persistence.
+- In typical APT attack sequences, initial access and execution are often the first steps to gain a foothold in the system. Persistence mechanisms like the Run registry key are usually set up after initial access and execution to ensure the malware remains active even after system reboots.
+- Given the lack of explicit information in the report about the order of persistence and injection, it is more plausible that the injection of shellcode happens as part of the initial execution phase, and persistence is set up afterward.
+
+#### 4. Final Answer
+
+**Final Answer: B: No**
+
+The injection of decrypted shellcode into svchost.exe using DLL Side-Loading is likely to occur as part of the initial execution phase, and persistence mechanisms like the Run registry key are typically set up afterward. Therefore, the answer is No.

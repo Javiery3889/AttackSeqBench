@@ -1,0 +1,26 @@
+Okay, so I'm trying to figure out whether TG1021 established command and control by deploying an inline hook on a validation function within the IIS request handling process, allowing NodeIISWeb to provide backdoor functionality after they accessed shared folders via SMB and dropped the NodeIISWeb web shell loader. 
+
+First, I'll go through the CTI outline provided. Let's break down the attack sequence step by step.
+
+1. **Reconnaissance**: TG1021 used some tools like SharpHound to map targets without writing binaries to disk.
+2. **Initial Access**: They exploited IIS servers with a 0-day vulnerability, gaining access.
+3. **Execution**: They ran a memory-resident malware called NodeIISWeb, which is in-memory.
+4. **Persistence**: They used web shells and a custom framework. NodeIISWeb intercepts HTTP requests. They also removed disk tools to stay stealthy.
+5. **Privilege Escalation**: Used PotatoEx.dll and other methods for escalation.
+6. **Defense Evasion**: They interfered with logging and evaded EDRs. Removed tools after use.
+7. **Credential Access**: Altered webpages to save credentials in clear text.
+8. **Discovery**: Used SharpHound and PowerSploit via memory loading without writing to disk.
+9. **Lateral Movement**: Accessed internal servers via SMB with compromised credentials, dropped NodeIISWeb via SMB to move laterally.
+
+The question is about whether after dropping NodeIISWeb via SMB, they set up an inline hook in IIS to create a backdoor. 
+
+From the outline, NodeIISWeb is a web shell and part of their custom framework. It operates in memory, intercepting HTTP requests. The persistence method involved using web shells and the NodeIISWeb framework, which intercepts requests. They didn't use traditional persistence like writing files, which is why they could stay stealthy.
+
+When they dropped NodeIISWeb via SMB, it's for lateral movement. The question is about establishing command and control through an inline hook. The outline mentions that NodeIISWeb handles HTTP requests, which suggests it's acting as a backdoor. So, setting up an inline hook would allow it to intercept and modify requests, providing a command and control mechanism.
+
+Since the framework is designed to intercept and handle HTTP requests, it's likely that this is how they maintain control. Therefore, the answer should be yes.
+</think>
+
+The analysis indicates that TG1021's NodeIISWeb framework intercepts HTTP requests, acting as a backdoor. Deploying an inline hook aligns with this functionality, enabling command and control. Thus, the answer is:
+
+Final Answer: A: Yes

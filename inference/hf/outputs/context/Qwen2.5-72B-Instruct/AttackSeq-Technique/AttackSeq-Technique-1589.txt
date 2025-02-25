@@ -1,0 +1,70 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- T9000 malware delivered via an RTF file exploiting CVE-2012-1856 and CVE-2015-1641.
+- Initial shellcode stage locates and executes a secondary shellcode stub.
+- Secondary shellcode stub decrypts and executes an embedded payload.
+- Payload creates a temporary file in the %TEMP% folder and executes it using WinExec.
+
+**Execution:**
+- T9000 uses igfxtray.exe to sideload a malicious DLL, hccutils.dll.
+- hccutils.dll performs security product checks and initiates the next stage of execution.
+- Malware uses three techniques for persistence, including setting registry keys and injecting the ResN32.dll library into the explorer.exe process.
+
+**Defense Evasion:**
+- T9000 avoids 24 identified security products.
+- Uses a multi-stage installation process with checks to detect analysis.
+- Creates mutexes and named events to ensure only one instance is running.
+
+**Collection:**
+- Captures data about the infected system and steals files from removable media.
+- Targets Skype users, capturing encrypted data, screenshots, and communications.
+
+**Command and Control:**
+- Communicates with a C2 server using a binary protocol over a specified port.
+- Supports proxy usage for victims behind web proxies.
+
+**Exfiltration:**
+- Exfiltrates various types of data, including screenshots, Skype communications, and files from removable drives.
+- Compresses, encrypts, and stores data in specific directories or sends it to the C2 server.
+
+#### 2. Analyze the Question
+
+**Question:**
+After performing DLL sideloading with igfxtray.exe and initiating further execution of its payload, which ATT&CK technique most likely ensured T9000's components would run or load with every user mode process spawned following system reboot?
+
+**Answer Choices:**
+A: T1497-Virtualization/Sandbox Evasion
+B: T1036.003-Rename System Utilities
+C: T1547-Boot or Logon Autostart Execution
+D: T1543-Create or Modify System Process
+
+#### 3. Compare and Evaluate
+
+**T1497-Virtualization/Sandbox Evasion:**
+- This technique is used to detect and avoid virtualized environments and sandboxes.
+- Not relevant to ensuring components run after system reboot.
+
+**T1036.003-Rename System Utilities:**
+- This technique involves renaming system utilities to avoid detection.
+- Not relevant to ensuring components run after system reboot.
+
+**T1547-Boot or Logon Autostart Execution:**
+- This technique ensures that malware components run automatically when the system boots or the user logs on.
+- Relevant to ensuring components run after system reboot.
+
+**T1543-Create or Modify System Process:**
+- This technique involves creating or modifying system processes to maintain persistence.
+- While it can be used for persistence, it is more about modifying existing processes rather than ensuring components run at boot or logon.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The CTI report mentions that T9000 uses three techniques for persistence, including setting registry keys and injecting the ResN32.dll library into the explorer.exe process.
+- Setting registry keys is a common method to ensure that malware components run at boot or logon.
+- The technique T1547-Boot or Logon Autostart Execution aligns with this description, as it ensures that the malware components are executed automatically when the system boots or the user logs on.
+
+**Final Answer:**
+C: T1547-Boot or Logon Autostart Execution

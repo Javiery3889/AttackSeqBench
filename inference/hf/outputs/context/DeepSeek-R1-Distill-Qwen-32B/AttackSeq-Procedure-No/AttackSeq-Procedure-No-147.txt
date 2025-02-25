@@ -1,0 +1,32 @@
+Okay, so I'm trying to figure out whether TG1021 accessed shared folders on internal web servers over SMB using compromised domain credentials and dropped the NodeIISWeb web shell loader via SMB for lateral movement only after establishing command and control with an inline hook on a validation function within the IIS request handling process. 
+
+First, I need to understand the attack sequence from the CTI report. Let me go through each tactic step by step.
+
+Reconnaissance: They used tools like SharpHound and PowerSploit to map the target network. These are loaded into memory without writing to disk, which helps in evading detection.
+
+Initial Access: They exploited IIS servers using deserialization attacks, including a 0-day. So they got in through these vulnerabilities.
+
+Execution: They executed memory-resident malware called NodeIISWeb. This malware intercepts HTTP requests, which suggests it's part of their command and control mechanism.
+
+Persistence: They used web shells and a custom framework. NodeIISWeb is part of this, and they removed disk tools after use, so they're focused on in-memory operations for stealth.
+
+Privilege Escalation: They used PotatoEx.dll and other techniques to escalate privileges, which would help them gain higher-level access within the network.
+
+Defense Evasion: They interfered with logging, evaded EDRs, and used in-memory techniques to stay hidden. They also removed tools after use.
+
+Credential Access: They modified login pages to steal credentials, which they saved in plaintext. This gives them domain credentials, which are useful for lateral movement.
+
+Discovery: They used SharpHound and PowerSploit to map the network, which would help them find targets for lateral movement.
+
+Lateral Movement: They accessed shared folders over SMB using the stolen domain credentials and dropped NodeIISWeb via SMB to compromise more servers. They also used exploits for lateral movement.
+
+Now, the question is about the sequence. It says that after establishing C2 with an inline hook on a validation function in IIS, allowing NodeIISWeb to provide backdoor functionality, did they then access shared folders and drop the web shell via SMB?
+
+From the report, the lateral movement happened after establishing a foothold on an external IIS server. So the sequence would be: initial access, execution, persistence, then lateral movement. The C2 establishment (inline hook) is part of the execution or persistence phase. Once they have that, they can move laterally.
+
+So the answer is likely yes, because the report states that after establishing the foothold, they used SMB with credentials and dropped the web shell. Therefore, the sequence makes sense.
+</think>
+
+The attack sequence indicates that after establishing command and control through NodeIISWeb, TG1021 proceeded to use stolen credentials for lateral movement via SMB, which aligns with the report's description.
+
+Final Answer: A: Yes

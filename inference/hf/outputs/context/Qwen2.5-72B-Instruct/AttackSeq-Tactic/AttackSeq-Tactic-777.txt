@@ -1,0 +1,65 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- The Chrome exploit vector involved chaining two patched vulnerabilities, CVE-2019-5782 and an unnamed Chrome bug, to execute custom shellcode.
+- The shellcode de-obfuscated strings, initialized a network connection, and downloaded a payload named 'dropper.dll' from a C&C server.
+- The dropper.dll then checked for security software presence and, if none were detected, downloaded and executed three additional malware samples.
+- An Internet Explorer exploit vector using CVE-2020-0674 was also employed, which ran a PowerShell loader to infect victims with the same three malware variants.
+
+**Privilege Escalation:**
+- The PowerShell loader used in the Internet Explorer exploit vector could instruct the download and execution of an LPE binary exploiting CVE-2019-1458, potentially allowing the backdoors to execute with system privileges.
+
+**Defense Evasion:**
+- The attackers implemented checks for security software during malware deployment to avoid detection. If any security software from a predefined list was detected, the malware would abort execution.
+
+**Discovery:**
+- The SLUB variant used in the campaign interacted with a Mattermost server to collect information about the infected machines.
+- It executed a series of commands to exfiltrate system information and captured screenshots, which were then sent back to the attacker-controlled Mattermost server.
+
+**Command and Control:**
+- The SLUB malware variant communicated with a Mattermost server using HTTP on port 443.
+- It created individual channels for each infected machine and used a notification channel for real-time updates on new infections.
+
+**Exfiltration:**
+- The SLUB malware variant exfiltrated a significant amount of system information from infected machines to the Mattermost server.
+- This included executing commands to gather system details and capturing screenshots.
+
+**Others:**
+- The campaign used GNUBOARD CMS on compromised websites, which had known RCE vulnerabilities.
+- The attackers set up their own Mattermost server, which provided them control over the infrastructure and avoided the risk of having their operations disrupted by third-party services.
+- The Mattermost server installation date of March 10, 2020, suggests the start of the 'mm' (SLUB) samples' activity.
+- The campaign used multiple C&C servers, seven samples, and exploits for four N-day bugs, indicating a well-resourced and capable group behind the operation.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK tactic most likely occurred after the attackers used watering hole tactics with exploits for CVE-2020-0674 and CVE-2019-5782 to compromise websites and deliver malware?
+
+**Answer Choices:**
+A: Execution
+B: Credential Access
+C: Initial Access
+D: Exfiltration
+
+#### 3. Compare and Evaluate
+
+- **Initial Access (C):** This tactic involves the methods used to gain an initial foothold in a network. The report mentions that the attackers used watering hole tactics with exploits for CVE-2020-0674 and CVE-2019-5782 to compromise websites and deliver malware. This is the initial step in the attack sequence.
+- **Execution (A):** After gaining initial access, the next logical step is to execute the malware. The report describes how the shellcode was executed to download and run additional payloads.
+- **Credential Access (B):** This tactic involves techniques to obtain credentials from the victim. The report does not mention any specific credential access techniques.
+- **Exfiltration (D):** This tactic involves techniques to steal data from the victim. The report mentions exfiltration, but it occurs after the malware has been executed and the system has been compromised.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+1. **Initial Access (C):** The attackers used watering hole tactics with exploits for CVE-2020-0674 and CVE-2019-5782 to compromise websites and deliver malware. This is the first step in the attack sequence.
+2. **Execution (A):** After gaining initial access, the attackers executed the shellcode to download and run additional payloads. This is the next logical step in the attack sequence.
+3. **Privilege Escalation:** The PowerShell loader used in the Internet Explorer exploit vector could instruct the download and execution of an LPE binary exploiting CVE-2019-1458.
+4. **Defense Evasion:** The attackers implemented checks for security software to avoid detection.
+5. **Discovery:** The SLUB variant collected information about the infected machines.
+6. **Command and Control:** The SLUB malware communicated with a Mattermost server.
+7. **Exfiltration:** The SLUB malware exfiltrated system information and screenshots.
+
+Given the sequence of events, the most likely tactic that occurred after the initial access is **Execution**.
+
+**Final Answer: A: Execution**

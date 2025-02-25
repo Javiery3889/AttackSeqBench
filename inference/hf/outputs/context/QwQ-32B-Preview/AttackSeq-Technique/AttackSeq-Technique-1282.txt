@@ -1,0 +1,109 @@
+Alright, I've got this CTI outline about an attack attributed to Tropic Trooper, also known as KeyBoy. They're using some pretty specific tactics, and I need to figure out which ATT&CK technique likely happened after they used DLL hijacking to evade antivirus detection.
+
+First, let's break down the CTI outline step by step.
+
+**Initial Access:**
+
+- They're exploiting CVE-2017-11882 or CVE-2018-0802, which are vulnerabilities in Microsoft Office's Equation Editor.
+
+- Through these exploits, they download an installer package (.msi) and install it on the system using `msiexec`.
+
+**Execution:**
+
+- The installer drops a backdoor installer (`UserInstall.exe`), which then deletes itself.
+
+- `UserInstall.exe` uses `BITSadmin` to create a job and launch `sidebar.exe`, which is a legitimate Windows Gadget tool.
+
+- The malicious loader (`wab32res.dll`) is dropped and uses DLL hijacking on `sidebar.exe` to launch `dllhost.exe`, another legitimate file.
+
+- The loader then injects a DLL backdoor into `dllhost.exe`.
+
+- There are also malicious documents that have the backdoor dropper embedded, so they don't need to download anything from the internet.
+
+**Persistence:**
+
+- The backdoor loads and decrypts an encrypted configuration file.
+
+- It uses SSL to connect to C&C servers.
+
+**Command and Control:**
+
+- The backdoor, TClient, uses SSL to communicate with the C&C server.
+
+- C&C server addresses and other configurations are not hardcoded, allowing for easy updates.
+
+- TClient uses symmetric encryption to decrypt its configuration and custom SSL libraries for C&C communication.
+
+**Others:**
+
+- Tropic Trooper uses exploit-laden Office documents, often themed around job vacancies in sensitive organizations.
+
+- The MSI file drops files into `C:\ProgramData\Apple\Update\`, including a hidden directory `UFile`.
+
+- They use DLL hijacking to load `wab32res.dll` through `sidebar.exe` to evade AV detection.
+
+- The backdoor uses custom SSL libraries and has a recently registered SSL certificate that expires in a year.
+
+Now, the question is: Which ATT&CK technique most likely occurred after Tropic Trooper used DLL hijacking to evade antivirus detection by loading malicious `wab32res.dll` through a legitimate process like `sidebar.exe`?
+
+The answer choices are:
+
+A: T1564 - Hide Artifacts
+
+B: T1574.011 - Services Registry Permissions Weakness
+
+C: T1072 - Software Deployment Tools
+
+D: T1037.004 - RC Scripts
+
+Let's look at each one:
+
+**A: T1564 - Hide Artifacts**
+
+This technique involves an adversary attempting to hide the artifacts of their presence on a system. This could include hiding files, processes, or other indicators from defensive tools or system monitoring.
+
+Given that they've already used DLL hijacking to load a malicious DLL via a legitimate process, it's plausible that they would want to further hide their activities. Maybe they're hiding the process or the DLL itself to avoid detection.
+
+**B: T1574.011 - Services Registry Permissions Weakness**
+
+This is about exploiting weak permissions on service registry keys to modify services and gain persistence or execute code.
+
+While persistence is mentioned in the outline, it's not directly related to what happens after DLL hijacking. The persistence mechanism described involves loading the backdoor and connecting to C&C, but not specifically modifying service registry permissions.
+
+**C: T1072 - Software Deployment Tools**
+
+This technique involves using legitimate software deployment tools to spread malware within an organization.
+
+The outline mentions using MSI files for installation, which could be considered a software deployment tool. However, the question is specifically about what happens after DLL hijacking, not about the initial installation method.
+
+**D: T1037.004 - RC Scripts**
+
+This is about using remote access tools or remote management protocols to execute scripts on remote systems.
+
+While the backdoor might allow for remote execution, the question is about what happens immediately after DLL hijacking, not necessarily about remote script execution.
+
+Considering the sequence of events:
+
+1. Initial access through Office exploit.
+
+2. Download and install MSI.
+
+3. Backdoor installer drops files.
+
+4. Use `BITSadmin` to launch `sidebar.exe`.
+
+5. DLL hijacking to load `wab32res.dll` into `dllhost.exe`.
+
+6. Inject backdoor DLL into `dllhost.exe`.
+
+After this DLL hijacking step, the next logical step would be to establish persistence and set up command and control communication.
+
+However, the question is specifically asking about what ATT&CK technique occurred after the DLL hijacking for evasion.
+
+Given that, option A: T1564 - Hide Artifacts, seems the most plausible because after evading antivirus detection through DLL hijacking, the adversary would likely want to further hide their activities to maintain persistence and avoid detection.
+
+Options B, C, and D don't directly relate to the immediate steps following DLL hijacking for evasion.
+
+Therefore, the most likely answer is A: T1564 - Hide Artifacts.
+
+**Final Answer: A**

@@ -1,0 +1,40 @@
+### Step-by-Step Analysis
+
+1. **Analyze the CTI Report:**
+   - **Initial Access:** The attack started with the delivery of an ISO file containing a zip file with malicious scripts.
+   - **Execution:** Various VBScripts and batch files were executed, including:
+     - `install.vbs` -> `resolve.dns`
+     - `update.vbs` -> `stopedge.bat`
+     - `activate.vbs` -> HTTP request and content retrieval
+     - `unactivate.vbs` -> Exfiltration through POST request
+     - `stopedge.bat` -> Scheduling `install.vbs` and managing file deletions
+     - `resolvedns.bat` -> Download from C2 server
+     - `versioninfo.bat` -> Collecting and exfiltrating data
+   - **Persistence:** `stopedge.bat` scheduled `install.vbs` to run every 33 minutes if `paycom.ini` was present.
+   - **Defense Evasion:** Scripts were heavily obfuscated, and `stopedge.bat` managed file deletions.
+   - **Discovery:** `versioninfo.bat` discovered information about the user's computer.
+   - **Collection:** `versioninfo.bat` collected information from the user's computer.
+   - **Command and Control:** `activate.vbs` and `resolvedns.bat` communicated with the C2 server.
+
+2. **Analyze the Question:**
+   - The question asks whether the Konni APT Group is likely to send the collected data through `unactivate.vbs` before exfiltrating it via a POST request.
+
+3. **Compare and Evaluate:**
+   - **Collection and Exfiltration:**
+     - The `versioninfo.bat` script collects information about the user's computer.
+     - The `unactivate.vbs` script is capable of exfiltration through a POST request.
+   - **Sequence of Actions:**
+     - `versioninfo.bat` collects data.
+     - `unactivate.vbs` is used for exfiltration.
+   - **Logical Flow:**
+     - The report indicates that `versioninfo.bat` collects data and prepares it for exfiltration.
+     - The `unactivate.vbs` script is specifically mentioned as being capable of exfiltration through a POST request.
+     - It is logical to conclude that the collected data would be sent through `unactivate.vbs` for exfiltration.
+
+4. **Step-by-Step Reasoning:**
+   - The CTI report clearly states that `versioninfo.bat` collects information and prepares it for exfiltration.
+   - The `unactivate.vbs` script is designed to exfiltrate data using a POST request.
+   - The sequence of actions described in the report aligns with the question's scenario, where the collected data is sent through `unactivate.vbs` before exfiltration.
+
+### Final Answer
+Final Answer: A: Yes

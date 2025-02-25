@@ -1,0 +1,76 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Reconnaissance:**
+- TeamTNT uses the image `pause-amd64:3.4` to conduct reconnaissance.
+- The image is deployed on Kubernetes clusters and uses a shell script as its entry point.
+- The script downloads a coin miner from a server in Germany.
+- The script scans for open Docker API endpoints using the `masscan` tool.
+- The script attempts to kill competitor images using `docker rm` commands.
+
+**Initial Access:**
+- TeamTNT spreads malware via exposed Docker API servers.
+- A new access vector involves the use of an open Weave Scope service.
+- Weave Scope, when exposed to the Internet without authentication, allows attackers to run shell commands on the pods or nodes in the cluster, leading to compromise.
+
+**Execution:**
+- The main payload, a coin miner, is executed after being downloaded and saved on the host as `/usr/sbin/docker-update`.
+- The attributes of the miner are changed to immutable.
+- The miner is executed to perform cryptocurrency mining.
+
+**Others:**
+- Azure Security Center (ASC) detects the attack by monitoring the behavior of the AKS management layer and the containers.
+- Recommendations include using Azure Policy for Kubernetes to restrict and audit sensitive actions and deploying images from trusted registries only.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After leveraging exposed Weave Scope services for initial access and executing a coin miner saved as `/usr/sbin/docker-update`, which ATT&CK technique most likely occurred when TeamTNT scanned for open Docker API endpoints and employed `iplogger.org` to track infected hosts?
+
+**Answer Choices:**
+- A: T1613-Container and Resource Discovery
+- B: T1562.003-Impair Command History Logging
+- C: T1059-Command and Scripting Interpreter
+- D: T1007-System Service Discovery
+
+#### 3. Compare and Evaluate
+
+**Reconnaissance and Initial Access:**
+- TeamTNT uses exposed Weave Scope services for initial access.
+- The coin miner is executed and saved as `/usr/sbin/docker-update`.
+
+**Scanning for Open Docker API Endpoints:**
+- The script uses `masscan` to scan for open Docker API endpoints.
+- This activity aligns with the technique of discovering and identifying resources within the environment.
+
+**Tracking Infected Hosts:**
+- TeamTNT uses `iplogger.org` to track infected hosts.
+- This activity is related to maintaining awareness of the compromised systems and their status.
+
+**Evaluating Answer Choices:**
+- **A: T1613-Container and Resource Discovery**
+  - This technique involves identifying and mapping out containers and resources within the environment.
+  - The use of `masscan` to scan for open Docker API endpoints fits this description.
+
+- **B: T1562.003-Impair Command History Logging**
+  - This technique involves preventing the logging of commands to avoid detection.
+  - There is no mention of command history logging in the report.
+
+- **C: T1059-Command and Scripting Interpreter**
+  - This technique involves using command-line interfaces and scripts to execute commands.
+  - While the script is used to download and execute the coin miner, the question specifically asks about scanning for open Docker API endpoints and tracking infected hosts.
+
+- **D: T1007-System Service Discovery**
+  - This technique involves identifying system services and their configurations.
+  - The report does not mention the discovery of system services, but rather the discovery of open Docker API endpoints.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The script uses `masscan` to scan for open Docker API endpoints, which is a form of resource discovery.
+- The use of `iplogger.org` to track infected hosts is a method to maintain awareness of the compromised systems.
+- The most relevant technique that aligns with these activities is T1613-Container and Resource Discovery.
+
+**Final Answer:**
+A: T1613-Container and Resource Discovery

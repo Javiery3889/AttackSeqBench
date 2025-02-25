@@ -1,0 +1,63 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The initial access was through a malicious installer named 20SPEED-VPN-v9.2.exe.
+- The installer placed spyware components in the %LOCALAPPDATA%\Microsoft\WindowsApps directory and launched sysCrt32.exe.
+
+**Execution:**
+- sysCrt32.exe ensures persistence and adds the WindowsApps folder to the %PATH% environment variable.
+- It sets up scheduled tasks to run sysBus32.exe every 3 hours.
+- sysBus32.exe downloads and executes the second stage from the C2 server.
+- Other executables like libCache32.exe, libTemp32.exe, and libchrome.exe perform keylogging, clipboard logging, and Chrome password extraction, respectively.
+
+**Persistence:**
+- Persistence is established by adding the WindowsApps folder to the %PATH% environment variable and setting up scheduled tasks to run sysBus32.exe every 3 hours.
+
+**Credential Access:**
+- libchrome.exe queries Google Chrome's SQLite databases to log usernames and passwords.
+- It uses stolen tokens from Local State and Login Data files to decrypt the stored passwords.
+
+**Command and Control:**
+- The C2 servers belong to SecondEye and are hosted on Novinhost.
+- The IP used by the initial execution flow is 213.232.124.157, and the other IP used by the additional payloads is 94.130.247.148.
+- The malware uses curl.exe to access the FTP servers.
+
+**Exfiltration:**
+- The exfiltration process is handled by sysUp32.bat, which collects all files created by the components and uploads them to the FTP server.
+- It also exfiltrates Chrome passwords and crypto-wallet data for various applications.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK technique most likely occurred after libchrome.exe supported credential access by decrypting stored passwords from Local State and Login Data files during the attack sequence?
+
+**Answer Choices:**
+A: T1115-Clipboard Data
+B: T1598.002-Spearphishing Attachment
+C: T1560.003-Archive via Custom Method
+D: T1053-Scheduled Task/Job
+
+#### 3. Compare and Evaluate
+
+**libchrome.exe and Credential Access:**
+- libchrome.exe is responsible for decrypting stored passwords from Chrome's Local State and Login Data files.
+
+**Next Steps in the Attack Sequence:**
+- After credential access, the next logical steps in the attack sequence would be to ensure persistence and exfiltrate the stolen data.
+
+**Evaluating the Answer Choices:**
+- **A: T1115-Clipboard Data** - This technique involves collecting data from the clipboard, which is not directly related to the next steps after credential access.
+- **B: T1598.002-Spearphishing Attachment** - This technique involves sending spearphishing emails with attachments, which is not relevant to the next steps after credential access.
+- **C: T1560.003-Archive via Custom Method** - This technique involves archiving data, which could be a step in the exfiltration process but is not the immediate next step after credential access.
+- **D: T1053-Scheduled Task/Job** - This technique involves setting up scheduled tasks to ensure persistence, which is a logical next step after credential access to maintain long-term access to the system.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- After libchrome.exe decrypts the stored passwords, the next logical step is to ensure that the malware can maintain persistence on the system.
+- The report mentions that the spyware sets up scheduled tasks to run sysBus32.exe every 3 hours, which is a clear indication of the T1053-Scheduled Task/Job technique.
+
+**Final Answer:**
+D: T1053-Scheduled Task/Job

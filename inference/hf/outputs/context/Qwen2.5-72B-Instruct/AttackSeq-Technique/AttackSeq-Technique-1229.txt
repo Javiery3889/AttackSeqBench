@@ -1,0 +1,71 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Reconnaissance:**
+- The Inception attackers use a two-stage spear phishing process.
+- Initial reconnaissance spear phish to gather information.
+- Second spear phish containing a remote template to deliver a payload.
+
+**Initial Access:**
+- Exploit a year-old Office vulnerability, CVE-2017-11882.
+- Use remote templates in Microsoft Word to load an external template when the document is opened.
+
+**Execution:**
+- Deploy a PowerShell backdoor named POWERSHOWER.
+- POWERSHOWER cleans up forensic evidence after itself.
+- Fingerprint the machine, upload information to the C&C, and potentially run a secondary payload.
+
+**Persistence:**
+- POWERSHOWER sets up persistence by writing itself to %AppData%\Microsoft\Word\log.ps1.
+- Use a run key in the registry.
+
+**Discovery:**
+- POWERSHOWER collects system information on the infected machine and sends it to the C2 server.
+
+**Command and Control:**
+- POWERSHOWER communicates with a C2 server, sending system information and receiving instructions.
+- Enters a communications loop after a reboot, performing actions based on the status code of a GET request.
+
+**Others:**
+- Palo Alto Networks' Wildfire detects all current Inception remote template documents and the downloaded CVE-2017-11882 RTFs with malware verdicts.
+- AutoFocus customers can track associated samples with the InceptionRemoteTemplate and PowerShower.
+- Traps blocks all files associated with this campaign.
+- Indicators of Compromise include various remote template documents, PowerShower samples, and IP addresses associated with Inception Remote Template documents.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK technique most likely occurred after the Inception attackers used anti-forensics techniques during the dropper process to prevent clues from being left on disk or in the registry?
+
+**Answer Choices:**
+A: T1574.005-Executable Installer File Permissions Weakness
+B: T1137-Office Application Startup
+C: T1070-Indicator Removal
+D: T1553-Subvert Trust Controls
+
+#### 3. Compare and Evaluate
+
+**Relevant Information from the CTI Report:**
+- POWERSHOWER cleans up forensic evidence after itself.
+- This indicates the use of anti-forensics techniques to prevent clues from being left on disk or in the registry.
+
+**Evaluating Answer Choices:**
+- **A: T1574.005-Executable Installer File Permissions Weakness**
+  - This technique involves exploiting weak file permissions to gain execution. It does not directly relate to anti-forensics or cleaning up forensic evidence.
+- **B: T1137-Office Application Startup**
+  - This technique involves using Office application startup to achieve persistence. It does not directly relate to anti-forensics or cleaning up forensic evidence.
+- **C: T1070-Indicator Removal**
+  - This technique involves removing or altering indicators of compromise to avoid detection. This aligns with the report's mention of POWERSHOWER cleaning up forensic evidence.
+- **D: T1553-Subvert Trust Controls**
+  - This technique involves subverting trust controls, such as code signing. It does not directly relate to anti-forensics or cleaning up forensic evidence.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The CTI report explicitly states that POWERSHOWER cleans up forensic evidence after itself.
+- This aligns with the ATT&CK technique T1070-Indicator Removal, which involves removing or altering indicators of compromise to avoid detection.
+- The other answer choices do not directly relate to the anti-forensics techniques described in the report.
+
+**Final Answer:**
+C: T1070-Indicator Removal

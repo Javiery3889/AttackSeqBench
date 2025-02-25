@@ -1,0 +1,18 @@
+Okay, so I need to figure out whether the MSIL/Crimson malware is likely to execute native Windows functions like GetFileAttributesW and GetSystemInfo before establishing command and control using a custom TCP protocol. Let me break this down step by step.
+
+First, I'll look at the CTI report provided. The report describes an attack where two malicious emails were sent with weaponized RTF documents exploiting CVE-2012-0158. This exploit drops an encoded PE file named svchost.exe, which is a downloader. The malware, MSIL/Crimson, uses a custom TCP protocol for C&C communication. It's mentioned that the malware is modular, with some modules relying on the RAT component for exfiltration. The report also notes that infections occur in stages, starting with a downloader, and that Crimson can perform various actions like keylogging, webcam spying, and stealing emails.
+
+Now, the question is about whether the malware executes specific Windows functions before establishing C&C. The functions in question are GetFileAttributesW and GetSystemInfo. These are common Windows API functions that malware often uses to gather system information. GetFileAttributesW retrieves information about a file, and GetSystemInfo gets details about the system, like processor type and memory.
+
+Looking at the attack sequence: the initial access is via the RTF exploit dropping a downloader. The downloader likely installs the main malware, which is MSIL/Crimson. Once installed, the malware would need to establish a connection to the C&C server. Before that, it's typical for malware to perform some reconnaissance on the infected system to determine if it's in a virtualized environment, check system configuration, etc. This is often done using these kinds of API calls.
+
+The report mentions that the malware is modular and that the RAT component is used for exfiltration. It also says that some modules lack C&C capability, so they rely on the RAT. This suggests that the initial stages involve establishing a connection, which would require knowing the system's details to avoid detection or to tailor the attack.
+
+So, putting it together: after the initial access, the downloader is dropped. It likely executes these Windows functions to gather system info before setting up the C&C communication. This makes sense because the malware needs to know it's on a real system before it starts communicating, to avoid analysis in a sandbox or VM.
+
+Therefore, the answer should be yes, it's likely that these functions are executed before establishing C&C.
+</think>
+
+The MSIL/Crimson malware likely executes native Windows functions such as GetFileAttributesW and GetSystemInfo before establishing command and control. These functions help gather system information, which is crucial for the malware to avoid detection and tailor its behavior. The modular nature of the malware and the initial downloader stage support this sequence.
+
+Final Answer: A

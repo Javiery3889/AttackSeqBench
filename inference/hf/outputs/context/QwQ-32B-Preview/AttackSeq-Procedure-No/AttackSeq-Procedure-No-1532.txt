@@ -1,0 +1,49 @@
+Alright, I've got this CTI outline about an attack by the Konni APT Group, and I need to answer a question based on it. Let's break this down step by step.
+
+First, I need to understand the attack sequence as described in the CTI outline. It starts with initial access through an ISO file downloaded from an in-the-wild URL. This ISO contains a zip file with malicious scripts. So, the attack begins with delivering these malicious files to the target's system.
+
+Next, there's the execution phase. Several VBScripts and batch files are involved here. There's 'install.vbs', 'update.vbs', 'activate.vbs', 'unactivate.vbs', 'stopedge.bat', 'resolvedns.bat', and 'versioninfo.bat'. Each of these seems to have specific roles:
+
+- 'install.vbs' deobfuscates and executes 'resolve.dns'.
+
+- 'update.vbs' is similar to 'install.vbs' and executes 'stopedge.bat'.
+
+- 'activate.vbs' sends an HTTP request and saves the retrieved content.
+
+- 'unactivate.vbs' can exfiltrate data through a POST request.
+
+- 'stopedge.bat' schedules 'install.vbs' to run every 33 minutes if 'paycom.ini' exists and manages file deletions.
+
+- 'resolvedns.bat' downloads a file from the C2 server.
+
+- 'versioninfo.bat' collects information about the user's computer and exfiltrates data using 'unactivate.vbs'.
+
+So, it's clear that there's a sequence of scripts being executed, each with specific tasks related to maintaining persistence, collecting information, and communicating with the C2 server.
+
+Now, under persistence, it mentions that 'stopedge.bat' schedules 'install.vbs' to run every 33 minutes if 'paycom.ini' is present, which helps maintain persistent access to the target system.
+
+Defense evasion is achieved through obfuscation of the scripts and managing deletions of certain files after execution to avoid leaving traces.
+
+Discovery involves 'versioninfo.bat' gathering information about the system, like directory listings, IP addresses, running processes, and system details.
+
+Collection is handled by 'versioninfo.bat' collecting this information and preparing it for exfiltration.
+
+Command and control communications are managed by 'activate.vbs' and 'resolvedns.bat', which interact with the C2 server to send requests and download files.
+
+Now, moving on to the question: "After collecting various information about the user's computer using 'versioninfo.bat', is the Konni APT Group likely to upload the collected data to dedicated per-victim folders in Dropbox before exfiltrating it via a POST request?"
+
+The answer choices are simply "Yes" or "No."
+
+To answer this, I need to look back at the CTI outline and see if there's any mention of Dropbox or any file upload to cloud storage services.
+
+Scanning through the outline, I don't see any reference to Dropbox or any other cloud storage service. The exfiltration method mentioned is via a POST request, which is typical for C2 communications.
+
+The 'unactivate.vbs' script is capable of exfiltration through a POST request, and 'versioninfo.bat' uses 'unactivate.vbs' to exfiltrate data. So, based on the information provided, the exfiltration method is through a POST request to the C2 server, not through uploading to Dropbox.
+
+Therefore, it doesn't seem likely that the Konni APT Group is uploading data to Dropbox before exfiltrating it via a POST request. The outline doesn't mention any such activity, and the exfiltration method is clearly stated as a POST request.
+
+Additionally, involving an additional step like uploading to Dropbox would introduce unnecessary risk and complexity. It's more straightforward and less detectable to exfiltrate data directly through C2 channels.
+
+Hence, the answer should be "No."
+
+**Final Answer: B**

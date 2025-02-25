@@ -1,0 +1,18 @@
+Okay, so I'm trying to figure out whether TClient will use email for C2 via an Office macro after Tropic Trooper used DLL hijacking during the defense evasion phase. Let me break this down step by step.
+
+First, from the CTI outline, I know that Tropic Trooper uses malicious Office documents to deliver malware. These documents don't need to download anything because the backdoor is embedded in them. The initial access is through exploits like CVE-2017-11882 or 2018-0802, which are in Microsoft Office's Equation Editor. So, the attack starts with a malicious document that triggers the installation of malware when opened.
+
+During execution, the system configuration file (in.sys) drops a backdoor installer (UserInstall.exe), which then deletes itself. This installer drops several files: sidebar.exe, a malicious loader (wab32res.dll), and an encrypted config file. The UserInstall.exe uses BITSadmin to create a job and launch sidebar.exe. The loader then does DLL hijacking on sidebar.exe, making it launch a malicious DLL via dllhost.exe. This backdoor is injected into dllhost.exe, allowing persistence.
+
+Looking at persistence, the backdoor uses an encrypted config file and SSL to connect to C&C servers. For defense evasion, Tropic Trooper uses DLL hijacking because wab32res.dll is loaded by the benign sidebar.exe, making it hard for antivirus to detect. They also create a hidden directory (UFile) in ProgramData\Apple\Update, which is a ruse.
+
+Now, the question is about whether TClient (which I assume is the backdoor) will use email for C2 via an Office macro after DLL hijacking during defense evasion. The options are Yes or No.
+
+From the outline, the malicious documents don't need to download anything because the backdoor is already embedded. So, during the Command and Control phase, the backdoor would communicate via SSL to the C&C server. There's no mention of using email or macros in the C2 communication. The backdoor is more about loading via DLLs and using encrypted config files with SSL.
+
+Emails are typically used for initial delivery, like the malicious Office document being sent via email, but the C2 communication is done through the backdoor's SSL connection. So, after the initial infection, the backdoor doesn't need to use email for C2; it's already established a connection. Therefore, it's unlikely that TClient would use email for C2 via macros after DLL hijacking.
+</think>
+
+The backdoor established during the attack communicates via SSL to the C&C server, not via email or macros. Thus, the answer is No.
+
+Final Answer: B: No

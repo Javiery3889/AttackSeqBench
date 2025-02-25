@@ -1,0 +1,53 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- A malicious executable was retrieved.
+- The executable dropped a batch file (install.bat) and a cabinet file (data.cab) in a new folder in C:\ProgramData with a random name.
+- The cabinet file contained partially encrypted malicious shellcode and a DLL to execute it.
+
+**Execution:**
+- The malicious executable executed the batch file, decompressing and executing the DLL file.
+- The shellcode decrypted the rest of the encrypted data using a single byte key in an XOR loop, revealing a C&C IP address and port.
+- The shellcode's main goal was to load and execute attacker plugins in memory.
+
+**Persistence:**
+- Persistence was achieved by creating a new service or a new registry key, depending on the privileges that the malware has.
+- The registry key for persistence was 'rundll32.exe_malicious_DLL_path' in 'HKCU\Software\Microsoft\Windows\CurrentVersion\Run'.
+
+**Others:**
+- Tools such as password dumpers, Monero cryptocurrency miners, PE injectors, and a modified version of Gh0st RAT (named 'Noodles') were found.
+- The 'Mozilla' tool was the primary tool used in the attack.
+- Both 'Mozilla' and 'Noodles' could listen on given ports, but only 'Mozilla' could connect to a bind port.
+- The tools supported SSL and TCP, with a protocol named 'WINNET' not yet supported.
+- Malicious files were found in directories C:\ProgramData\HIDMgr, C:\ProgramData\Rascon, and C:\ProgramData\TrkSvr, with service names HIDMgr, RasconMan, and TrkSvr.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After persistence is achieved via creating a new service or registry key, is it likely that the Iron Tiger malware will encrypt network traffic using Rivest Cipher 4 (RC4) to facilitate command-and-control communication?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- The shellcode decrypted data using a single byte key in an XOR loop.
+- The tools supported SSL and TCP.
+- The 'Mozilla' tool, which was the primary tool used, supported SSL and TCP but did not mention RC4 specifically.
+
+**Evaluation:**
+- The report mentions the use of XOR for decryption, which is a simple and fast method but not as secure as RC4.
+- The tools support SSL and TCP, which are more secure and commonly used for encrypted communication.
+- There is no explicit mention of RC4 in the report.
+
+**Reasoning:**
+- Given that the tools support SSL and TCP, it is more likely that the malware would use these more secure and widely supported protocols for command-and-control communication.
+- The use of RC4 is not mentioned, and the report does not provide any evidence to suggest that RC4 is used for network traffic encryption.
+
+#### 4. Final Answer
+
+**Final Answer: B: No**

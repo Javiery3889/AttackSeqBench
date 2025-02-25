@@ -1,0 +1,40 @@
+Okay, so I'm trying to figure out which ATT&CK technique was used before TeamTNT's script used iplogger.org to track infected hosts. Let me break this down step by step.
+
+First, I'll look at the CTI outline provided. The attack starts with reconnaissance using a new image, pause-amd64:3.4, which is deployed on Kubernetes clusters. The script uses masscan to scan for open Docker API endpoints. So, the initial step is about discovering these endpoints, which probably involves network scanning.
+
+Then, the script deploys the same image on exposed endpoints. This seems like it's exploiting exposed services, which might relate to some network discovery or enumeration. After that, the script tries to kill competitor images using docker rm commands, which is an attempt to remove other containers, possibly to eliminate competition or clean up.
+
+Next, the main payload, a coin miner, is downloaded and saved as /usr/sbin/docker-update. The miner is then made immutable and executed. So, the execution phase involves deploying and running the miner, which is a form of malicious activity on the host.
+
+Now, the question is about what happened before the script used iplogger.org. The script uses iplogger.org to track the number of infected hosts and obtain their details. So, before that, TeamTNT must have already established some network access or presence on the host.
+
+Looking at the options, the possible techniques are:
+
+A: T1542.004 - ROMMONkit
+B: T1049 - System Network Connections Discovery
+C: T1595 - Active Scanning
+D: T1087 - Account Discovery
+
+I know that T1049 involves using tools to discover and exploit network connections, which could involve scanning for open ports or services, like the masscan mentioned in the outline. T1595 is active scanning, which is similar to masscan. T1087 is about account discovery, which doesn't seem relevant here. T1542.004 is related to ROMMONkit, which I'm less familiar with, but I think it's more about credential dumping or privilege escalation.
+
+The CTI outline mentions that the script uses masscan to scan for Docker API endpoints, which is active scanning (T1595). After that, it uses the image to deploy on exposed endpoints, which would be exploiting those connections. So, the sequence would be: first, active scanning to find exposed Docker endpoints, then using those to deploy the image, and then execute the miner.
+
+The question is about what happened before using iplogger.org. Since the script uses iplogger after deploying the miner, the step before would be the active scanning to find the endpoints. So, the technique used before would be T1595 - Active Scanning.
+</think>
+
+The correct answer is C: T1595-Active Scanning.
+
+**Step-by-Step Reasoning:**
+
+1. **Identify the sequence from the CTI outline:**
+   - The script uses masscan (active scanning) to find exposed Docker API endpoints.
+   - Deploys the image on these endpoints.
+   - Runs the coin miner after deployment.
+
+2. **Understand the question context:**
+   - The script uses iplogger.org after deploying the miner to track infected hosts.
+
+3. **Match the steps:**
+   - The action before using iplogger is the active scanning (masscan) to find exposed endpoints.
+
+**Final Answer: C: T1595-Active Scanning**

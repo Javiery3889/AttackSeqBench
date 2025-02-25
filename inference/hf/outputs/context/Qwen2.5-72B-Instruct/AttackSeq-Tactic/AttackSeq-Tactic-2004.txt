@@ -1,0 +1,59 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The dropper uses an RTF file to exploit CVE-2017-1882 on eqnedt32.exe.
+- The exploit maps a large OLE object in memory and drops files using a PE.
+- The largest object is a new exe that overwrites the first eqnedt32.exe, decoded by the shellcode from the exploit.
+
+**Execution:**
+- The PE dropper creates a directory named IISWebClient in %appdata%.
+- It decrypts a buffer in its address space with XOR, decompresses, and drops three files: iassvcs.exe (signed by Symantec), sqlite3.dll (signed by av 360), and RasTls.dll (the backdoor).
+- The dropper executes iassvcs.exe for side loading and persistence, reloading the executable with each command line execution.
+
+**Persistence:**
+- The dropper ensures persistence by executing iassvcs.exe, which is reloaded with each executable or command line execution.
+
+**Defense Evasion:**
+- The dropper uses a side loading technique by executing iassvcs.exe to maintain persistence and evade defenses.
+
+**Others:**
+- The dropper was submitted by an ID from Kazakhstan, suggesting that Goblin Panda may be targeting this region.
+- Dropped files include RasTls.dll, iassvcs.exe, and sqlite3.dll with their respective SHA256 hashes.
+- DNS requests were made to skylineqaz.crabdance.com and xn--ylineqaz-y25ja.crabdance.com.
+- Connections were made to IP 154.223.167.20, and HTTP/HTTPS requests were sent to https://skylineqaz.crabdance.com/.
+- The domains tele.zyns.com, uzwatersource.dynamic-dns.net, and tajikstantravel.dynamic-dns.net are also mentioned in relation to Goblin Panda and Icefog activities.
+
+#### 2. Analyze the Question
+
+**Question:**
+After the dropper evades defenses by utilizing a side loading technique and establishes persistence through the execution of iassvcs.exe, which ATT&CK tactic most likely occurred next as the backdoor communicated with the domain skylineqaz.crabdance.com?
+
+**Answer Choices:**
+A: Command and Control
+B: Privilege Escalation
+C: Impact
+D: Defense Evasion
+
+#### 3. Compare and Evaluate
+
+**Sequence of TTPs:**
+1. **Initial Access:** Exploiting CVE-2017-1882 to drop the dropper.
+2. **Execution:** Creating a directory, decrypting, decompressing, and dropping files.
+3. **Persistence:** Ensuring persistence by executing iassvcs.exe.
+4. **Defense Evasion:** Using side loading to maintain persistence and evade defenses.
+
+**Next Step:**
+- The report mentions that the backdoor (RasTls.dll) communicated with the domain skylineqaz.crabdance.com.
+- Communication with a domain is a key indicator of the **Command and Control** (C2) tactic, where the malware establishes a channel to receive commands from the attacker.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The dropper has already achieved Initial Access, Execution, Persistence, and Defense Evasion.
+- The next logical step in the attack sequence is for the backdoor to establish a Command and Control (C2) channel to communicate with the attacker's server.
+- The report explicitly mentions that the backdoor communicated with the domain skylineqaz.crabdance.com, which aligns with the C2 tactic.
+
+**Final Answer:**
+A: Command and Control

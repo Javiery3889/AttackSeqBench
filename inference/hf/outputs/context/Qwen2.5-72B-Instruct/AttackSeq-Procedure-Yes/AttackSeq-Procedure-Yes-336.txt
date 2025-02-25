@@ -1,0 +1,61 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- The Winnti Group uses a backdoor called skip-2.0, launched via a VMProtected launcher.
+- The backdoor is executed with the SessionEnv service and likely uses DLL hijacking for persistence.
+
+**Persistence:**
+- The skip-2.0 backdoor achieves persistence by exploiting a DLL hijacking vulnerability, installed at C:\Windows\System32\TSVIPSrv.DLL.
+- This DLL is loaded by the standard Windows SessionEnv service at system startup.
+
+**Defense Evasion:**
+- The backdoor employs multiple hooks in the sqllang.dll service to bypass authentication and maintain stealth.
+- It blocks event logging and uses Winnti's custom packer and VMProtected launcher for evasion.
+
+**Discovery:**
+- The Inner-Loader component lists running processes to find the process running MSSQL Server, indicating a process discovery technique.
+
+**Others:**
+- ESET researchers have been tracking the Winnti Group, known for high-profile supply-chain attacks.
+- The backdoor targets MSSQL Server 11 and 12, allowing stealthy connections using a 'magic password' and hiding these connections from logs.
+- The backdoor shares similarities with PortReuse and ShadowPad, using the same custom packer and VMProtected launcher.
+- The backdoor's functionality includes hooking functions related to authentication and event logging in sqllang.dll to allow persistent and undetected access.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After the Inner-Loader component of the skip-2.0 backdoor discovers MSSQL processes through process discovery techniques, is it likely that the skip-2.0 backdoor will allow unauthorized access and manipulate event logging before enabling manipulation of stored data, thereby impacting the integrity of the data?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Sequence of TTPs in the CTI Report:**
+1. **Execution:** The backdoor is launched via a VMProtected launcher and executed with the SessionEnv service.
+2. **Persistence:** The backdoor achieves persistence through DLL hijacking.
+3. **Defense Evasion:** The backdoor uses hooks in sqllang.dll to bypass authentication and block event logging.
+4. **Discovery:** The Inner-Loader component lists running processes to find MSSQL Server processes.
+5. **Impact:** The backdoor allows stealthy connections and hides these connections from logs, potentially impacting data integrity.
+
+**Sequence of TTPs in the Question:**
+1. **Discovery:** The Inner-Loader component discovers MSSQL processes.
+2. **Defense Evasion:** The backdoor allows unauthorized access and manipulates event logging.
+3. **Impact:** The backdoor manipulates stored data, impacting data integrity.
+
+**Evaluation:**
+- The CTI report clearly states that the backdoor uses hooks in sqllang.dll to bypass authentication and block event logging, which aligns with the "manipulate event logging" and "allow unauthorized access" steps in the question.
+- The report also mentions that the backdoor allows stealthy connections and hides these connections from logs, which can be interpreted as impacting data integrity by allowing unauthorized access and manipulation of stored data.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The CTI report confirms that the skip-2.0 backdoor uses process discovery to find MSSQL processes.
+- It then employs hooks in sqllang.dll to bypass authentication and block event logging, which aligns with the "manipulate event logging" and "allow unauthorized access" steps.
+- The backdoor's ability to hide connections and allow stealthy access suggests that it can manipulate stored data, impacting data integrity.
+
+**Final Answer:**
+A: Yes

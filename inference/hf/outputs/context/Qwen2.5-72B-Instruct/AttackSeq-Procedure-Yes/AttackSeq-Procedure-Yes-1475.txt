@@ -1,0 +1,68 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attackers used a watering hole attack to compromise a website.
+- They added code to redirect visitors to the infecting code, exploiting CVE-2018-8174.
+
+**Execution:**
+- The malware exploits the VBScript engine vulnerability to download a DLL.
+- The DLL is run in PowerShell.
+- The downloader checks for antivirus software processes and exits if any are found.
+- It exploits CVE-2015-1701 for Local Privilege Escalation.
+- The second stage involves downloading and executing the SLUB backdoor.
+
+**Persistence:**
+- The SLUB backdoor achieves persistence by copying itself to ProgramData\update\ and creating a Run registry key with a typo in the ValueName, 'Microsoft Setup Initializazion', to call the export function UpdateMPUnits with rundll32.exe.
+
+**Privilege Escalation:**
+- The downloader exploits CVE-2015-1701 to acquire Local Privilege Escalation.
+
+**Defense Evasion:**
+- The first stage downloader exits if it detects any antivirus software processes.
+
+**Discovery:**
+- The SLUB backdoor performs discovery by downloading a 'gist' snippet from GitHub and parsing it for commands to execute.
+- It looks for lines starting with '^' and ending with '$', ignoring other lines.
+- The backdoor also retrieves the username and computer name.
+
+**Collection:**
+- The backdoor supports various commands for data collection, including taking screenshots, listing files, copying files, and uploading files to the file.io website.
+- It collects information from registry keys and creates archives of user's Desktop folders for exfiltration.
+
+**Command and Control:**
+- The backdoor communicates with the attackers via Slack, using two hardcoded authentication tokens to post messages and command results to a private Slack channel.
+- It also uses the Slack API to post messages.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After the SLUB backdoor performs discovery by downloading a 'gist' snippet from GitHub and parsing it for commands to execute, is it likely that the attackers will exfiltrate data by creating archive files of user's Desktop folders and building CAB files before posting download links to the Slack channel?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- The SLUB backdoor performs discovery by downloading a 'gist' snippet from GitHub and parsing it for commands.
+- The backdoor supports various commands for data collection, including creating archives of user's Desktop folders for exfiltration.
+- The backdoor communicates with the attackers via Slack and can post messages and command results to a private Slack channel.
+
+**Evaluation:**
+- The report explicitly states that the backdoor can create archives of user's Desktop folders for exfiltration.
+- The backdoor uses Slack to communicate with the attackers and can post messages and command results.
+- However, the report does not mention the creation of CAB files specifically.
+
+**Reasoning:**
+- The backdoor has the capability to create archives of user's Desktop folders.
+- The backdoor uses Slack to communicate and post results.
+- The creation of CAB files is not mentioned in the report, but the creation of archives is.
+
+#### 4. Final Answer
+
+Given the information in the CTI report, it is likely that the attackers will exfiltrate data by creating archive files of user's Desktop folders and posting download links to the Slack channel. The creation of CAB files is not explicitly mentioned, but the creation of archives is.
+
+**Final Answer: A: Yes**

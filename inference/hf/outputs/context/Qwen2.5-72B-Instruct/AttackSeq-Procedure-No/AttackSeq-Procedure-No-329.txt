@@ -1,0 +1,58 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The adversary obtained SSH access to the target system.
+- Used wget to fetch malware samples from a specific IP address.
+- The malware binary had a date string in its naming convention, suggesting it was compiled on the day it was downloaded.
+
+**Execution:**
+- The custom loader loads the Derusbi malware into memory.
+- Derusbi drops the Turbo Linux Kernel Module (LKM) to disk, loads it into the kernel, and deletes it from disk to avoid detection.
+- The client uses Turbo to hide relevant user space processes.
+
+**Persistence:**
+- The Turbo LKM provides persistence by hiding processes, making detection of the attacker's malicious applications more difficult.
+
+**Defense Evasion:**
+- The Derusbi malware and Turbo kernel module employ cloaking and anti-analysis techniques.
+- The Turbo LKM modifies the system's global call table, particularly pertaining to process IDs (PIDs), to hide and unhide processes.
+- The LKM disables the CPU's control register zero's (CR0) write protection to modify the system call table.
+
+**Command and Control:**
+- The malware binds to a raw socket on a random source port between 31800 and 31900 and beacons to the preconfigured destination port 443.
+- The traffic is not SSL/TLS encrypted.
+- A backup communication method with HTTP beacon is used, with content obfuscated using variable 4-byte XOR keys.
+- C2 interactions include HTTP POST requests to /photos/photo.asp and responses from the server.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After using the Turbo Linux Kernel Module (LKM) to modify the system's global call table and evade detection, is it likely that Derusbi will bind to a raw socket and initiate communication with the C2 server before gathering system information about the victim host?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- The Turbo LKM is used to modify the system's global call table and hide processes.
+- The malware binds to a raw socket and initiates communication with the C2 server.
+- The C2 communication is established before any mention of gathering system information.
+
+**Evaluation:**
+- The report indicates that the Turbo LKM is used to modify the system's global call table and evade detection.
+- After this, the malware binds to a raw socket and initiates communication with the C2 server.
+- The report does not explicitly state that the malware gathers system information before initiating C2 communication, but it is implied that the C2 communication is a primary action after gaining persistence and evading detection.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+1. The Turbo LKM is used to modify the system's global call table and hide processes, ensuring persistence and evasion.
+2. The malware then binds to a raw socket and initiates communication with the C2 server.
+3. The report does not mention gathering system information before this step, suggesting that C2 communication is a primary action.
+
+**Final Answer:**
+A: Yes

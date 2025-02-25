@@ -1,0 +1,56 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- Malicious email with a subject line "Wanna see the Game of Thrones in advance?"
+- Microsoft Word attachment "game of thrones preview.docx" containing an embedded .LNK object.
+- The .LNK object runs a PowerShell script to download and install the 9002 RAT.
+
+**Execution:**
+- The .LNK object executes a PowerShell command to download two files:
+  - The first file contains the 9002 RAT shellcode.
+  - The second file is a .LNK file for persistence.
+- The persistence .LNK file is stored in the Startup directory as UpdateCheck.lnk.
+- This .LNK file contains a PowerShell script that decodes and injects the 9002 RAT shellcode into a newly created wabmig.exe process.
+
+**Persistence:**
+- The .LNK file in the Startup directory ensures the 9002 RAT remains active after system restarts.
+
+**Defense Evasion:**
+- The 9002 RAT communicates over HTTP and fake SSL.
+- It uses a custom algorithm and base64-encoding to send data to the C&C.
+- It mimics SSL traffic to login.live[.]com.
+- It returns a legitimate JPG if the same URI is requested with any User-Agent to avoid detection.
+
+**Others:**
+- The campaign is attributed to a state-sponsored actor, possibly the Chinese government.
+- The 9002 RAT has been used in previous attacks.
+- The attack was blocked by Proofpoint, but the delivery mechanisms and RAT pose significant threats.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After maintaining persistence through a .LNK file in the Startup directory that executes a PowerShell script to inject the downloaded 9002 RAT shellcode into a new wabmig.exe process, is the 9002 RAT likely to download additional payloads onto an infected machine for Command and Control?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- The 9002 RAT is capable of communicating over HTTP and fake SSL.
+- It uses a custom algorithm and base64-encoding to send data to the C&C.
+- It mimics SSL traffic to avoid detection.
+- The RAT is sophisticated and has been used in previous attacks.
+
+**Reasoning:**
+- The 9002 RAT is designed to maintain persistence and communicate with a C&C server.
+- The use of sophisticated evasion techniques and the ability to communicate over HTTP and fake SSL suggest that the RAT is capable of downloading additional payloads.
+- The report mentions that the RAT uses a custom algorithm and base64-encoding to send data to the C&C, which implies that it can also receive and execute commands from the C&C server.
+- Given the sophistication and capabilities of the 9002 RAT, it is highly likely that it would download additional payloads to maintain control and perform further actions on the infected machine.
+
+#### 4. Final Answer
+
+**Final Answer: A: Yes**

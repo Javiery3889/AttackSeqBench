@@ -1,0 +1,65 @@
+I have this question here about threat actors and their tactics after executing a malicious macro from an MS Office document. Let's break it down step by step.
+
+First, the scenario says that a malicious macro was executed from an MS Office document, and it successfully downloaded the RMS tool and some supporting scripts. So, the initial compromise has happened via a phishing email or something similar, typical for many cyber attacks.
+
+Now, the question is asking whether, after this initial execution, the threat actors are likely to achieve persistence by using the `sp_addlinkedsrvlogin` command in MS-SQL to create a link between a created account and other servers in the network, before attempting to kill the 'rundll32.exe' process.
+
+Okay, so there are a few things here:
+
+1. **Persistence via `sp_addlinkedsrvlogin` in MS-SQL:**
+
+   - `sp_addlinkedsrvlogin` is a stored procedure in Microsoft SQL Server used to manage linked server logins. Linked servers allow SQL Server to access data from other data sources, like other SQL Servers or even non-SQL data sources.
+
+   - In the context of threat actor activities, using such database features to maintain persistence is possible but not very common compared to other methods like creating scheduled tasks, modifying registry keys, or using Windows services.
+
+   - However, in some advanced persistent threat (APT) scenarios, threat actors might leverage database features for lateral movement or persistence, especially if they have gained access to database servers.
+
+2. **Killing the 'rundll32.exe' process:**
+
+   - 'rundll32.exe' is a legitimate Windows process used to run DLLs (Dynamic Link Libraries). It's often used by malware to execute code indirectly, making it harder to detect.
+
+   - If the threat actors are trying to kill this process, it might be because it's being used by security software or another process that could interfere with their activities.
+
+   - Alternatively, they might be cleaning up after themselves or trying to remove evidence of their initial infection vector.
+
+Given these points, let's look at the sequence of events:
+
+- Malicious macro executes and downloads RMS tool and scripts.
+
+- Threat actors aim to achieve persistence using `sp_addlinkedsrvlogin` in MS-SQL.
+
+- Before doing that, they attempt to kill the 'rundll32.exe' process.
+
+Does this sequence make sense?
+
+First, after gaining initial access via the malicious macro, threat actors typically perform several actions:
+
+- Establish persistence to ensure they can maintain access even if the system is rebooted or the initial vulnerability is patched.
+
+- Perform reconnaissance to understand the network and identify high-value targets.
+
+- Move laterally to access more critical systems.
+
+Using `sp_addlinkedsrvlogin` for persistence is an unconventional method but not impossible, especially for threat actors who have knowledge of database systems and intend to leverage them for their operations.
+
+However, killing the 'rundll32.exe' process before setting up persistence seems out of sequence. 'rundll32.exe' is a common process, and killing it might disrupt normal system operations, which could raise alarms.
+
+A more likely sequence would be:
+
+1. Execute the malicious macro and download necessary tools and scripts.
+
+2. Set up persistence through more common methods like creating registry keys, scheduled tasks, or installing backdoors.
+
+3. Perform reconnaissance and move laterally within the network.
+
+4. Clean up logs and traces of their activities.
+
+Given this typical sequence, using `sp_addlinkedsrvlogin` for persistence before killing 'rundll32.exe' seems less plausible.
+
+Moreover, killing 'rundll32.exe' could be counterproductive if it's being used by the malware itself or by essential system processes.
+
+Therefore, considering the usual tactics, techniques, and procedures (TTPs) of threat actors, this specific sequence seems unlikely.
+
+So, the answer should be "No," which is option B.
+
+**Final Answer: B**

@@ -1,0 +1,66 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attack began with a spear-phishing campaign using macro-embedded documents masquerading as job opportunities from Lockheed Martin.
+
+**Execution:**
+- The malicious macros used a technique involving the KernelCallbackTable to hijack control flow and execute malicious code.
+- The malware retrieved the address of the 'WMIsAvailableOffline' function from 'wmvcore.dll,' modified memory protection permissions, and overwrote the code with malicious shellcode.
+- The shellcode contained an encrypted DLL that was decrypted at runtime and manually mapped into memory.
+
+**Persistence:**
+- The malware achieved startup persistence by dropping a malicious LNK file named 'WindowsUpdateConf.lnk' into the startup folder.
+- This LNK file was designed to execute 'C:\Windows\system32\wuauclt.exe' with arguments to run a malicious DLL using the Windows Update Client.
+
+**Discovery:**
+- The 'GetBaseInfo.dll' module retrieved the username, computer name, and a list of all running processes on the system.
+
+**Command and Control:**
+- The core_module.dll communicated with a C2 server hosted on GitHub.
+- The malware used a hardcoded username, repository name, directory, and token to make HTTP requests to GitHub and retrieve files from the 'images' directory.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK technique most likely occurred after the Lazarus Group used a spear-phishing campaign with macro-embedded documents masquerading as job opportunities for initial access and before they achieved persistence by dropping a malicious LNK file into the startup folder?
+
+**Answer Choices:**
+A: T1055.011-Extra Window Memory Injection
+B: T1134.001-Token Impersonation/Theft
+C: T1057-Process Discovery
+D: T1574-Hijack Execution Flow
+
+#### 3. Compare and Evaluate
+
+**Initial Access:**
+- The attack started with a spear-phishing campaign using macro-embedded documents.
+
+**Execution:**
+- The malicious macros used a technique involving the KernelCallbackTable to hijack control flow and execute malicious code.
+- This aligns with **T1574-Hijack Execution Flow**.
+
+**Persistence:**
+- The malware achieved persistence by dropping a malicious LNK file into the startup folder.
+
+**Discovery:**
+- The 'GetBaseInfo.dll' module retrieved the username, computer name, and a list of all running processes on the system.
+- This aligns with **T1057-Process Discovery**.
+
+**Command and Control:**
+- The core_module.dll communicated with a C2 server hosted on GitHub.
+
+**Evaluation of Answer Choices:**
+- **A: T1055.011-Extra Window Memory Injection** - This technique involves injecting code into the extra window memory of a process, which is not mentioned in the report.
+- **B: T1134.001-Token Impersonation/Theft** - This technique involves stealing or impersonating tokens, which is not mentioned in the report.
+- **C: T1057-Process Discovery** - This technique involves discovering running processes, which is mentioned in the report as the 'GetBaseInfo.dll' module retrieves a list of all running processes.
+- **D: T1574-Hijack Execution Flow** - This technique involves hijacking the execution flow, which is mentioned in the report as the malicious macros used the KernelCallbackTable to hijack control flow.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The attack sequence in the CTI report shows that after the initial access via spear-phishing, the malware executed malicious macros that hijacked the execution flow using the KernelCallbackTable.
+- After hijacking the execution flow, the malware achieved persistence by dropping a malicious LNK file into the startup folder.
+- The 'GetBaseInfo.dll' module, which retrieves a list of all running processes, aligns with the **T1057-Process Discovery** technique.
+
+**Final Answer: C: T1057-Process Discovery**

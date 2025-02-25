@@ -1,0 +1,58 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- Turla uses PowerShell to run malware directly in memory.
+- PowerShell scripts persist on the system by:
+  - Using WMI event subscriptions.
+  - Modifying the PowerShell profile (profile.ps1 file).
+
+**Persistence:**
+- WMI event filters and consumers execute base64-encoded PowerShell commands.
+- PowerShell profile runs a script on startup to load and execute malware.
+
+**Defense Evasion:**
+- Payloads are encrypted and scripts are obfuscated.
+- AMSI bypass technique is used to patch the AmsiScanBuffer function.
+
+**Discovery:**
+- Turla uses RPC backdoor and PowerStallion backdoor for lateral movement and control.
+- RPC backdoor supports plugins for file and directory information and USB drive monitoring.
+- PowerStallion monitors antimalware logs and the Windows process list.
+
+**Collection:**
+- RPC backdoor plugins collect recent files and files from USB drives.
+- PowerStallion uses Microsoft OneDrive for command and control and can execute additional PowerShell scripts, writing command results to another OneDrive subfolder.
+
+**Command and Control:**
+- RPC backdoor uses the RPC protocol.
+- PowerStallion uses Microsoft OneDrive via SMB.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After utilizing the RPC protocol and Microsoft OneDrive as command and control channels, is it likely that PowerStallion will exfiltrate collected data via HTTPS?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- PowerStallion uses Microsoft OneDrive for command and control.
+- PowerStallion can execute additional PowerShell scripts and write command results to another OneDrive subfolder.
+
+**Evaluation:**
+- The report explicitly states that PowerStallion uses Microsoft OneDrive for command and control.
+- It also mentions that PowerStallion can write command results to another OneDrive subfolder, indicating that data exfiltration is done through OneDrive.
+- There is no mention of PowerStallion using HTTPS for exfiltration.
+
+**Reasoning:**
+- Given that PowerStallion is designed to use OneDrive for both command and control and data exfiltration, it is unlikely that it would switch to HTTPS for exfiltration.
+- The use of OneDrive for exfiltration is more consistent with the described behavior and infrastructure of PowerStallion.
+
+#### 4. Final Answer
+
+**Final Answer: B: No**

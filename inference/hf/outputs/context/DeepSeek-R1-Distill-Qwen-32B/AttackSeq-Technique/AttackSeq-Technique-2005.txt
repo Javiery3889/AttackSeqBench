@@ -1,0 +1,32 @@
+Okay, so I'm trying to figure out which ATT&CK technique corresponds to the KopiLuwak backdoor communicating with two compromised legitimate websites. Let me break this down step by step.
+
+First, I'll look at the CTI report provided. The report details an attack by the Turla APT group. The attack sequence starts with Initial Access using a .NET/MSIL dropper that delivers the JS/KopiLuwak backdoor. The dropper is disguised as a G20 meeting invitation, which is a social engineering tactic to trick users into opening it.
+
+Next, during Execution, the dropper deploys a PDF decoy and a JavaScript dropper. The JavaScript dropper installs a decryptor that then executes the KopiLuwak backdoor in memory. The dropper is named Runer.exe and writes some files to %APPDATA%.
+
+For Persistence, the JavaScript dropper, Scr.js, creates a scheduled task called PolicyConverter that runs every 10 minutes. This task executes the JS backdoor decryptor, which contains the KopiLuwak backdoor code.
+
+In Defense Evasion, the dropper doesn't use obfuscation or anti-analysis features. The JavaScript dropper fingerprints the system and sets up persistence without raising suspicion. The backdoor communicates with compromised legitimate websites, and the HTTP User-Agent is hardcoded, which is different from previous variants.
+
+In the Discovery phase, Scr.js runs several commands to gather system information, including checking for Kaspersky directories and doing a traceroute to Google. This information is saved for later use.
+
+Exfiltration is handled by the backdoor, which can send files to the C&C and download files to the infected machine.
+
+Now, the question is about the technique used when the KopiLuwak backdoor communicates with two compromised legitimate websites. The answer choices are A: T1135, B: T1572, C: T1102, D: T1053.
+
+I need to map this to the MITRE ATT&CK techniques. Let's go through each option:
+
+A: T1135 - Network Share Discovery. This is about identifying accessible network shares. The report doesn't mention anything about network shares, so probably not this.
+
+B: T1572 - Protocol Tunneling. This involves using legitimate protocols to hide malicious traffic. The report says the backdoor communicates with legitimate websites, but it doesn't mention tunneling or using a different protocol, so maybe not.
+
+C: T1102 - Web Service. This technique involves using web services for command and control. The backdoor is communicating with legitimate websites, which are likely acting as web services for C&C. This seems relevant.
+
+D: T1053 - Scheduled Task/Job. This is about using scheduled tasks for persistence, which is mentioned in the report, but the question is about communication, not persistence.
+
+So, the key here is that the backdoor is using legitimate websites to communicate. That aligns with T1102, which is about using web services for C&C. The other options don't fit as well because they involve different aspects of the attack lifecycle.
+</think>
+
+The KopiLuwak backdoor communicates with legitimate websites for command and control, which corresponds to the use of web services as per T1102.
+
+Final Answer: C: T1102-Web Service

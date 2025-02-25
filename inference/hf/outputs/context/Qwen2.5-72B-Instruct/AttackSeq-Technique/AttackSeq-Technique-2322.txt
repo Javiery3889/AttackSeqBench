@@ -1,0 +1,68 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The adversary uses credentials obtained from previous breaches for credential stuffing or password spraying.
+- They access remote services like webmail, Citrix, or other internet-reachable services.
+- They use the compromised account to access the victim's network via VPN or other remote services.
+
+**Execution:**
+- The adversary installs Cobalt Strike using a PowerShell one-liner.
+- They use scheduled tasks to execute batch files.
+
+**Persistence:**
+- The Cobalt Strike beacon is loaded in memory.
+- They install the beacon on systems with high uptimes for persistent access.
+- They search for VPN and firewall configs as a backup access method.
+
+**Privilege Escalation:**
+- They perform a password spraying attack against domain admin accounts.
+- They move laterally to systems with domain admins logged in.
+- They use tools like NtdsAudit and commands like `msadcs.exe` to dump password hashes.
+
+**Defense Evasion:**
+- They clean up traces by clearing Windows event logs, deleting files, and timestomping.
+- They use a Windows version of the Linux `touch` command to timestomp files.
+
+**Credential Access:**
+- They use credential stuffing or password spraying to gain access.
+- They perform brute force attacks and observe unusual login attempts.
+
+**Discovery:**
+- They use tools like PsLogList to export Security Event logs.
+- They use Mimikatz to dump credentials from privileged users.
+
+**Collection:**
+- They collect data from various sources, including Microsoft SharePoint Online.
+- They copy file and directory lists from local and remote systems.
+- They copy user mailboxes from both local and remote systems.
+
+**Command and Control:**
+- They use Cobalt Strike for C2, initially with DNS and later with HTTPS.
+- They use a cracked/patched trial version of Cobalt Strike.
+
+**Exfiltration:**
+- They exfiltrate small amounts of data via the C2 channel.
+- They use a custom tool to exfiltrate large amounts of data to cloud storage services like Dropbox, Google Drive, and OneDrive.
+
+#### 2. Analyze the Question
+
+The question asks for the ATT&CK technique that most likely occurred after the adversary used Cobalt Strike's built-in abilities (SMB and PsExec) for lateral movement to deploy beacons on additional systems within the victim's network but before they began collecting data from information repositories and user mailboxes for exfiltration.
+
+#### 3. Compare and Evaluate
+
+**Answer Choices:**
+- **A: T1021.007-Cloud Services:** This technique involves using cloud services for lateral movement, which is not mentioned in the report.
+- **B: T1098.002-Additional Email Delegate Permissions:** This technique involves adding email delegate permissions, which is not mentioned in the report.
+- **C: T1210-Exploitation of Remote Services:** This technique involves exploiting vulnerabilities in remote services, which is not the primary method used for lateral movement in the report.
+- **D: T1005-Data from Local System:** This technique involves collecting data from the local system, which aligns with the report's description of the adversary collecting file and directory lists from local systems before exfiltration.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The adversary uses Cobalt Strike's built-in abilities (SMB and PsExec) for lateral movement to deploy beacons on additional systems.
+- After deploying the beacons, the next logical step is to collect data from the local systems to understand the environment and identify valuable data.
+- The report mentions that the adversary collects file and directory lists from local systems, which aligns with the T1005 technique (Data from Local System).
+- The collection of data from local systems is a necessary step before exfiltrating data from information repositories and user mailboxes.
+
+**Final Answer: D: T1005-Data from Local System**

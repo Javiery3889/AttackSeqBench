@@ -1,0 +1,58 @@
+Okay, so I'm trying to figure out which ATT&CK technique happened after the RIG Exploit kit used CEIDPageLock by exploiting a vulnerability to tamper with the victim's browser homepage but before the dropper started the kernel-mode driver for persistence. Let me break this down step by step.
+
+First, I need to understand the CTI outline provided. The outline describes a cyber attack involving CEIDPageLock malware. Let's go through each part.
+
+Starting with the Persistence section: The dropper's main job is to extract a driver from a file and save it as houzi.sys in the Windows Temp directory. The driver was previously named CEID.sys and was signed by Thawte Code Signing CA. After registering and starting the driver, it sends the MAC address and user ID to the domain www.tj999.top.
+
+Next, the Defense Evasion part says the driver is a 32-bit kernel-mode driver that's launched during startup. It evades endpoint security products and connects to one of two hardcoded C&C domains to download a homepage configuration to tamper with the browser. The homepage is encrypted from the C&C server.
+
+Collection: CEIDPageLock operators gather browsing data, tracking visited sites and visit durations to target ads or sell data.
+
+Command and Control: The driver connects to C&C domains to download the homepage configuration.
+
+Others: Targets Chinese victims mainly. It adds a registry key to 360Safe's product as part of the rootkit, setting a value under a specific registry key.
+
+Now, the question is about the sequence of TTPs. The attack happened after the RIG Exploit kit used CEIDPageLock by exploiting a vulnerability to change the homepage, but before the dropper started the kernel-mode driver for persistence.
+
+So, the timeline would be: Exploit (vulnerability) → Tamper with homepage → Then what?
+
+Looking at the CTI, after the exploit, the malware changes the homepage. Then, the dropper starts the driver for persistence. So the question is about the TTP after the homepage tampering but before the driver starts.
+
+The options are:
+
+A: T1189-Drive-by Compromise
+B: T1189-Drive-by Compromise (same as A, maybe a typo)
+C: T1071-Application Layer Protocol
+D: T1219-Remote Access Software
+
+Wait, A and B are the same, which is odd. Maybe a mistake, but I'll proceed.
+
+T1189 is Drive-by Compromise, which is about using a malicious script injected into a legitimate file to execute commands. T1071 is Application Layer Protocol, like using HTTP or HTTPS for C&C. T1219 is Remote Access Software, like using tools like Cobalt Strike.
+
+In the CTI, after the exploit, the homepage is tampered with. Then the driver is started for persistence. So what happened in between? The driver connects to C&C to download the homepage configuration. So the C&C communication is via the driver, which is a T1071 since it's using a protocol (HTTP/S) to communicate.
+
+But the question is about the TTP after the homepage tampering but before the driver starts. So after tampering, the driver connects to C&C, which is T1071. So the answer would be C: T1071-Application Layer Protocol.
+
+Wait, but the question is about the TTP that occurred after the exploit and before the driver starts. So the driver hasn't started yet, but the C&C communication via HTTP would be part of the Command and Control step, which is T1071.
+
+Alternatively, T1189 is about drive-by, which is more about exploiting a website to deliver malware, but in this case, the exploit is via a vulnerability, not drive-by.
+
+So the correct answer is C: T1071-Application Layer Protocol.
+</think>
+
+The correct answer is C: T1071-Application Layer Protocol.
+
+**Step-by-Step Explanation:**
+
+1. **Identify the Attack Phases:**
+   - **Exploit:** The attack starts with exploiting a vulnerability.
+   - **Tamper Homepage:** The malware changes the victim's browser homepage.
+   - **Persistence Driver Start:** The dropper starts the kernel-mode driver for persistence.
+
+2. **Determine the TTP Between Tamper and Persistence:**
+   - After tampering with the homepage, the driver connects to C&C to download configuration, using HTTP/S (T1071).
+
+3. **Evaluate Answer Choices:**
+   - **T1071** fits as the C&C communication uses application layer protocols.
+
+**Final Answer: C: T1071-Application Layer Protocol**

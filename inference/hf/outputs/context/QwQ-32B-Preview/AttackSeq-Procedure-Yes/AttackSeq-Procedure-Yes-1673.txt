@@ -1,0 +1,135 @@
+Alright, I've got this CTI outline from Symantec about some attacks involving WastedLocker ransomware attributed to Evil Corp. They used this SocGholish framework to trick victims into downloading malicious JavaScript that looked like a browser update. So, the attack starts with reconnaissance and initial access through these compromised websites.
+
+First, I need to understand the sequence of tactics and techniques used by the attackers as per the MITRE ATT&CK framework. Let's break down the outline step by step.
+
+**Reconnaissance:**
+- Symantec identified attacks against U.S. organizations aimed at deploying WastedLocker ransomware.
+- The attackers are linked to Evil Corp and used SocGholish, a JavaScript-based framework, on over 150 compromised websites to masquerade as software updates.
+
+**Initial Access:**
+- The initial compromise involved SocGholish delivered via compromised legitimate websites.
+- Victims received a zipped file containing malicious JavaScript disguised as a browser update.
+- This led to the execution of a second JavaScript file by wscript.exe, which profiled the computer and downloaded additional discovery-related PowerShell scripts.
+
+**Execution:**
+- Attackers deployed Cobalt Strike using PowerShell to download and execute a loader.
+- This loader contained a .NET injector from an open-source project called Donut, used to execute the Cobalt Strike Beacon payload.
+- The Beacon payload could execute commands, inject processes, escalate privileges, and upload/download files.
+
+**Privilege Escalation:**
+- Achieved using a publicly documented technique involving slui.exe.
+- Also used wmic.exe to execute commands on remote computers.
+
+**Defense Evasion:**
+- Used PsExec to manage Windows Defender, disabling scanning, removing definitions, and sometimes disabling real-time monitoring.
+- Used PsExec to stop services across the organization before launching WastedLocker.
+
+**Credential Access:**
+- Used Cobalt Strike for credential dumping with ProcDump and emptied log files to conceal activities.
+
+**Lateral Movement:**
+- Used Cobalt Strike Beacon for lateral movement, executing commands and injecting processes on remote computers.
+
+**Command and Control:**
+- The Cobalt Strike Beacon payload communicated with a C&C domain associated with WastedLocker infrastructure.
+
+**Impact:**
+- The goal was to encrypt computers and servers, causing disruption and demanding a multimillion-dollar ransom.
+
+**Others:**
+- Symantec's Targeted Attack Cloud Analytics and Threat Hunter team detected and verified the activity.
+- Alerted at least 31 customer organizations, mostly major U.S. corporations, including 11 listed companies and eight Fortune 500 companies.
+- Attackers showed skill in penetrating well-protected corporations and moving laterally.
+- Symantec implemented protections and reported IoCs to relevant parties.
+
+Now, the question is: After initially compromising systems using the SocGholish framework disguised as a browser update, is it likely that the attackers will execute the Cobalt Strike Beacon payload using a .NET injector before using tools such as whoami, net user, and net group to perform account discovery?
+
+Answer choices are A: Yes and B: No.
+
+To answer this, I need to see if the sequence described in the question matches the sequence of events outlined in the CTI report.
+
+First, the initial access vector is confirmed: SocGholish framework disguised as a browser update. So, that matches.
+
+Next, after initial access, the report says that the malicious JavaScript executed by wscript.exe profiles the computer and downloads additional PowerShell scripts for discovery. So, at this stage, there's already some level of discovery happening using PowerShell scripts.
+
+Then, in the execution phase, Cobalt Strike is deployed using PowerShell to download and execute a loader that contains a .NET injector (Donut), which is used to execute the Cobalt Strike Beacon payload.
+
+After that, the Beacon payload has capabilities for command execution, process injection, privilege escalation, and file upload/download.
+
+Privilege escalation is achieved using slui.exe and wmic.exe.
+
+For defense evasion, PsExec is used to manage Windows Defender and stop services.
+
+Credential access is performed using Cobalt Strike and ProcDump, and log files are emptied.
+
+Lateral movement is conducted using the Cobalt Strike Beacon.
+
+Finally, the impact is the deployment of WastedLocker ransomware.
+
+Now, looking back at the question: After initial compromise with SocGholish, is it likely that attackers will execute the Cobalt Strike Beacon payload using a .NET injector before using tools like whoami, net user, and net group for account discovery?
+
+So, the sequence in question is:
+
+1. Execute Cobalt Strike Beacon payload using a .NET injector.
+
+2. Use tools like whoami, net user, and net group for account discovery.
+
+From the CTI outline, we see that after initial access, PowerShell scripts are used for discovery, and then Cobalt Strike is deployed using a .NET injector to execute the Beacon payload.
+
+But, in the sequence provided in the question, it's suggesting that after initial compromise, they execute the Cobalt Strike Beacon payload using a .NET injector, and then use tools like whoami, net user, and net group for account discovery.
+
+Is this plausible?
+
+Well, Cobalt Strike Beacon has the capability to execute commands, including whoami, net user, and net group, for account discovery. So, it's likely that once the Beacon payload is executed, the attackers would use it to perform various tasks, including account discovery.
+
+However, according to the CTI outline, before even getting to the Cobalt Strike stage, there are already discovery activities happening via PowerShell scripts downloaded and executed by the initial JavaScript.
+
+So, perhaps the sequence is a bit different. Maybe the initial discovery is done using PowerShell scripts, and then Cobalt Strike is brought in for more advanced activities, including further discovery, privilege escalation, lateral movement, etc.
+
+But the question is specifically asking if, after initial compromise with SocGholish, it's likely that they will execute the Cobalt Strike Beacon payload using a .NET injector before using tools like whoami, net user, and net group for account discovery.
+
+Given that the Beacon payload has the capability to execute these commands, it's plausible that after deploying the Beacon payload, the attackers would use it to perform account discovery.
+
+However, the CTI outline suggests that there is already discovery happening via PowerShell scripts before Cobalt Strike is deployed.
+
+So, perhaps the sequence is:
+
+1. Initial access via SocGholish.
+
+2. Execution of malicious JavaScript and download of PowerShell scripts for initial discovery.
+
+3. Deployment of Cobalt Strike Beacon payload using a .NET injector.
+
+4. Further activities, including account discovery, using the Beacon payload.
+
+If that's the case, then the answer would be B: No, because account discovery is already happening before Cobalt Strike is deployed.
+
+But wait, the question is asking if, after initial compromise with SocGholish, they will execute the Cobalt Strike Beacon payload using a .NET injector before using tools like whoami, net user, and net group for account discovery.
+
+Given that the initial discovery is already happening via PowerShell scripts, and then Cobalt Strike is deployed, it's possible that account discovery continues or is repeated using the Beacon payload.
+
+Alternatively, perhaps the Beacon payload is used for account discovery in addition to the initial discovery via PowerShell scripts.
+
+But the sequence in the question suggests that the execution of the Beacon payload using a .NET injector comes before using tools for account discovery.
+
+Given that the Beacon payload is capable of executing these tools, it's likely that after deploying the Beacon payload, the attackers would use it to perform account discovery.
+
+Therefore, the sequence makes sense: execute Beacon payload using a .NET injector, and then use the Beacon to execute whoami, net user, net group, etc., for account discovery.
+
+So, even though there is initial discovery via PowerShell scripts, the deployment of Cobalt Strike likely brings in more sophisticated tools and techniques for further discovery and other activities.
+
+Therefore, the answer should be A: Yes, it is likely that after initially compromising systems using SocGholish, the attackers will execute the Cobalt Strike Beacon payload using a .NET injector before using tools like whoami, net user, and net group for account discovery.
+
+But to make sure, let's look at the other answer choice.
+
+B: No, it is not likely.
+
+This would suggest that either the sequence is different or that account discovery doesn't happen after deploying the Beacon payload.
+
+However, given that Cobalt Strike is a post-exploitation framework and is commonly used for various activities, including account discovery, it's reasonable to assume that account discovery occurs after deploying the Beacon payload.
+
+Moreover, the use of a .NET injector to execute the Beacon payload aligns with the techniques described in the CTI outline.
+
+Therefore, A: Yes, is the more plausible answer.
+
+**Final Answer: A**

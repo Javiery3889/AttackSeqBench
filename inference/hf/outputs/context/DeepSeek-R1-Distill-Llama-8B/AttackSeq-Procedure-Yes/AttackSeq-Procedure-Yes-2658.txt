@@ -1,0 +1,30 @@
+Okay, so I need to figure out whether Korplug communicates with C&C servers using a custom TCP-based protocol over non-standard ports before performing data exfiltration via compressed and encrypted TCP messages. Let me break this down step by step.
+
+First, I'll look at the CTI outline provided. The outline describes the attack sequence of the Mustang Panda group using the Korplug variant. Let me go through each part to extract the relevant information.
+
+Starting with the overview, it mentions that the group uses a new Korplug variant called Hodur, active since August 2021. They target research entities, ISPs, and European diplomatic missions, using phishing documents related to current events like the Russia-Ukraine conflict. They're known for using custom loaders for malware like Cobalt Strike, Poison Ivy, and Korplug, and they employ anti-analysis techniques and control-flow obfuscation.
+
+Next, initial access is via phishing and watering hole attacks. The filenames of the delivered files are related to current events, such as COVID-19 or EU border situations, which are legitimate-looking documents. The initial access vector isn't specified beyond phishing and watering holes.
+
+Execution involves a custom loader that exploits a side-loading vulnerability in a legitimate signed executable. The loader decrypts the Korplug file in memory, making it executable, and then calls into it. So the loader is a key part of the process.
+
+Persistence is achieved by creating a directory under %allusersprofile%, making it hidden and system, copying files there, and setting up scheduled tasks or registry entries to run the malware on boot.
+
+Defense evasion techniques include control-flow obfuscation, anti-analysis methods, encrypted files, and hidden directories. The Korplug file is encrypted and decrypted at runtime, with configuration data encrypted with XOR. The directories are hidden, and the malware can run on a hidden desktop.
+
+Discovery: Korplug collects system info like uptime, RAM, etc., and also collects data from local systems, removable media, and network shares, including file metadata and content.
+
+Exfiltration is done via a custom protocol using TCP messages with a header and compressed, encrypted bodies. So the data is sent over TCP, compressed, and encrypted.
+
+Now, the question is about whether Korplug communicates with C&C servers using a custom TCP-based protocol on non-standard ports before exfiltration. The outline says that exfiltration is done via the same custom protocol, which uses TCP messages with a header and compressed, encrypted body. It doesn't explicitly mention communication with C&C servers, but since C&C is a common part of APT groups, it's implied that communication with C&C would be part of the process.
+
+Looking at the steps, after collection, the next step would logically be exfiltration. The outline doesn't explicitly state that communication with C&C happens before exfiltration, but since the exfiltration method is a custom TCP protocol, it's likely that the C&C communication is part of the same mechanism. The question is whether this communication occurs before exfiltration.
+
+So, the steps would be: after collecting data, the malware uses a custom TCP protocol to communicate with C&C, then exfiltrate data using the same or another method. But the outline says that exfiltration is via the same protocol, so perhaps the communication with C&C is part of the same process.
+
+Therefore, the answer should be yes, because the exfiltration method is a custom TCP protocol, which would imply that communication with C&C is done via this protocol before exfiltration.
+</think>
+
+The CTI outline indicates that Korplug uses a custom TCP-based protocol for both communication with C&C servers and data exfiltration. The exfiltration method is described as using TCP messages with a header and compressed, encrypted body. Since the question asks if this communication occurs before exfiltration, the answer is yes.
+
+Final Answer: A: Yes

@@ -1,0 +1,70 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The adversary obtained SSH access to the target system.
+- Used wget to fetch malware samples from a specific IP address.
+- The malware binary had a date string matching the day it was downloaded, indicating active developer involvement.
+
+**Execution:**
+- The custom loader loads the Derusbi malware into memory.
+- Derusbi drops the Turbo Linux Kernel Module to disk, loads it into the kernel, and deletes it from disk to avoid detection.
+- The client uses Turbo to hide relevant user space processes.
+
+**Persistence:**
+- The Turbo Linux Kernel Module (LKM) provides persistence by hiding processes, making detection of the attacker's malicious applications more difficult.
+
+**Defense Evasion:**
+- The Derusbi malware and Turbo kernel module employ cloaking and anti-analysis techniques.
+- The Turbo LKM modifies the system's global call table to hide processes and unhide them as needed.
+- The LKM disables the CPU's control register zero's (CR0) write protection to modify the system call table.
+
+**Command and Control:**
+- The malware binds to a raw socket on a random source port between 31800 and 31900 and beacons to the preconfigured destination port 443.
+- The traffic is not SSL/TLS encrypted.
+- A backup communication method with HTTP beacon is used, with content obfuscated using variable 4-byte XOR keys.
+- C2 interactions include HTTP POST requests to /photos/photo.asp and responses from the server.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After achieving persistence through the use of the Turbo Linux Kernel Module to hide malicious processes, which ATT&CK tactic most likely occurred before the malware's command and control communications over obfuscated HTTP POST requests?
+
+**Answer Choices:**
+- A: Reconnaissance
+- B: Defense Evasion
+- C: Execution
+- D: Discovery
+
+#### 3. Compare and Evaluate
+
+**Persistence:**
+- The Turbo Linux Kernel Module (LKM) is used to hide malicious processes, providing persistence.
+
+**Command and Control:**
+- The malware establishes C2 communications using obfuscated HTTP POST requests.
+
+**Sequence Analysis:**
+- **Initial Access** → **Execution** → **Persistence** → **Defense Evasion** → **Command and Control**
+
+**Reconnaissance:**
+- Reconnaissance typically occurs before the initial access to gather information about the target. It is not mentioned in the report as occurring after persistence.
+
+**Defense Evasion:**
+- Defense evasion techniques are used to avoid detection and maintain access. The report mentions that the Turbo LKM and Derusbi malware use cloaking and anti-analysis techniques, which are part of defense evasion.
+
+**Execution:**
+- Execution is the process of running the malware on the target system. The report clearly states that the custom loader loads the Derusbi malware into memory, which is part of the execution phase.
+
+**Discovery:**
+- Discovery involves the adversary gathering information about the system and network. The report does not mention any discovery activities occurring after persistence and before C2 communications.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The sequence of events in the report is: Initial Access → Execution → Persistence → Defense Evasion → Command and Control.
+- After achieving persistence, the next logical step is to ensure that the malware can evade detection and maintain its presence on the system.
+- The report mentions that the Turbo LKM and Derusbi malware use cloaking and anti-analysis techniques, which are part of the defense evasion phase.
+- Therefore, the most likely tactic that occurred before the malware's command and control communications over obfuscated HTTP POST requests is **Defense Evasion**.
+
+**Final Answer: B: Defense Evasion**

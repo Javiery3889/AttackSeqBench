@@ -1,0 +1,97 @@
+Alright, I've got this CTI outline about FIN13, a cyber threat actor that's been active since 2016, mainly targeting organizations in Mexico, particularly in financial, retail, and hospitality industries. They're known for long-term intrusions, mapping victim networks, capturing credentials, and stealing sensitive documents to facilitate fraudulent money transfers. Unlike typical ransomware groups, they focus on maintaining a persistent presence in the network using custom passive backdoors and tools.
+
+First, I need to understand the attack sequence based on the MITRE ATT&CK tactics outlined in the CTI report. Let's break it down step by step.
+
+1. **Reconnaissance**: FIN13 has been tracking targets since 2017, with activities dating back to 2016. They target specific industries and have a long dwell time, indicating thorough planning and research.
+
+2. **Initial Access**: They exploit external servers to deploy web shells and custom malware like BLUEAGAVE and SIXPACK. The specific vulnerabilities used aren't clear due to long dwell times and insufficient evidence.
+
+3. **Execution**: They use JSPRAT for command execution, file upload/download, and proxying network traffic. Also, they use passive backdoors like BLUEAGAVE, which sets up a local HTTP server to listen for incoming requests and execute commands.
+
+4. **Persistence**: FIN13 uses various methods to maintain access, such as replacing legitimate KeePass binaries with trojanized versions to log passwords, and deploying malware like SIXPACK and SWEARJAR. They also use email communications for command and control with a backdoor called MAILSLOT.
+
+5. **Privilege Escalation**: They use common techniques like dumping LSASS process memory with ProcDump and extracting credentials with Mimikatz. They also use certutil to launch obfuscated utilities and trojanized KeePass binaries for credential harvesting.
+
+6. **Defense Evasion**: They employ passive backdoors for stealth, chain web shells for complex pivots, and use legitimate utilities like certutil to evade detection. They also use custom droppers and malware with recon functionality.
+
+7. **Credential Access**: They obtain credentials through process memory dumping, network sniffing, and targeting unsecured credentials. They trojanize KeePass to log newly entered passwords.
+
+8. **Discovery**: They use native OS binaries, scripts, third-party tools, and custom malware to gather information about the network and host configurations, user accounts, and services.
+
+9. **Collection**: They collect data from network shared drives, stage it locally or remotely, and archive it using utilities and libraries, focusing on data that aids in fraudulent transactions.
+
+10. **Command and Control**: They use proxies, application layer protocols, and non-application layer protocols for C2. They transfer tools into the environment and encode data for communication.
+
+11. **Exfiltration**: They exfiltrate data over web services using tools like web shells and JSP tools in web-accessible directories to steal targeted data for fraudulent transactions.
+
+Now, the question is: After collecting data from network shared drives and targeting specific information for fraudulent transactions, is it likely that FIN13 will use tools like Invoke-WMIExec and custom web shells such as BUSTEDPIPE for lateral movement via remote services before leveraging native OS binaries and custom malware for internal reconnaissance during discovery?
+
+Answer choices are A: Yes and B: No.
+
+To answer this, I need to evaluate if the sequence of techniques mentioned in the question aligns with the attack sequence and tactics described in the CTI outline.
+
+First, let's look at the sequence in the question:
+
+1. Collect data from network shared drives.
+
+2. Target specific information for fraudulent transactions.
+
+3. Use Invoke-WMIExec and BUSTEDPIPE for lateral movement.
+
+4. Leverage native OS binaries and custom malware for internal reconnaissance.
+
+From the CTI outline:
+
+- **Collection**: They collect data from network shared drives and stage it locally or remotely. They archive collected data using utilities and libraries, targeting specific data that aids in fraudulent transactions.
+
+- **Lateral Movement**: The outline doesn't explicitly mention the use of Invoke-WMIExec or BUSTEDPIPE, but it does mention using web shells and custom malware for movement within the network.
+
+- **Discovery**: They use native OS binaries, scripts, third-party tools, and custom malware for internal reconnaissance.
+
+So, in the attack sequence:
+
+- After collection, the next logical step would be to move laterally within the network to find more data or to establish a more secure foothold.
+
+- The question suggests that after collection, they would use specific tools for lateral movement and then proceed to discovery.
+
+Now, looking back at the CTI outline:
+
+- **Initial Access**: They use web shells and custom malware like BLUEAGAVE and SIXPACK.
+
+- **Execution**: They use JSPRAT and BLUEAGAVE.
+
+- **Persistence**: They use MAILSLOT, trojanized KeePass, SIXPACK, SWEARJAR.
+
+- **Privilege Escalation**: They use ProcDump, Mimikatz, certutil.
+
+- **Defense Evasion**: They use passive backdoors, chaining web shells, and legitimate utilities.
+
+- **Credential Access**: They dump LSASS, network sniffing, trojanized KeePass.
+
+- **Discovery**: They use native OS binaries, scripts, third-party tools, custom malware.
+
+- **Collection**: They collect data from network shared drives.
+
+- **Command and Control**: They use proxies, application layer protocols, non-application layer protocols.
+
+- **Exfiltration**: They exfiltrate data over web services using web shells and JSP tools.
+
+Notably, the outline doesn't specifically mention Invoke-WMIExec or BUSTEDPIPE. Invoke-WMIExec is a PowerShell script that uses WMI for execution on remote systems, which is a common technique for lateral movement. BUSTEDPIPE is a custom web shell, which they do use, as per the initial access vector.
+
+Given that they use web shells for initial access and execution, it's plausible that they could use custom web shells for lateral movement as well. However, the CTI outline doesn't specifically mention the use of Invoke-WMIExec or BUSTEDPIPE for lateral movement.
+
+Moreover, the sequence in the question places lateral movement after collection, which might not necessarily be the case. In many attack sequences, lateral movement happens earlier, after gaining initial access and establishing persistence, to move deeper into the network and elevate privileges before collection.
+
+In the CTI outline, discovery is mentioned as a separate stage where they use various tools to map the network and gather information. This would likely happen after initial access and persistence but before collection.
+
+So, the sequence in the question seems slightly off compared to the typical attack sequence implied by the CTI outline.
+
+Additionally, the question suggests using native OS binaries and custom malware for internal reconnaissance during discovery. The CTI outline does mention using native OS binaries and custom malware for discovery, so this part aligns.
+
+However, the use of specific tools like Invoke-WMIExec and BUSTEDPIPE isn't directly supported by the CTI outline. While it's possible that they use such tools, the evidence provided doesn't confirm their use.
+
+Given that the CTI outline doesn't specifically mention these tools for lateral movement, and considering that the sequence in the question seems to place lateral movement after collection, which might not align with the typical attack sequence, I would lean towards answer choice B: No.
+
+It's important to base the answer on the information provided in the CTI outline and not make assumptions beyond what's stated.
+
+**Final Answer: B**

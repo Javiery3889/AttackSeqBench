@@ -1,0 +1,26 @@
+Okay, so I need to figure out which ATT&CK technique the Sednit group used for reconnaissance after achieving persistence. Let me start by going through the CTI report step by step.
+
+First, the report mentions that the Sednit group uses Zebrocy as their malware, which is a downloader for the Xagent backdoor. The attack starts with an email containing malicious attachments, like Office documents or archives. These use VBA macros, exploits, or DDE to download the first-stage payload. The initial access is through these email attachments, and the VBA macro creates a file in the %TEMP% directory, decodes the malware, and runs it using PowerShell or Scriptable Shell Objects.
+
+Once the initial access is achieved, the Delphi downloader is the first stage. It displays a splash window with a bogus error message to distract the user while gathering information. It also establishes persistence by adding a registry entry under HKCU\Software\Microsoft\Windows\CurrentVersion\Run. The AutoIt downloader can be either the first or second stage and also does some reconnaissance and shows a splash screen.
+
+Looking at the execution phase, the Delphi downloader uses CreateProcess to run cmd.exe with commands like SYSTEMINFO and TASKLIST. This suggests that it's gathering system information. The information is sent to the C&C server via HTTP POST. If the target is interesting, the server sends the next stage payload.
+
+So, after persistence is set up, the malware starts gathering information. The Delphi downloader runs these system commands, which are part of the reconnaissance phase. The question is asking which ATT&CK technique corresponds to this reconnaissance activity.
+
+Now, looking at the answer choices:
+
+A: T1552.008 - Chat Messages. This seems unrelated because the report doesn't mention any chat activity.
+
+B: T1497.002 - User Activity Based Checks. This technique involves checking user activity to avoid detection, like checking if a user is active. The report mentions splash screens to distract users, but the main reconnaissance here is about system info, not user activity.
+
+C: T1497 - Virtualization/Sandbox Evasion. This is about evading detection in sandboxes. The report mentions splash screens to mislead users, but not specifically about evading sandboxes or virtualization.
+
+D: T1595 - Active Scanning. This technique involves actively scanning a network or system to gather info. The Delphi downloader running SYSTEMINFO and TASKLIST fits this because it's actively querying the system for information.
+
+So, the correct answer should be D: T1595-Active Scanning, as the malware is actively gathering system information after persistence.
+</think>
+
+The Sednit group's malware, after establishing persistence, actively gathers system information using commands like SYSTEMINFO and TASKLIST, which aligns with the Active Scanning technique.
+
+Final Answer: D: T1595-Active Scanning

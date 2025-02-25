@@ -1,0 +1,22 @@
+Okay, so I'm trying to figure out whether the Rising Sun implant communicated with control servers via HTTP POST requests after performing initial reconnaissance. Let me go through the CTI report step by step to understand the attack sequence and see if I can find any clues.
+
+First, the report mentions that the attack started with Reconnaissance, where the threat actors used job recruitment emails to gather information. Then, Initial Access was achieved through malicious documents with macros that injected the Sharpshooter downloader into Word. This downloader then retrieved the Rising Sun implant.
+
+Next, during Execution, the macro's shellcode acted as a downloader. It used functions like LoadLibraryA and GetProcAddress to resolve libraries and APIs. It downloaded the Rising Sun payload and a decoy document to specific folders and executed them using CreateProcessA and ShellExecuteA.
+
+For Persistence, the Rising Sun implant ensured it stayed on the system by placing the second-stage binary in the startup folder, so it didn't need to set up its own persistence mechanisms.
+
+Then, during Discovery, the implant collected a bunch of information: network adapter info, computer name, username, IP address, system info, and OS details. It also decrypted additional information, though not all was used.
+
+Exfiltration is where it gets interesting. The report says the Rising Sun implant encrypted data using RC4 and obfuscated it with Base64 before sending it via HTTP POST requests to the control server.
+
+So, the question is asking if after the initial reconnaissance, the implant communicated via HTTP POST for C2. From the Exfiltration section, it's clear that the implant used HTTP POST to exfiltrate data. But does that mean it also used it for command and control?
+
+In many APTs, the same communication method is used for both exfiltration and C2. Since the report mentions HTTP POST for exfiltration, it's likely that the same method was used for C2. Also, the implant had 14 backdoor capabilities, which suggests it could receive commands, implying it communicated with the server.
+
+So, putting it all together, the answer should be yes, it communicated via HTTP POST for C2 purposes.
+</think>
+
+The Rising Sun implant used HTTP POST requests for exfiltration, and given its backdoor capabilities, it likely used the same method for command and control.
+
+Final Answer: A: Yes

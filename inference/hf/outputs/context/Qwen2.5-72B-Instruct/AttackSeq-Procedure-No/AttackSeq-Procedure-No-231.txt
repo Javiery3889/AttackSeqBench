@@ -1,0 +1,64 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- Malware sent via email to a Vietnam government domain.
+- The email contained a zip file with a .lnk file simulating a document icon.
+
+**Execution:**
+- The .lnk file contained MS-DOS obfuscated code.
+- The code carved out a base64 encoded PowerShell script (s.ps1) and saved it in the %TEMP% directory.
+- The PowerShell script executed another PowerShell script in memory, which ran a WScript Shell.
+- The WScript Shell created three files: a decoy DOC file, a legitimate tool for installing .NET files, and a .NET DLL file containing the actual malicious payload.
+
+**Persistence:**
+- The PowerShell script checked for administrative privileges.
+- If the user was an administrator, the DLL file was copied to WINDIR\debug\ or %TEMP%.
+- A scheduled task was created with SYSTEM privileges if the user was an administrator, or with lower privileges otherwise.
+- The malware also checked for the presence of Kaspersky antivirus and adjusted its behavior accordingly.
+
+**Command and Control:**
+- The payload was identified as a Cobalt Strike beacon, communicating with the command and control server.
+
+**Others:**
+- The attack used sophisticated techniques to evade detection.
+- The infrastructure was not associated with any other known attacks.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After generating a DLL file from the .DAT file using InstallUtil.exe as part of its defense evasion strategy, is it likely that the malware will create a scheduled task with SYSTEM privileges or lower privileges based on user rights for persistence?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- The PowerShell script checks for administrative privileges.
+- If the user is an administrator, the DLL file is copied to WINDIR\debug\ or %TEMP%.
+- A scheduled task is created with SYSTEM privileges if the user is an administrator, or with lower privileges otherwise.
+
+**Evaluation:**
+- The report clearly states that the malware checks for administrative privileges and creates a scheduled task with SYSTEM privileges if the user is an administrator.
+- If the user is not an administrator, the scheduled task is created with lower privileges.
+
+**Answer Choice A: Yes**
+- This choice aligns with the report, as it states that the malware will create a scheduled task with SYSTEM privileges if the user is an administrator, or with lower privileges otherwise.
+
+**Answer Choice B: No**
+- This choice does not align with the report, as it contradicts the behavior described in the persistence section.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Step-by-Step Reasoning:**
+1. The malware checks for administrative privileges.
+2. If the user is an administrator, the DLL file is copied to WINDIR\debug\ or %TEMP%.
+3. A scheduled task is created with SYSTEM privileges if the user is an administrator.
+4. If the user is not an administrator, the scheduled task is created with lower privileges.
+5. The question asks if it is likely that the malware will create a scheduled task with SYSTEM privileges or lower privileges based on user rights for persistence.
+6. The report confirms this behavior.
+
+**Final Answer: A: Yes**

@@ -1,0 +1,129 @@
+Alright, I have this CTI outline about Operation Sharpshooter and a question related to the Rising Sun implant's behavior. I need to determine the most plausible sequence of tactics, techniques, and procedures (TTPs) based on the information provided.
+
+First, I need to understand the attack sequence as described in the CTI outline. Let's break it down step by step.
+
+**Reconnaissance:**
+
+- The campaign masqueraded as job recruitment to gather information for exploitation.
+
+- Targets were defense and government-related organizations.
+
+**Initial Access:**
+
+- Started on October 25 with malicious documents containing a Korean-language metadata and English job descriptions.
+
+- These documents had a malicious macro that injected the Sharpshooter downloader into Word's memory.
+
+- The downloader then retrieved the second-stage implant, Rising Sun, from a control server.
+
+**Execution:**
+
+- The shellcode from the macro in winword.exe acted as a downloader for Rising Sun.
+
+- It resolved libraries and APIs using LoadLibraryA() and GetProcAddress().
+
+- Downloaded the second-stage payload (Rising Sun) and a decoy document to the startup folder and %LOCALAPPDATA%, respectively.
+
+- Executed both payloads using CreateProcessA() and ShellExecuteA().
+
+**Persistence:**
+
+- Rising Sun ensured persistence by downloading the second-stage binary to the startup folder during the download process.
+
+**Command and Control (C2):**
+
+- Rising Sun communicated with control servers via HTTP POST requests.
+
+- Data was encrypted with RC4 and obfuscated with Base64.
+
+- Identified C2 servers include 34.214.99.20/view_style.php, 137.74.41.56/board.php, and kingkoil.com.sg/board.php.
+
+**Exfiltration:**
+
+- Data was encrypted with RC4, obfuscated with Base64, and exfiltrated via HTTP POST requests.
+
+**Others:**
+
+- The implant framework resembles Duuzer, which targeted South Korea and Japan.
+
+- Similarities to Lazarus Group attacks, but with possible false flags.
+
+- The implant has 14 backdoor capabilities, including executing commands, gathering drive and process information, reading and writing files, and modifying file attributes.
+
+Now, the question is: "After communicating with control servers using HTTP POST requests, is it likely that the Rising Sun implant will fetch computer name and user name information as part of its discovery activities only after ensuring persistence by downloading the second-stage binary to the startup folder during the download process?"
+
+Answer choices are A: Yes and B: No.
+
+To answer this, I need to understand the sequence of events:
+
+1. Initial access through malicious documents with macros.
+
+2. Execution of shellcode that downloads Rising Sun and a decoy document.
+
+3. Persistence is ensured by placing the second-stage binary in the startup folder.
+
+4. C2 communication via HTTP POST requests with encrypted and obfuscated data.
+
+5. Exfiltration of data via HTTP POST requests, also encrypted and obfuscated.
+
+The question is asking whether, after C2 communication, the implant is likely to fetch computer name and user name information as part of discovery activities only after ensuring persistence.
+
+Let's think about this step by step.
+
+First, the implant ensures persistence by placing itself in the startup folder. This is a common tactic to ensure that the implant survives system reboots.
+
+After ensuring persistence, it's likely that the implant would proceed to perform discovery activities to gather information about the compromised system. This often includes gathering system information like computer name, user name, installed software, network configuration, etc.
+
+The C2 communication is mentioned after persistence is established. It's plausible that once persistence is achieved, the implant would communicate back to the C2 server to report its success and potentially send gathered information, such as computer name and user name.
+
+So, in sequence:
+
+- Ensure persistence.
+
+- Perform discovery activities.
+
+- Communicate with C2 to report back and possibly exfiltrate data.
+
+Given this sequence, it makes sense that after ensuring persistence, the implant would fetch computer name and user name information as part of its discovery activities and then communicate this back to the C2 server via HTTP POST requests.
+
+Therefore, the answer seems to be A: Yes.
+
+However, let's consider if there might be a different sequence or if there's any information in the CTI outline that contradicts this.
+
+Looking back at the Execution phase:
+
+- The shellcode downloads the second-stage payload and the decoy document.
+
+- It executes both payloads using CreateProcessA() and ShellExecuteA().
+
+This suggests that after downloading, the payloads are executed immediately.
+
+In the Persistence phase:
+
+- Persistence is ensured by downloading the second-stage binary to the startup folder.
+
+This implies that the second-stage binary is placed in the startup folder as part of the initial infection process.
+
+So, persistence is established during the initial infection phase.
+
+Then, the C2 communication is a function of the Rising Sun implant, which is the second-stage payload.
+
+Therefore, after the implant is executed, it would likely establish C2 communication, and as part of that communication, it would send information about the compromised system, including computer name and user name.
+
+Given that persistence is already ensured before the implant is executed, the discovery activities would occur after persistence is established.
+
+Hence, the sequence is:
+
+- Initial access through malicious document.
+
+- Execution of shellcode that downloads and executes Rising Sun.
+
+- Persistence established by placing the implant in the startup folder.
+
+- Rising Sun executes, establishes C2 communication, and performs discovery activities, including fetching computer name and user name.
+
+Therefore, the answer is A: Yes.
+
+It is likely that after communicating with control servers using HTTP POST requests, the Rising Sun implant will fetch computer name and user name information as part of its discovery activities only after ensuring persistence by downloading the second-stage binary to the startup folder during the download process.
+
+**Final Answer: A**

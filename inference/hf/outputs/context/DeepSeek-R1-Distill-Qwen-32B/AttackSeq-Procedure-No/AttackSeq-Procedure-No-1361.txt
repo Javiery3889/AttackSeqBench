@@ -1,0 +1,26 @@
+Okay, so I need to figure out whether the VERMIN malware's keylogger component collects keystrokes and clipboard data before storing them encrypted in a specific folder. Let me go through the CTI report step by step.
+
+First, the report mentions that VERMIN is a Remote Access Tool (RAT) written in .NET. It uses HTTP encapsulated SOAP for command and control, which is unusual. The initial access was through an SFX executable with a decoy document. 
+
+Looking at the Execution section, after the malware runs, it checks the system's input language. If it's not Russian or Ukrainian, it tries to exit but continues due to a coding error. Then it decrypts an embedded resource using a brute force method to find a 6-byte array matching a CRC32 sum, which is hashed with MD5 for the decryption key. It sets up a scheduled task every 30 minutes and collects system info like machine name, username, OS, architecture, local IP, and anti-virus software. If anti-virus is detected, it doesn't install the keylogger.
+
+In the Persistence section, it sets itself to run as a scheduled task and saves encrypted parameters to C:\Users\Admin\AppData\Roaming\Microsoft\AddIns\settings.dat.
+
+Defense Evasion: Uses ConfuserEx for obfuscation and avoids installing the keylogger if anti-virus is present.
+
+Discovery: Collects info via WMI queries, including machine name, username, OS, architecture, local IP, and anti-virus check.
+
+Command and Control: Uses SOAP and WSHttpBinding with 'Username' authentication.
+
+Now, the question is about whether the keylogger collects keystrokes and clipboard data and stores them encrypted in %appdata%\Microsoft\Proof\Settings.
+
+From the report, I see that the keylogger component is only installed if no anti-virus is detected. But the report doesn't explicitly mention where the collected data is stored. It does mention that the scheduled task runs every 30 minutes, and the malware collects info, but the storage location isn't specified in the Execution or Discovery sections.
+
+The report does mention that the scheduled task parameters are saved to C:\Users\Admin\AppData\Roaming\Microsoft\AddIns\settings.dat, but that's for the task, not the keylogger data. The keylogger's behavior isn't detailed beyond its installation condition.
+
+So, the answer choices are Yes or No. The question is whether the keylogger stores data in that specific folder. Since the report doesn't provide information about the keylogger's storage location, I can't confirm it. Therefore, the answer is No because there's no evidence supporting that specific storage path.
+</think>
+
+The CTI report does not provide information about the keylogger component storing data in the specified folder. It only mentions that the keylogger is installed conditionally and that the scheduled task parameters are stored elsewhere. Therefore, the answer is:
+
+Final Answer: B: No

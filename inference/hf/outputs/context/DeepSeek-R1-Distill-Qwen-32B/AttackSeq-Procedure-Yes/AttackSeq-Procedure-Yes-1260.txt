@@ -1,0 +1,28 @@
+Okay, so I need to figure out whether Blind Eagle will execute a PowerShell script to load a DLL with an AMSI bypass and create a registry key before establishing persistence via a VBScript in the Startup folder. Let me break this down step by step.
+
+First, I'll look at the CTI report provided. The attack sequence is described in several stages. The second stage involves a PowerShell script that loads a DLL from an obfuscated Base64 string. This DLL has a method called Bypass(), which is an AMSI bypasser. After bypassing AMSI, the script checks for a specific registry key. If it's not present, it creates the key and sets an obfuscated value. Then, it drops two files: myScript.ps1 and SystemLogin.bat. Finally, a VBScript named Login1.vbs is placed in the Startup folder to execute SystemLogin.bat on system start.
+
+The third stage is about persistence, where the VBScript in the Startup folder runs the batch file. The fourth stage involves an obfuscated batch script that executes myScript.ps1 using mshta and a VBScript command. The fifth stage is another PowerShell script that again uses the AMSI bypass DLL and decrypts the registry key to load njRAT.
+
+Now, the question is asking if, after using Discord CDNs to host the next stage script, Blind Eagle will execute a PowerShell script that loads the AMSI bypass DLL and create a registry key before using the VBScript for persistence.
+
+Looking at the attack sequence, the second stage is where the PowerShell script loads the DLL, bypasses AMSI, creates the registry key, and drops the files. The third stage is the persistence via the VBScript. So, the sequence is: second stage (PowerShell with DLL, registry key) → third stage (VBScript in Startup). 
+
+The question mentions that the subsequent stage script is hosted on Discord CDNs. In the report, the fourth stage uses an obfuscated batch script that was likely hosted somewhere, possibly on a CDN, to execute the next PowerShell script. But the initial stages (second and third) don't mention CDNs; they're more about local execution after the initial compromise.
+
+Wait, the question is about whether, after using a CDN, they'll execute the PowerShell script with the DLL and registry key before placing the VBScript. From the report, the sequence is that the second stage does the PowerShell script with the DLL and registry, then the third stage is the VBScript for persistence. So yes, the PowerShell script (with DLL and registry) comes before the VBScript persistence.
+
+But the question is about after using a CDN. In the report, the fourth stage uses a batch script that's obfuscated and possibly hosted on a CDN. That batch script then runs the PowerShell script. So the sequence would be: initial compromise → second stage (PowerShell with DLL, registry) → third stage (VBScript) → fourth stage (batch from CDN runs PowerShell). Wait, that might not fit.
+
+Alternatively, perhaps the initial stages are delivered via the CDN. The report says the fifth stage involves another PowerShell script that decrypts the registry key. The IoCs include a malicious URL on Discord's CDN, so maybe the initial stages are hosted there.
+
+So, if the subsequent stage script is hosted on Discord CDNs, that would be the next stage after the initial compromise. So, the sequence would be: initial infection vector (maybe phishing) → download from CDN (second stage) which is the PowerShell script with DLL and registry key → then create the VBScript for persistence.
+
+So, yes, after using the CDN to host the next stage, they execute the PowerShell script (with DLL and registry) before placing the VBScript in the Startup folder.
+
+Therefore, the answer should be A: Yes.
+</think>
+
+The analysis of the CTI report indicates that after using Discord CDNs to host the subsequent stage script, Blind Eagle executes a PowerShell script that loads an AMSI bypass DLL and creates a registry key before establishing persistence via a VBScript in the Startup folder. This sequence aligns with the described attack stages, confirming the likelihood of this behavior.
+
+Final Answer: A

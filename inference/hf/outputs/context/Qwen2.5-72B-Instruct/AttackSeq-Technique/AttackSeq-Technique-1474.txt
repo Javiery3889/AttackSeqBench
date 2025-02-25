@@ -1,0 +1,77 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attackers used a watering hole attack to compromise a website.
+- They added code to redirect visitors to the infecting code, exploiting CVE-2018-8174 (VBScript engine vulnerability).
+
+**Execution:**
+- The malware exploits the VBScript engine vulnerability to download a DLL.
+- The DLL is run in PowerShell.
+- The downloader checks for antivirus software processes and exits if any are found.
+- It exploits CVE-2015-1701 for Local Privilege Escalation.
+- The second stage involves downloading and executing the SLUB backdoor.
+
+**Persistence:**
+- The SLUB backdoor achieves persistence by copying itself to ProgramData\update\ and creating a Run registry key with a typo in the ValueName, 'Microsoft Setup Initializazion', to call the export function UpdateMPUnits with rundll32.exe.
+
+**Privilege Escalation:**
+- The downloader exploits CVE-2015-1701 to acquire Local Privilege Escalation.
+
+**Defense Evasion:**
+- The first stage downloader exits if it detects any antivirus software processes.
+
+**Discovery:**
+- The SLUB backdoor performs discovery by downloading a 'gist' snippet from GitHub and parsing it for commands.
+- It retrieves the username and computer name.
+
+**Collection:**
+- The backdoor supports various commands for data collection, including taking screenshots, listing files, copying files, and uploading files to the file.io website.
+- It collects information from registry keys and creates archives of user's Desktop folders for exfiltration.
+
+**Exfiltration:**
+- The attackers exfiltrate data by uploading files to the file.io website and posting download links to the Slack channel.
+- They create archive files of user's Desktop folders and build CAB files containing the file tree for exfiltration.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK technique most likely occurred before the SLUB backdoor communicated with the attackers via Slack using hardcoded authentication tokens to post messages and command results to a private Slack channel?
+
+**Answer Choices:**
+A: T1560-Archive Collected Data
+B: T1588.004-Digital Certificates
+C: T1132.002-Non-Standard Encoding
+D: T1071-Application Layer Protocol
+
+#### 3. Compare and Evaluate
+
+**T1560-Archive Collected Data:**
+- This technique involves compressing and archiving data to prepare it for exfiltration.
+- The report mentions that the backdoor creates archive files of user's Desktop folders and builds CAB files containing the file tree for exfiltration.
+- This technique is relevant but occurs after the data is collected and before exfiltration.
+
+**T1588.004-Digital Certificates:**
+- This technique involves using digital certificates to sign malware or tools.
+- The report does not mention the use of digital certificates.
+
+**T1132.002-Non-Standard Encoding:**
+- This technique involves using non-standard data encoding methods to obfuscate data.
+- The report does not mention the use of non-standard encoding.
+
+**T1071-Application Layer Protocol:**
+- This technique involves using common application layer protocols to communicate with remote systems.
+- The report mentions that the backdoor communicates with the attackers via Slack, which is an application layer protocol.
+- This technique is relevant and likely occurs before the backdoor posts messages and command results to the Slack channel.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The backdoor communicates with the attackers via Slack, which is an application layer protocol.
+- The communication involves posting messages and command results to a private Slack channel.
+- The use of Slack as a communication channel is a clear example of the T1071-Application Layer Protocol technique.
+- The other techniques (T1560, T1588.004, T1132.002) are either not mentioned in the report or occur at different stages of the attack.
+
+**Final Answer:**
+D: T1071-Application Layer Protocol

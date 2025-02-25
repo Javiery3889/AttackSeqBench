@@ -1,0 +1,36 @@
+Okay, so I need to figure out whether the WastedLocker ransomware deletes system volume shadow copies via PowerShell commands during the Impact phase after deploying using PsExec to stop services and disable Windows Defender. Let me break this down step by step.
+
+First, I'll look at the CTI report provided. The report details an attack by Evil Corp using WastedLocker ransomware. The attack sequence is outlined using MITRE ATT&CK tactics. Let me go through each tactic mentioned.
+
+Reconnaissance: They used SocGholish on compromised websites to deliver the attack, masquerading as a software update. So the initial access was through a malicious JavaScript framework.
+
+Initial Access: The SocGholish framework delivered a zipped file with malicious JavaScript, which then executed another JS file via wscript.exe. This led to downloading PowerShell scripts for discovery.
+
+Execution: They used Cobalt Strike with PowerShell to download a loader, which included a .NET injector (Donut) to execute the Cobalt Strike Beacon. This payload could do command execution, process injection, privilege escalation, and file upload/download.
+
+Privilege Escalation: They used slui.exe and wmic.exe to escalate privileges. Slui.exe is a legitimate tool, and wmic.exe is commonly used for remote command execution.
+
+Defense Evasion: They used PsExec to manage Windows Defender, disabling scanning, removing definitions, and stopping real-time monitoring. PsExec was also used to stop services across the organization before deploying WastedLocker.
+
+Credential Access: Cobalt Strike was used for credential dumping with ProcDump and to clear logs.
+
+Discovery: They used commands like whoami, net user, net group, and PowerView's Get-NetComputer to gather information.
+
+Lateral Movement: Cobalt Strike Beacon was used for moving laterally, executing commands and injecting processes on remote machines.
+
+Command and Control: The Beacon communicated with a C&C domain linked to WastedLocker.
+
+Now, the question is about the Impact phase. Specifically, after deploying WastedLocker using PsExec to stop services and disable Defender, does the ransomware delete system volume shadow copies via PowerShell?
+
+Looking at the report, during the Defense Evasion phase, they used PsExec to stop services and disable Defender. The Impact phase would typically involve the actual deployment of the ransomware and any actions that cause harm, like encrypting files.
+
+The report mentions that the attackers used PsExec to stop services and disable Defender, but it doesn't explicitly state whether they deleted volume shadow copies. However, it's common for ransomware to delete shadow copies to prevent data recovery. Volume shadow copies are backups, so removing them makes it harder for victims to recover without paying the ransom.
+
+In the report, the attackers used PowerShell for execution and other phases. It's plausible that they would use PowerShell commands to delete shadow copies as part of the Impact phase. The report doesn't explicitly mention this, but it's a typical step in ransomware attacks.
+
+So, considering the information, it's likely that they did delete the shadow copies using PowerShell. Therefore, the answer would be Yes.
+</think>
+
+The analysis of the CTI report indicates that while the report does not explicitly mention the deletion of system volume shadow copies, it is a common tactic for ransomware to remove these backups to hinder recovery. Given the attackers' use of PowerShell in other phases, it is plausible they used it for this purpose during the Impact phase.
+
+Final Answer: A: Yes

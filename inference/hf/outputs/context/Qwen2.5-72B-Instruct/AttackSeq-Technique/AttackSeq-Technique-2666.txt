@@ -1,0 +1,84 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Resource Development:**
+- Campaign by Mustang Panda using a new Korplug variant named Hodur.
+- Targets research entities, ISPs, and European diplomatic missions.
+- Uses current events (e.g., Russia's invasion of Ukraine) to lure victims with phishing documents.
+
+**Initial Access:**
+- Phishing and watering hole attacks.
+- Filenames related to current events (e.g., 'COVID-19 travel restrictions EU reviews list of third countries.exe') to deliver a downloader.
+
+**Execution:**
+- Custom loader to execute the new Korplug variant.
+- Loader is a DLL that exploits a side-loading vulnerability in a legitimate, signed executable.
+- Decrypts the encrypted Korplug file in memory and makes it executable.
+
+**Persistence:**
+- Creates a hidden system directory under %allusersprofile%.
+- Sets up persistence via scheduled tasks or registry entries.
+
+**Defense Evasion:**
+- Heavy use of control-flow obfuscation and anti-analysis techniques.
+- Downloader and loader use junk code, opaque predicates, and encrypted stack strings.
+- Korplug file is encrypted and decrypted at runtime.
+- Configuration data is encrypted with XOR.
+- Directories are hidden system directories.
+- Malware can run commands on a hidden desktop.
+
+**Discovery:**
+- Collects system information (uptime, Windows version, CPU clock rate, RAM, display resolution, system locale, hostname, IP addresses).
+
+**Collection:**
+- Collects data from local systems, removable media, and network shared drives.
+- Lists files and directories with attributes and content.
+- Collects metadata and content from all mapped drives.
+
+**Command and Control:**
+- Communicates with C&C servers using a custom TCP-based protocol.
+- Initial handshake can be done over HTTPS or TCP.
+- Subsequent communication is always over TCP.
+- Communication is encrypted using RC4.
+- Configuration contains fallback C&C servers.
+- Can download additional files from the C&C server.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After Korplug collects data from local systems, removable media, and network shared drives, utilizing system metadata and file attributes, which ATT&CK technique most likely occurred as part of transferring the collected data to the C&C server?
+
+**Answer Choices:**
+- A: T1567.004-Exfiltration Over Webhook
+- B: T1048-Exfiltration Over Alternative Protocol
+- C: T1556.003-Pluggable Authentication Modules
+- D: T1008-Fallback Channels
+
+#### 3. Compare and Evaluate
+
+**T1567.004-Exfiltration Over Webhook:**
+- Involves using webhooks to exfiltrate data.
+- Not mentioned in the report.
+
+**T1048-Exfiltration Over Alternative Protocol:**
+- Involves using alternative protocols to exfiltrate data.
+- The report mentions that Korplug communicates with C&C servers using a custom TCP-based protocol and can use non-standard ports, which aligns with this technique.
+
+**T1556.003-Pluggable Authentication Modules:**
+- Involves modifying or replacing PAM modules to gain persistence or escalate privileges.
+- Not mentioned in the report.
+
+**T1008-Fallback Channels:**
+- Involves using fallback channels to maintain command and control.
+- The report mentions that Korplug configuration contains fallback C&C servers, which aligns with this technique.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The report clearly states that Korplug communicates with C&C servers using a custom TCP-based protocol and can use non-standard ports.
+- This aligns with the technique T1048-Exfiltration Over Alternative Protocol.
+- While T1008-Fallback Channels is also mentioned, it is more about maintaining command and control rather than exfiltrating data.
+
+**Final Answer:**
+B: T1048-Exfiltration Over Alternative Protocol

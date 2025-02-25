@@ -1,0 +1,66 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- DRAGONFISH distributes Elise malware through a malicious Microsoft Word document.
+- The document contains an OLE object that drops and executes a malicious executable in the %temp% folder.
+- The payload is moved to \AppData\Roaming\Microsoft\Windows\Caches\ as NavShExt.dll.
+- The original executable is deleted.
+
+**Execution:**
+- Elise malware starts iexplore.exe in a suspended state.
+- It injects NavShExt.dll into iexplore.exe and calls the 'Setting' export function.
+- A mutex named 'donotbotherme' is created to prevent duplicate executions.
+- Harvested data is stored in thumbcache_1CD60.db in AppData\Local\Microsoft\Windows\Explorer\.
+- Data is sent to and files/commands are downloaded from a C2 server (103.236.150[.]14).
+
+**Persistence:**
+- Persistence is achieved by using the Run Registry key with the value name IAStorD.
+- Two hidden DLLs with export functions named DePatchEntry or EvilEntry are injected into iexplore.exe.
+
+**Defense Evasion:**
+- Various defense evasion techniques are used, including anti-VM features, obfuscation, and data exfiltration using base64-encoded cookie values.
+- The host is spoofed to query non-existing domains to mislead analysts.
+- Debug paths are stripped from the malware.
+
+**Command and Control:**
+- The malware communicates with a hardcoded C2 server (103.236.150[.]14) to send harvested data and receive files/commands.
+
+**Others:**
+- The campaign targets the ASEAN Defence Ministers' Meeting (ADMM) and associated individuals for espionage.
+- The malware can provide a remote shell and uninstall itself.
+- Execution debug messages are stored in %temp%\FXSAPIDebugLogFile.tmp.
+- Logs are encrypted using a static AES key.
+- Security teams are advised to block access to the C2 server and patch the CVE-2017-11882 vulnerability.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After achieving persistence using the Run Registry key with the value name IAStorD and injecting hidden DLLs into the Internet Explorer process, is DRAGONFISH likely to harvest a list of all files present on the user's desktop to gather directory information?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- The malware achieves persistence using the Run Registry key and injects hidden DLLs into iexplore.exe.
+- The malware harvests data and stores it in thumbcache_1CD60.db.
+- The malware communicates with a C2 server to send harvested data and receive commands.
+
+**Evaluation:**
+- The report mentions that the malware harvests data and stores it in a specific file (thumbcache_1CD60.db).
+- However, the report does not explicitly state that the malware harvests a list of all files on the user's desktop.
+- The primary focus of the malware seems to be on exfiltrating specific data and maintaining persistence, rather than a comprehensive directory listing.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The CTI report provides detailed information about the malware's actions, including data harvesting and persistence mechanisms.
+- While the malware does harvest data, the report does not specify that it includes a list of all files on the user's desktop.
+- The focus of the malware appears to be on specific data and maintaining a low profile to avoid detection.
+
+**Final Answer:**
+- B: No

@@ -1,0 +1,71 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attack started with the delivery of an ISO file containing a zip file with malicious scripts.
+
+**Execution:**
+- Various VBScripts and batch files were executed.
+- 'install.vbs' executed 'resolve.dns'.
+- 'update.vbs' executed 'stopedge.bat'.
+- 'activate.vbs' sent an HTTP request and saved the retrieved content.
+- 'unactivate.vbs' was capable of exfiltration through a POST request.
+- 'stopedge.bat' scheduled 'install.vbs' to run every 33 minutes and managed file deletions.
+- 'resolvedns.bat' initiated the download of a file from the C2 server.
+- 'versioninfo.bat' collected information about the user's computer and exfiltrated data using 'unactivate.vbs'.
+
+**Persistence:**
+- 'stopedge.bat' scheduled 'install.vbs' to run every 33 minutes if 'paycom.ini' was present.
+
+**Defense Evasion:**
+- Scripts were heavily obfuscated.
+- 'stopedge.bat' managed the deletion of 'versioninfo.bat' and 'update.vbs' after execution.
+
+**Discovery:**
+- 'versioninfo.bat' discovered information about the user's computer, including directory listings, IP addresses, running processes, and system details.
+
+**Command and Control:**
+- 'activate.vbs' communicated with a C2 server by sending an HTTP request and saving the content retrieved.
+- 'resolvedns.bat' facilitated communication with the C2 server to initiate the download of a file.
+
+**Exfiltration:**
+- 'unactivate.vbs' exfiltrated data through a POST request.
+- 'versioninfo.bat' exfiltrated collected information about the user's computer using 'unactivate.vbs'.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After 'versioninfo.bat' script performed discovery on the victim's computer, including directory listings, IP addresses, and running processes, which ATT&CK tactic most likely occurred before the exfiltration of this gathered data using 'unactivate.vbs'?
+
+**Answer Choices:**
+- A: Defense Evasion
+- B: Impact
+- C: Collection
+- D: Discovery
+
+#### 3. Compare and Evaluate
+
+**Discovery:**
+- 'versioninfo.bat' performed discovery by collecting information about the user's computer.
+
+**Exfiltration:**
+- 'unactivate.vbs' exfiltrated the data collected by 'versioninfo.bat'.
+
+**Sequence Analysis:**
+- The 'versioninfo.bat' script performed discovery.
+- The data collected by 'versioninfo.bat' was then exfiltrated using 'unactivate.vbs'.
+
+**Tactics in Sequence:**
+1. **Discovery** (by 'versioninfo.bat')
+2. **Exfiltration** (by 'unactivate.vbs')
+
+**Evaluation of Answer Choices:**
+- **A: Defense Evasion** - This tactic involves techniques to avoid detection, which is not directly related to the sequence of discovery and exfiltration.
+- **B: Impact** - This tactic involves causing damage or disruption, which is not mentioned in the sequence.
+- **C: Collection** - This tactic involves gathering data, which is a step that logically precedes exfiltration. However, the report specifically mentions 'versioninfo.bat' performing discovery, not collection.
+- **D: Discovery** - This is the correct tactic as 'versioninfo.bat' performed discovery before the data was exfiltrated.
+
+#### 4. Final Answer
+
+**Final Answer: D: Discovery**

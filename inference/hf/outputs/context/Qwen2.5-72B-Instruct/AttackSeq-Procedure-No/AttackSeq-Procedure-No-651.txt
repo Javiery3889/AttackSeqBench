@@ -1,0 +1,71 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attack used a backdoor malware that leverages Dropbox API for C&C.
+- The malware loaded a malicious DLL using the legitimate Windows Defender Core Process (MsMpEng.exe).
+- Different loader filenames were placed in C:\ProgramData\Microsoft, which called the function ServiceCrtMain from mpsvc.dll.
+- The older variant read shellcode from an English.rtf payload file, while the newer variant had hardcoded shellcode that loaded additional shellcode from mpsvc.mui, ultimately releasing a fully functional backdoor executable.
+
+**Execution:**
+- The final malicious executable had features to interact with Dropbox API, bypass UAC using a .NET technique, and had persistence mechanisms.
+
+**Persistence:**
+- The malware ensured persistence by registering as a startup program in the registry path HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run if it lacked privileges, or as a system service if it had higher privileges.
+
+**Defense Evasion:**
+- The malware used a UAC bypass technique using .NET, which was not new but had been disclosed in 2017. The threat actor only changed the GUID to evade detection.
+
+**Collection:**
+- The malware had recording features that included keylogging, clipboard logging, and screen recording.
+- The screen recording files were named with the format [%y-%m-%d]%H-%M-%S.avi.
+- The key-log and clipboard log were encoded and saved with the filenames <hash>.pas and <hash>.log, respectively.
+
+**Command and Control:**
+- The malware could connect to a specific C&C server and send back data using fake HTTP POST requests.
+- It also interacted with Dropbox, uploading and downloading files using the Dropbox API.
+- The malware checked for a fake GIF file header in the bin.asc file downloaded from Dropbox before proceeding to a custom decoding phase to release the inject payload.
+
+**Others:**
+- The Dropbox API token was hardcoded in the malware.
+- The Dropbox folder structure included a unique hash for each infected victim, log files, and payload files such as bin.asc.
+- The malware's second stage involved establishing a connection to the C&C server and Dropbox, with Dropbox becoming a secondary C&C server with full remote control features if the primary C&C server's IP address was blocked.
+- The malware could execute various commands, including listing drives, managing files, and opening terminals.
+- The threat actor's approximate working hours were inferred from the decoded command files.
+- Monitoring of the Dropbox tokens showed nearly 200 infected computers at the peak, with a drop in activity on August 21, 2019, when the threat actor cleared the Dropbox folder.
+- The monitoring ended on September 20, 2019, when all tokens were revoked by the threat actor.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After achieving persistence by registering as a startup program or system service in the registry, is it likely that the malware will perform keylogging, clipboard logging, and screen recording for further data collection before collecting Bitcoin wallet addresses from the registry?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Persistence:**
+- The malware ensures persistence by registering as a startup program or system service in the registry.
+
+**Collection:**
+- The malware has recording features that include keylogging, clipboard logging, and screen recording.
+
+**Additional Data Collection:**
+- The report does not explicitly mention the collection of Bitcoin wallet addresses from the registry. However, the malware is capable of executing various commands, including managing files and opening terminals, which could potentially include searching for and collecting Bitcoin wallet addresses.
+
+**Sequence Analysis:**
+- The report clearly states that the malware performs keylogging, clipboard logging, and screen recording as part of its data collection activities.
+- The collection of Bitcoin wallet addresses from the registry is not explicitly mentioned, but it is a plausible additional step given the malware's capabilities.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The malware ensures persistence by registering as a startup program or system service.
+- After achieving persistence, the malware performs keylogging, clipboard logging, and screen recording.
+- The malware has the capability to execute various commands, which could include searching for and collecting Bitcoin wallet addresses from the registry.
+
+Given the capabilities and the sequence of activities described in the report, it is plausible that the malware would perform keylogging, clipboard logging, and screen recording before potentially collecting Bitcoin wallet addresses from the registry.
+
+**Final Answer: A: Yes**

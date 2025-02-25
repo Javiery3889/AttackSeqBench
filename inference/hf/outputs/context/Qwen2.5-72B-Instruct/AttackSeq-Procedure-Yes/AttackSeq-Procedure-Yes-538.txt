@@ -1,0 +1,73 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The PIVY variant drops a decoy document, a DLL named ActiveUpdate.dll, and the PIVY shellcode file as Active.dat in a directory named ActiveUpdate_[0-9]{3}.
+- It copies rundll32.exe to ActiveFlash.exe.
+- It executes the new file (ActiveFlash.exe) with the path to the DLL.
+- It installs itself for automatic startup via a .lnk in the Windows Startup folder.
+
+**Execution:**
+- The PIVY variant copies rundll32.exe to ActiveFlash.exe.
+- It then executes the new file (ActiveFlash.exe) with the path to the DLL to perform its malicious actions.
+
+**Persistence:**
+- The PIVY variant installs itself for automatic startup via a .lnk in the Windows Startup folder.
+
+**Command and Control:**
+- The PIVY samples communicate with C2 servers such as webserver.servehttp[.]com and admin.nslookupdns[.]com.
+- The IP resolved to by these hostnames overlapped with fileshare.serveftp[.]com, which was used in an earlier PIVY sample.
+- The C2s are no longer null-padded, and each hostname ends with a null-byte followed by a string that changes slightly with each C2 server.
+
+**Others:**
+- PIVY samples were observed targeting Myanmar and several other countries in Asia.
+- The targeting of post-election Myanmar appears to be following the same style as what was mentioned in the "Uncovering the Seven Pointed Dagger" paper by ASERT.
+- A possible connection exists given that the C2 for these samples resolved to an IP contained within 103.240.203.0/22, as did a 9002 RAT sample in the Seven Pointed Dagger exploitation campaign.
+- A "LURK0" Gh0strat and another PIVY domain were also observed to have resolved to IPs contained within this range, making this subnet more suspicious from a targeted attack perspective.
+
+#### 2. Analyze the Question
+
+**Question:**
+Is it likely that the PIVY variant will execute the copied rundll32.exe as ActiveFlash.exe to perform its malicious actions before using DLL sideloading to load the dropped DLL for defense evasion?
+
+**Answer Choices:**
+A: Yes
+B: No
+
+#### 3. Compare and Evaluate
+
+**Extracted Attack Sequence:**
+1. **Initial Access:**
+   - Drops a decoy document, ActiveUpdate.dll, and Active.dat.
+   - Copies rundll32.exe to ActiveFlash.exe.
+   - Executes ActiveFlash.exe with the path to ActiveUpdate.dll.
+   - Installs a .lnk in the Windows Startup folder for persistence.
+
+2. **Execution:**
+   - Executes ActiveFlash.exe with the path to ActiveUpdate.dll to perform malicious actions.
+
+3. **Persistence:**
+   - Installs a .lnk in the Windows Startup folder.
+
+4. **Command and Control:**
+   - Communicates with C2 servers.
+
+**Evaluation of Answer Choices:**
+- **Choice A: Yes**
+  - The report clearly states that the PIVY variant copies rundll32.exe to ActiveFlash.exe and then executes it with the path to the DLL (ActiveUpdate.dll). This is a form of DLL sideloading, where the legitimate rundll32.exe is used to load the malicious DLL.
+  - The sequence described in the report aligns with the question: the PIVY variant executes the copied rundll32.exe (ActiveFlash.exe) to perform its malicious actions, which involves loading the dropped DLL (ActiveUpdate.dll) for defense evasion.
+
+- **Choice B: No**
+  - This choice would imply that the PIVY variant does not execute the copied rundll32.exe (ActiveFlash.exe) to perform its malicious actions before using DLL sideloading.
+  - However, the report explicitly states that the PIVY variant does execute ActiveFlash.exe with the path to the DLL, which is a form of DLL sideloading.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The CTI report clearly indicates that the PIVY variant copies rundll32.exe to ActiveFlash.exe and then executes it with the path to the DLL (ActiveUpdate.dll).
+- This execution of ActiveFlash.exe with the path to the DLL is a form of DLL sideloading, which is used for defense evasion.
+- Therefore, the sequence described in the question aligns with the attack sequence presented in the CTI report.
+
+**Final Answer:**
+A: Yes

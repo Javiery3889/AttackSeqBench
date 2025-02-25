@@ -1,0 +1,91 @@
+Alright, I've got this CTI outline about FIN13, a cyber threat group that's been active since 2016, mainly targeting organizations in Mexico, especially in finance, retail, and hospitality. They're known for long-term intrusions, mapping networks, stealing credentials and sensitive documents to carry out fraudulent money transfers. Unlike typical ransomware groups, they don't deploy ransomware; instead, they use custom passive backdoors and tools for extended periods within victim environments.
+
+So, the outline breaks down their activities into several MITRE ATT&CK tactics:
+
+1. **Reconnaissance**: They've been tracking FIN13 since 2017, with activities dating back to 2016. The group is known for long-term intrusions, mapping victim networks, capturing credentials, and stealing sensitive documents for fraudulent money transfers. They focus on financial, retail, and hospitality industries.
+
+2. **Initial Access**: They exploit external servers to deploy web shells and custom malware like BLUEAGAVE and SIXPACK to get a foothold. Specific vulnerabilities targeted are unclear due to long dwell times and insufficient evidence. Web shells on external servers are a consistent entry point.
+
+3. **Execution**: They use JSPRAT for local command execution, file upload/download, and network traffic proxying. They also use passive backdoors like BLUEAGAVE, which sets up a local HTTP server on high ephemeral ports, listening for incoming HTTP requests and executing commands via cmd.exe.
+
+4. **Privilege Escalation**: They use common privilege escalation techniques, adapting to diverse victim networks. They've used utilities like ProcDump to dump LSASS process memory and Mimikatz to extract credentials. Additionally, they've used certutil to launch obfuscated utilities and trojanized KeePass binaries for credential harvesting.
+
+5. **Defense Evasion**: They employ passive backdoors for stealth, chain web shells for complex pivots, and use legitimate utilities like certutil for detection evasion. They also use custom droppers like LATCHKEY and malware like DRAWSTRING with recon functionality.
+
+6. **Credential Access**: They use techniques like process memory dumping of LSASS and network sniffing to obtain credentials. They also target unsecured credentials and have used trojanized versions of KeePass to log newly entered passwords.
+
+7. **Discovery**: They leverage native OS binaries, scripts, third-party tools, and custom malware for internal reconnaissance. They gather information on network and host configurations, user accounts, and services to support their objectives.
+
+8. **Lateral Movement**: The group uses WMI to remotely execute commands and move laterally, employing utilities like Invoke-WMIExec and custom web shells like BUSTEDPIPE. They also use Invoke-SMBExec and NIGHTJAR for lateral movement and cross-platform operations.
+
+9. **Collection**: They collect data from network shared drives and stage it locally or remotely. They also archive collected data using utilities and libraries, targeting specific data that aids in fraudulent transactions.
+
+10. **Command and Control**: They use proxies, application layer protocols, and non-application layer protocols for command and control. They also transfer tools into the environment and encode data for communication.
+
+11. **Exfiltration**: They exfiltrate data over web services, using tools like web shells and JSP tools in web-accessible directories to steal targeted data for fraudulent transactions.
+
+Additionally, there's some context about their operations having a median dwell time of 913 days, which is much longer than typical financially motivated actors. They have an operational lifespan of over five years, targeting only organizations in Mexico. Their endgame involves processing POS data and sending fraudulent ISO 8583 transactions. Despite the rise of ransomware, they haven't deployed it and remain focused on traditional cybercrime.
+
+Now, the question is: After deploying web shells and custom malware such as BLUEAGAVE during initial access, which ATT&CK tactic most likely occurred before FIN13 escalated privileges using tools like Mimikatz and trojanized KeePass binaries?
+
+The answer choices are:
+
+A: Persistence
+
+B: Credential Access
+
+C: Execution
+
+D: Exfiltration
+
+Okay, so I need to figure out the sequence of tactics here. The outline provides a general order of tactics, but I need to focus on the sequence around initial access and privilege escalation.
+
+First, during Initial Access, they deploy web shells and custom malware like BLUEAGAVE on external servers. This gives them a foothold in the network.
+
+Next, they need to execute commands and possibly maintain access, which might involve establishing persistence. However, the outline mentions that they use passive backdoors for stealth, which could be part of maintaining access.
+
+Then, they likely need to gather information about the network and discover potential targets, which falls under the Discovery tactic.
+
+After that, to move laterally and access more sensitive parts of the network, they would need to escalate privileges. This is where they use tools like Mimikatz to extract credentials and trojanized KeePass binaries for credential harvesting.
+
+So, the sequence I'm envisioning is:
+
+1. Initial Access: Deploy web shells and custom malware.
+
+2. Execution: Use these tools to execute commands on the network.
+
+3. Discovery: Gather information about the network and identify targets.
+
+4. Credential Access: Harvest credentials using tools like Mimikatz and trojanized KeePass.
+
+5. Privilege Escalation: Use the obtained credentials to gain higher privileges.
+
+6. Lateral Movement: Move across the network to access more sensitive areas.
+
+7. Collection: Collect the desired data.
+
+8. Exfiltration: Send the data out of the network.
+
+But the question is asking for which tactic occurred before privilege escalation using Mimikatz and trojanized KeePass.
+
+Looking at the sequence above, Credential Access (harvesting credentials) happens before Privilege Escalation (using those credentials to gain higher privileges).
+
+So, option B: Credential Access seems to be the most plausible answer.
+
+But let's consider the other options to make sure.
+
+Option A: Persistence. While establishing persistence might be important for maintaining access over time, it's not necessarily directly before privilege escalation. They might establish persistence to ensure they can come back to the network even if their initial access is detected and mitigated. But in terms of sequence, it might not be immediately before privilege escalation.
+
+Option C: Execution. They already have execution capabilities through the web shells and custom malware deployed during initial access. So, execution is likely ongoing throughout the attack, but it's not specifically before privilege escalation.
+
+Option D: Exfiltration. Exfiltration typically happens towards the end of the attack, after they've collected the desired data. So, it wouldn't occur before privilege escalation.
+
+Therefore, comparing these, Credential Access is the most logical tactic that occurs immediately before Privilege Escalation.
+
+Additionally, in the outline, under Credential Access, it mentions that they use process memory dumping of LSASS and network sniffing to obtain credentials, and they use trojanized KeePass binaries to log newly entered passwords. Then, under Privilege Escalation, they use Mimikatz to extract credentials and certutil to launch obfuscated utilities.
+
+So, the sequence is: first, they access credentials, and then they use those credentials to escalate privileges.
+
+Hence, the answer should be B: Credential Access.
+
+**Final Answer: B**

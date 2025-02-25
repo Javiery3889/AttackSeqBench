@@ -1,0 +1,66 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The adversary obtained SSH access to the target system.
+- Used wget to fetch malware samples from a specific IP address.
+- The malware binary had a date string matching the day it was downloaded.
+
+**Execution:**
+- The custom loader loads the Derusbi malware into memory.
+- Derusbi drops the Turbo Linux Kernel Module to disk, loads it into the kernel, and deletes it from disk to avoid detection.
+- Turbo is used to hide relevant user space processes.
+
+**Defense Evasion:**
+- Derusbi and Turbo employ cloaking and anti-analysis techniques.
+- Turbo LKM modifies the system's global call table to hide processes.
+- Turbo LKM disables CR0 write protection to modify the system call table.
+
+**Discovery:**
+- Derusbi gathers information about the victim host, including local host name, GCC version, and system information.
+- This information is transferred back to the C2 infrastructure via network beacons.
+
+**Command and Control:**
+- Malware binds to a raw socket on a random port between 31800 and 31900 and beacons to port 443.
+- A backup communication method with HTTP beacon is used, with content obfuscated using variable 4-byte XOR keys.
+- C2 interactions include HTTP POST requests to /photos/photo.asp and responses from the server.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK tactic most likely occurred after the attackers employed the Turbo Linux Kernel Module (LKM) to provide stealth for malicious processes, but before the Derusbi malware gathered information about the victim host, such as GCC version and system details?
+
+**Answer Choices:**
+A: Privilege Escalation
+B: Exfiltration
+C: Persistence
+D: Defense Evasion
+
+#### 3. Compare and Evaluate
+
+**Sequence of Events:**
+1. **Initial Access:** SSH access and wget to fetch malware.
+2. **Execution:** Loading Derusbi and Turbo LKM.
+3. **Defense Evasion:** Turbo LKM provides stealth for malicious processes.
+4. **Discovery:** Derusbi gathers information about the victim host.
+5. **Command and Control:** Malware communicates with C2.
+
+**Key Points:**
+- The Turbo LKM is used to hide processes, which is a form of **Defense Evasion**.
+- After the Turbo LKM is loaded, the next step is for Derusbi to gather information about the victim host, which is part of the **Discovery** phase.
+
+**Evaluation of Answer Choices:**
+- **A: Privilege Escalation:** This tactic involves gaining higher-level permissions. The report does not mention any specific actions to escalate privileges between loading the Turbo LKM and gathering information.
+- **B: Exfiltration:** This tactic involves sending data out of the network. The report mentions exfiltration in the C2 phase, which occurs after the discovery phase.
+- **C: Persistence:** This tactic involves maintaining access to the system. The report does not mention any specific actions to establish persistence between loading the Turbo LKM and gathering information.
+- **D: Defense Evasion:** This tactic involves techniques to avoid detection. The Turbo LKM is used to hide processes, which is a form of defense evasion. The next step is the discovery phase, where information is gathered.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The Turbo LKM is used to hide processes, which is a form of **Defense Evasion**.
+- After the Turbo LKM is loaded, the next step is for Derusbi to gather information about the victim host, which is part of the **Discovery** phase.
+- Therefore, the most likely tactic that occurred after the Turbo LKM was loaded and before the information gathering is **Defense Evasion**.
+
+**Final Answer: D: Defense Evasion**

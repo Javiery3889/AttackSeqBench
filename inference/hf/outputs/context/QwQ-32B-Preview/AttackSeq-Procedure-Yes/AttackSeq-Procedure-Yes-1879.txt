@@ -1,0 +1,59 @@
+Alright, I have this CTI outline about FIN13, a cyber threat group that's been active since 2016, mainly targeting organizations in Mexico, particularly in financial, retail, and hospitality sectors. They're known for long-term intrusions, mapping victim networks, capturing credentials, and stealing sensitive documents to facilitate fraudulent money transfers. Unlike typical ransomware groups, they focus on maintaining a persistent presence in the network using custom passive backdoors and tools.
+
+First, I need to understand the attack sequence based on the MITRE ATT&CK tactics outlined in the CTI report. Let's break it down step by step.
+
+1. **Reconnaissance**: FIN13 has been tracking targets since 2017, with activities dating back to 2016. They target specific industries and have a long dwell time, indicating thorough planning and patience.
+
+2. **Initial Access**: They exploit external servers to deploy web shells and custom malware like BLUEAGAVE and SIXPACK. The specific vulnerabilities used aren't clear due to long dwell times and lack of evidence.
+
+3. **Execution**: They use JSPRAT for command execution, file operations, and proxying network traffic. Also, they use passive backdoors like BLUEAGAVE, which sets up a local HTTP server to listen for commands.
+
+4. **Persistence**: FIN13 uses various methods to maintain access, including trojanizing KeePass binaries to log passwords, and deploying malware like SIXPACK, SWEARJAR, and MAILSLOT for email-based C2.
+
+5. **Privilege Escalation**: They use common techniques like dumping LSASS memory with ProcDump and extracting credentials with Mimikatz. They also use certutil to execute obfuscated utilities and trojanized KeePass binaries for credential harvesting.
+
+6. **Defense Evasion**: They employ stealthy backdoors, chain web shells for complex movements, and use legitimate utilities to avoid detection. Custom droppers and malware with recon functionalities are also used.
+
+7. **Discovery**: They use native OS binaries, scripts, third-party tools, and custom malware to gather information about the network and host configurations, user accounts, and services.
+
+8. **Lateral Movement**: They use WMI for remote command execution and lateral movement, employing tools like Invoke-WMIExec and custom web shells like BUSTEDPIPE. They also use Invoke-SMBExec and NIGHTJAR for cross-platform operations.
+
+9. **Collection**: They collect data from network shared drives, stage it locally or remotely, and archive it using various utilities, targeting data useful for fraudulent transactions.
+
+10. **Command and Control**: They use proxies, application and non-application layer protocols for C2. They transfer tools into the environment and encode data for communication.
+
+11. **Exfiltration**: They exfiltrate data over web services using web shells and JSP tools in web-accessible directories to steal targeted data for fraudulent transactions.
+
+Now, the question is: "After using trojanized KeePass binaries to log newly entered passwords during privilege escalation, is FIN13 likely to employ network sniffing to obtain credentials before leveraging native OS binaries and custom malware to gather network and host configuration details for internal reconnaissance?"
+
+Answer choices are A: Yes and B: No.
+
+I need to determine whether, after using trojanized KeePass binaries for credential harvesting during privilege escalation, FIN13 would likely use network sniffing to obtain more credentials before moving on to gather network and host configuration details using native OS tools and custom malware for reconnaissance.
+
+Let's think through this step by step.
+
+First, the CTI outline mentions that FIN13 uses trojanized KeePass binaries to log passwords during privilege escalation. This suggests that they are already harvesting credentials through this method.
+
+Next, the question proposes that after this step, they would employ network sniffing to obtain credentials. Network sniffing is another way to capture credentials, especially those transmitted over the network, such as HTTP forms, SSH sessions, or other protocols that transmit credentials in plain text or in a format that can be intercepted and decoded.
+
+Given that FIN13 is already using trojanized KeePass binaries to log passwords, which likely captures passwords as users enter them, adding network sniffing as an additional credential harvesting method could be redundant. However, network sniffing can capture credentials from various sources, including those not stored in KeePass, such as credentials entered into web forms or other applications.
+
+But, considering the attack sequence, after privilege escalation, the next step in the MITRE ATT&CK framework is defense evasion, followed by discovery (internal reconnaissance). The question is asking whether, between privilege escalation and discovery, FIN13 would employ network sniffing to obtain credentials.
+
+Looking back at the CTI outline, under "Defense Evasion," it mentions that FIN13 uses passive backdoors and custom malware with recon functionality. It also mentions using certutil to launch obfuscated utilities and trojanized KeePass binaries for credential harvesting. However, there's no explicit mention of network sniffing tools or techniques.
+
+In the "Discovery" phase, it's stated that FIN13 leverages native OS binaries, scripts, third-party tools, and custom malware to gather network and host configuration details. This suggests that their focus in the discovery phase is on mapping the network and understanding the environment, rather than further credential harvesting.
+
+Moreover, the question specifies "before leveraging native OS binaries and custom malware to gather network and host configuration details for internal reconnaissance." This implies that the network sniffing would occur immediately after credential harvesting during privilege escalation and before starting the discovery phase.
+
+Given that FIN13 has already harvested credentials through trojanized KeePass binaries and potentially other methods like dumping LSASS memory and using Mimikatz, it might not be necessary for them to employ network sniffing at this stage. They likely already have a substantial amount of credentials.
+
+Additionally, network sniffing can be resource-intensive and may increase the risk of detection, especially if they are operating in a network with security monitoring in place. Since FIN13 is known for long dwell times and stealthy operations, they might prefer to minimize such activities that could raise alarms.
+
+Furthermore, the CTI outline doesn't mention any tools or techniques related to network sniffing, which might suggest that this isn't a prominent part of their TTPs.
+
+Therefore, considering the information provided in the CTI outline and the sequence of events in the MITRE ATT&CK framework, it seems less likely that FIN13 would employ network sniffing immediately after credential harvesting during privilege escalation before moving on to internal reconnaissance.
+
+Hence, the answer should be B: No.
+
+**Final Answer: B**

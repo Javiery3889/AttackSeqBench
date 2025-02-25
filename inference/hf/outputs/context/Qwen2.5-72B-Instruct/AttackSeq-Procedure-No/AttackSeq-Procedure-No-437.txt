@@ -1,0 +1,41 @@
+### Step-by-Step Analysis
+
+1. **Analyze the CTI Report:**
+   - **Initial Access:**
+     - APT Sidewinder exploited CVE-2017-11882 using an RTF document to download an HTA file from the domain webserv-redir.net.
+   - **Execution:**
+     - The HTA file contained a script that checked for installed antivirus software using WMI.
+     - If certain antivirus software was not detected, it proceeded to run a backdoor named FinalBot.exe, which was extracted from a zip file and renamed to Srvstr.exe.
+   - **Persistence:**
+     - The backdoor established persistence by creating a Run key in the registry: HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run\WinSrv.
+   - **Defense Evasion:**
+     - The HTA file avoided using PowerShell and instead used VBS.
+     - The backdoor employed DLL sideloading using cmpbk32.dll to execute Srvstr.exe.
+   - **Command and Control:**
+     - The HTA file communicated with the C2 server to send information about the installed antivirus software.
+     - The domain used for C2 communication was webserv-redir.net.
+
+2. **Analyze the Question:**
+   - The question asks whether Sidewinder is likely to use the HTA file to discover installed antivirus products on the victim's system only after executing a backdoor named FinalBot.exe which was extracted and renamed to Srvstr.exe.
+
+3. **Compare and Evaluate:**
+   - **Sequence of Events:**
+     1. **Initial Access:**
+        - The RTF document is used to download the HTA file.
+     2. **Execution:**
+        - The HTA file checks for installed antivirus software using WMI.
+        - If no specific antivirus is detected, it proceeds to extract and rename FinalBot.exe to Srvstr.exe and execute it.
+     3. **Command and Control:**
+        - The HTA file communicates with the C2 server to send information about the installed antivirus software.
+
+   - **Key Points:**
+     - The HTA file checks for antivirus software before executing the backdoor.
+     - The communication with the C2 server to send information about the antivirus software happens after the initial check but before the backdoor execution.
+
+4. **Reasoning:**
+   - The CTI report clearly states that the HTA file checks for installed antivirus software using WMI before proceeding to extract and execute the backdoor.
+   - The communication with the C2 server to send information about the antivirus software happens after the initial check but before the backdoor execution.
+   - Therefore, the HTA file does not discover installed antivirus products only after executing the backdoor. It does so before executing the backdoor.
+
+### Final Answer
+Final Answer: B: No

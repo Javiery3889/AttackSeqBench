@@ -1,0 +1,75 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- Creates an unnamed event object and two new threads.
+- Uses GetMessage to process messages and breaks the loop if the message is WM_ENDSESSION.
+- Creates an anonymous pipe and uses GetStartupInfoA to retrieve the STARTUPINFO structure.
+- Creates a new process to run the `systeminfo` command, using the pipe for inter-process communication.
+- Reads the output via ReadFile.
+- Runs the `tasklist` command and reads the output.
+
+**Discovery:**
+- Enumerates files and directories from the Desktop directory using FindFirstFileW and FindNextFileW functions.
+- Targets directories such as 'C:\Program Files', 'C:\Program Files (x86)', and various user-specific AppData folders.
+- Uses SHGetFolderPathW to obtain folder names.
+- Uses GetComputerNameA and GetUserNameA to retrieve the NetBIOS name of the local computer and the name of the user associated with the current thread.
+- Extracts the volume serial number of the root directory using GetVolumeInformationW.
+
+**Collection:**
+- Base64 encodes the output of the `systeminfo` and `tasklist` commands, along with the list of targeted directories and their content, using the CryptBinaryToStringA API.
+
+**Command and Control:**
+- Communicates with the C2 server `updaterweb[.]com`, sending exfiltrated data in a POST request.
+- Downloads a DLL file from the C2 server, which is loaded using the LoadLibraryW API, and executes the first ordinal function.
+
+**Exfiltration:**
+- Exfiltrates collected information to the C2 server `updaterweb[.]com` using an HTTP POST request.
+
+**Others:**
+- Uses CryptAcquireContextA to acquire a handle to the Microsoft RSA and AES Cryptographic Provider.
+- Uses CryptCreateHash to create a hash object.
+- Verifies the hash value of a downloaded DLL file against a provided buffer.
+- Creates a file called `fvjoik.dll` in the `%TEMP%` directory, populates it with the DLL downloaded from the C2 server, and executes an exported function with ordinal 1.
+- Uses WinExec to delete the DLL file.
+- The main thread retrieves the termination status of the two threads using the GetExitCodeThread API.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK tactic most likely occurred after SkinnyBoy created a new process to run system commands and before it enumerated files and directories to gather system information?
+
+**Answer Choices:**
+A: Exfiltration
+B: Defense Evasion
+C: Execution
+D: Lateral Movement
+
+#### 3. Compare and Evaluate
+
+- **Execution:**
+  - The report states that SkinnyBoy creates a new process to run the `systeminfo` and `tasklist` commands.
+  - This is part of the initial execution phase.
+
+- **Discovery:**
+  - After running the `systeminfo` and `tasklist` commands, SkinnyBoy enumerates files and directories to gather system information.
+  - This is the next logical step in the attack sequence.
+
+- **Exfiltration:**
+  - Exfiltration occurs after the data is collected and encoded, which happens after the discovery phase.
+
+- **Defense Evasion:**
+  - The report mentions that SkinnyBoy uses cryptographic functions and verifies the hash of a downloaded DLL, which can be part of defense evasion.
+  - However, this is not explicitly mentioned as occurring between the execution of system commands and the enumeration of files and directories.
+
+- **Lateral Movement:**
+  - Lateral movement is not mentioned in the report and does not fit the sequence described.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- **Step 1:** SkinnyBoy creates a new process to run the `systeminfo` and `tasklist` commands.
+- **Step 2:** After running these commands, SkinnyBoy enumerates files and directories to gather system information.
+- **Step 3:** The most likely tactic that occurred between these two steps is **Execution** because the creation of the new process to run the commands is part of the execution phase.
+
+**Final Answer: C: Execution**

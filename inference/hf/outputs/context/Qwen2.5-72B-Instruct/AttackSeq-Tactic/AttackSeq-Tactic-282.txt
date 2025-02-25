@@ -1,0 +1,58 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The adversaries used weaponized exploit documents to gain initial access, exploiting the Microsoft Office vulnerability CVE-2012-0158.
+- A spear-phishing email was sent from an impersonated individual of the Russian-based organization Vigstar, containing a malicious document that, once opened, would infect the system and leave a Russian language decoy document.
+
+**Execution:**
+- The BBSRAT malware is executed by a dropper that generates a path in the %TEMP% directory and writes an embedded cab file.
+- It creates directories based on the Windows version and uses the expand.exe utility to write three files to the SSONSVR directory: aclmain.sdb, pnipcn.dll, and ssonsvr.exe.
+- The legitimate Citrix executable ssonsvr.exe is used to sideload the malicious pnipcn.dll file, which then identifies the path to msiexec.exe, spawns a suspended instance of it, and performs process hollowing before resuming the process.
+- To ensure persistence, a registry key is written to run ssonsvr.exe on startup.
+
+**Persistence:**
+- The BBSRAT malware ensures persistence by writing a registry key on the victim's machine to run the ssonsvr.exe file on startup.
+- Additionally, the malware uses a downloader that deploys a DLL to either %SYSTEMROOT%\web\srvcl32.dll or %APPDATA%\web\srvcl32.dll, with corresponding registry keys set to ensure the DLL loads when Windows starts.
+
+**Command and Control:**
+- The BBSRAT malware communicates with the C2 server using HTTP or HTTPS requests and exfiltrates data about the victim's machine via POST requests.
+- The C2 domains used by the BBSRAT malware have significant overlap with the 'Roaming Tiger' campaign.
+
+**Others:**
+- The adversaries continue to reuse much of their exposed playbook.
+- Organizations are urged to use threat intelligence data proactively to secure themselves and prevent attacks.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK tactic most likely occurred after BBSRAT communicated with the C2 server using HTTP or HTTPS requests and sent data about the victim’s machine via POST requests?
+
+**Answer Choices:**
+A: Discovery
+B: Exfiltration
+C: Command and Control
+D: Defense Evasion
+
+#### 3. Compare and Evaluate
+
+**Key Details from the CTI Report:**
+- BBSRAT communicates with the C2 server using HTTP or HTTPS requests.
+- It exfiltrates data about the victim's machine via POST requests.
+
+**Evaluation of Answer Choices:**
+- **A: Discovery** - This tactic involves the adversary attempting to understand the environment they have compromised. While this could occur after initial communication with the C2 server, the report does not explicitly mention any discovery activities following the C2 communication.
+- **B: Exfiltration** - This tactic involves the adversary stealing data from the victim's network. The report clearly states that BBSRAT exfiltrates data about the victim's machine via POST requests, which aligns with the exfiltration tactic.
+- **C: Command and Control** - This tactic involves the adversary communicating with the compromised system to control it. The report mentions that BBSRAT communicates with the C2 server, but this is part of the initial C2 setup and not a subsequent action.
+- **D: Defense Evasion** - This tactic involves the adversary attempting to avoid detection. While BBSRAT uses techniques like process hollowing and persistence, these are part of the initial execution and persistence phases, not a subsequent action after C2 communication.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The CTI report explicitly states that BBSRAT exfiltrates data about the victim's machine via POST requests after communicating with the C2 server.
+- The exfiltration of data is a clear and direct action that follows the communication with the C2 server.
+- The other answer choices (Discovery, Command and Control, and Defense Evasion) do not align as closely with the sequence of events described in the report.
+
+**Final Answer:**
+B: Exfiltration

@@ -1,0 +1,22 @@
+Okay, so I'm trying to figure out whether the NewPass implant will initiate a download via FTP before exfiltrating information using encrypted POST requests. Let me go through the CTI report step by step to understand the attack sequence.
+
+First, the report mentions that the attack starts with Execution. The threat actor uses a dropper to execute the NewPass implant. The dropper has a function called 'LocalDataVer' which is the entry point. This function deploys the backdoor and its configuration file, and it avoids detection by terminating if certain entry points like 'DllMain' or 'DllRegisterServer' are used. So, the initial execution is done through this dropper.
+
+Next, the Persistence mechanism is described. The malware creates a new Windows service named 'Adobe Update Module' pointing to the loader's path. This allows it to maintain persistence by interacting with the SCManager. So, after execution, it sets up a service to keep running.
+
+Then, the Defense Evasion part: The NewPass implant uses a loader library to decode a binary file and extract the agent component. The loader and agent share a JSON configuration in memory, which allows customization. The loader checks for a configuration file and decodes it using XOR. The agent is hidden in the configuration file after some random bytes, which changes the file's hash each time, making it harder to detect.
+
+Exfiltration is handled by the NewPass agent, which sends information to the C2 server using a POST request with encrypted values. So, the exfiltration method is via encrypted POST, not FTP.
+
+The 'Others' section adds context that the implant targets a European Union country in diplomacy, has different components, and uses an ID for communication. The versions are 19.03.28 for AgentLoader and 19.7.16 for Agent.
+
+Now, the question is whether after decoding the configuration (Defense Evasion), the malware will download via FTP before exfiltrating with encrypted POST. The answer choices are Yes or No.
+
+Looking at the report, the exfiltration method is clearly stated as using POST requests with encrypted values. There's no mention of FTP being used for downloading or exfiltration. The loader decodes the configuration, but the exfiltration step doesn't involve FTP. So, the sequence after decoding is exfiltration via POST, not FTP.
+
+Therefore, the answer should be No, it's not likely to use FTP before exfiltration.
+</think>
+
+The CTI report details the attack sequence of the NewPass implant, which includes execution, persistence, defense evasion, and exfiltration. The exfiltration method is specifically described as using encrypted POST requests, with no mention of FTP. Therefore, the malware does not use FTP for exfiltration.
+
+Final Answer: B: No

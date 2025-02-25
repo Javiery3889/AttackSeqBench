@@ -1,0 +1,74 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The Higaisa APT group used spear-phishing to distribute malicious LNK files within RAR archives.
+- The LNK files were disguised as a Curriculum Vitae, IELTS exam results, or targeted product teams using zeplin.io.
+
+**Execution:**
+- Upon execution, the LNK file initiates a multi-stage attack:
+  - Copies the LNK content to a temporary directory.
+  - Uses 'certutil.exe' (renamed to 'gosia.exe') to bypass security detection.
+  - Decodes a base64 blob.
+  - Decompresses content along with a decoy PDF document.
+  - Executes a JavaScript file.
+  - The JavaScript file performs additional actions:
+    - Creates and executes 'd3reEW.exe'.
+    - Copies 'svchhast.exe' to the startup directory.
+    - Sends a POST request to a hardcoded URL.
+
+**Defense Evasion:**
+- The attack employs a list of commands executed by the LNK shortcut.
+- 'certutil.exe' is renamed to 'gosia.exe' to bypass security detection.
+
+**Discovery:**
+- The JavaScript file creates 'd3reEW.exe' with the command 'cmd /c ipconfig' to discover IP address information.
+
+**Command and Control:**
+- The final shellcode within the attack resolves imports, allocates memory, and creates a thread to make HTTPS requests to a C&C server.
+
+**Others:**
+- The Higaisa APT group's activities date back to at least 2016.
+- They use Trojans such as Gh0st and PlugX, as well as mobile malware.
+- Targets include government officials, human rights organizations, and other entities related to North Korea.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After employing defense evasion methods such as renaming 'certutil.exe' to 'gosia.exe', and executing commands to decode and decompress malicious content, which ATT&CK technique most likely occurred as part of maintaining persistence by ensuring execution of 'officeupdate.exe'?
+
+**Answer Choices:**
+- A: T1059-Command and Scripting Interpreter
+- B: T1566.002-Spearphishing Link
+- C: T1197-BITS Jobs
+- D: T1053-Scheduled Task/Job
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- The JavaScript file copies 'svchhast.exe' to the startup directory.
+- The question asks about maintaining persistence by ensuring the execution of 'officeupdate.exe'.
+
+**Evaluation of Answer Choices:**
+- **A: T1059-Command and Scripting Interpreter**
+  - This technique involves using command-line interfaces and scripts to execute commands and scripts.
+  - While the report mentions the use of JavaScript and other commands, this does not directly relate to maintaining persistence.
+
+- **B: T1566.002-Spearphishing Link**
+  - This technique involves sending spear-phishing emails with links to malicious content.
+  - This is relevant to the initial access but not to maintaining persistence.
+
+- **C: T1197-BITS Jobs**
+  - This technique involves using the Background Intelligent Transfer Service (BITS) to download and execute files.
+  - The report does not mention the use of BITS jobs.
+
+- **D: T1053-Scheduled Task/Job**
+  - This technique involves creating scheduled tasks or jobs to maintain persistence.
+  - The report mentions that 'svchhast.exe' is copied to the startup directory, which is a common method for maintaining persistence.
+
+**Conclusion:**
+- The most plausible technique for maintaining persistence by ensuring the execution of 'officeupdate.exe' is creating a scheduled task or job.
+
+### Final Answer
+Final Answer: D: T1053-Scheduled Task/Job

@@ -1,0 +1,60 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attack starts with a malicious Microsoft Word document inside a ZIP file.
+- The document contains encrypted script data and an external template that points to another document with malicious VBA macros.
+- The external template is downloaded via URL shortening services and redirects to a domain controlled by the attacker.
+- The VBA code decrypts the embedded data and drops it into two files: 'fmx.ps1' (PowerShell script) and 'sdmc.jpg' (base64 encoded PowerShell code).
+
+**Defense Evasion:**
+- The attackers switch the malicious external template to a benign one after a certain amount of time.
+- The malware payload is generated using image files to conceal its components.
+- The final Bandook payload is signed with valid certificates to appear trustworthy.
+
+**Command and Control:**
+- The Bandook loader uses Process Hollowing to inject a malicious payload into a new instance of an Internet Explorer process.
+- The payload contacts the C&C server, sends basic information about the infected machine, and awaits further commands.
+- The communication protocol with the C&C server uses AES encryption.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After delivering a malicious Microsoft Word document inside a ZIP file to achieve initial access, is it likely that the 'fmx.ps1' PowerShell script will decode and execute the base64 encoded script stored in 'sdmc.jpg' before the PowerShell script downloads a zip file containing components for the malware payload?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Extracted Attack Sequence:**
+1. **Initial Access:**
+   - Malicious Word document inside a ZIP file.
+   - Document contains encrypted script data and an external template.
+   - External template is downloaded and redirects to a domain controlled by the attacker.
+   - VBA code decrypts the embedded data and drops 'fmx.ps1' and 'sdmc.jpg'.
+
+2. **Execution:**
+   - 'fmx.ps1' is a PowerShell script.
+   - 'sdmc.jpg' contains base64 encoded PowerShell code.
+
+**Contextual Information:**
+- The VBA code decrypts the embedded data and drops the files.
+- The 'fmx.ps1' script is likely to be the primary script that executes the base64 encoded script in 'sdmc.jpg'.
+
+**Evaluation:**
+- The CTI report does not explicitly state that 'fmx.ps1' downloads a zip file containing components for the malware payload.
+- However, it is logical to infer that 'fmx.ps1' would decode and execute the base64 encoded script in 'sdmc.jpg' as part of the initial execution process.
+- The report focuses on the initial access and the initial execution of the dropped files, but does not mention a subsequent download of a zip file.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The CTI report clearly states that the VBA code decrypts the embedded data and drops 'fmx.ps1' and 'sdmc.jpg'.
+- It is reasonable to assume that 'fmx.ps1' is designed to decode and execute the base64 encoded script in 'sdmc.jpg' as part of the initial execution process.
+- The report does not mention any additional steps involving the download of a zip file containing components for the malware payload.
+
+**Final Answer:**
+A: Yes

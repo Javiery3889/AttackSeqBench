@@ -1,0 +1,79 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attack uses a vulnerability in Microsoft Office 2013 (CVE-2014-4114) through infected Excel documents.
+- The attack vector involves a Visual Basic macro embedded in the Excel document.
+
+**Execution:**
+- The macro reassembles and executes a PE32 file named vba_macro.exe.
+- vba_macro.exe drops two additional executables: FONTCACHE.DAT and rundll32.exe.
+- FONTCACHE.DAT operates as a network sniffer, and rundll32.exe loads the malicious DLL.
+
+**Persistence:**
+- The malware registers a binary to the startup shell using the RegSetValueExw() function to ensure FONTCACHE.DAT is executed upon system startup.
+
+**Defense Evasion:**
+- The malware uses multiple anti-debugging techniques, including:
+  - CryptDecrypt() function calls on itself.
+  - SetUnhandledExceptionFilter API.
+  - Kernel debugger checks.
+  - IsDebuggerPresent API.
+  - Detection of runtime checksum changes to evade non-hardware breakpoints.
+
+**Lateral Movement:**
+- The malware is designed for lateral movement, sending data to servers deployed in major ISPs across Europe.
+
+**Command and Control:**
+- The malware communicates with its C2 server using HTTP protocol.
+- The IP address 5.149.254.114 is associated with FORTUNIX-NETWORS.
+- The malware sends localization data and keyboard layout information to the C2 server.
+
+**Exfiltration:**
+- The malware functions as a network sniffer and sends gathered information to the C2 server.
+
+**Others:**
+- The malware is a product of a nation-sponsored campaign, likely involving multiple teams.
+- It is associated with the Sandworm Team and has been used in various campaigns.
+- The malware's toolkit is believed to be used for 'black ops' and has been linked to the shutdown of Estonian internet and government websites in 2007.
+- The report highlights the malware's high entropy and sophisticated evasion techniques, including encryption, encoding, and anti-debugging measures.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK tactic most likely occurred after BlackEnergy 3 malware used multiple anti-debugging techniques to evade defenses and before it gathered information for lateral movement by retrieving network information using the GetAdaptersInfo() function API?
+
+**Answer Choices:**
+A: Persistence
+B: Discovery
+C: Lateral Movement
+D: Resource Development
+
+#### 3. Compare and Evaluate
+
+**Sequence of TTPs:**
+1. **Initial Access** - Using a vulnerability in Microsoft Office 2013.
+2. **Execution** - Executing the malware through a Visual Basic macro.
+3. **Persistence** - Registering a binary to the startup shell.
+4. **Defense Evasion** - Using multiple anti-debugging techniques.
+5. **Discovery** - Gathering network information using the GetAdaptersInfo() function API.
+6. **Lateral Movement** - Sending data to servers deployed in major ISPs.
+7. **Command and Control** - Communicating with the C2 server.
+8. **Exfiltration** - Sending gathered information to the C2 server.
+
+**Evaluation:**
+- **Persistence** (A) - This occurs after the initial execution and before defense evasion.
+- **Discovery** (B) - This is the most likely tactic to occur after defense evasion and before lateral movement. The malware needs to gather network information to facilitate lateral movement.
+- **Lateral Movement** (C) - This occurs after discovery.
+- **Resource Development** (D) - This is not relevant to the sequence described in the report.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The malware uses multiple anti-debugging techniques to evade defenses (Defense Evasion).
+- After evading defenses, the malware needs to gather network information to facilitate lateral movement (Discovery).
+- The GetAdaptersInfo() function API is used to gather network information, which is a key step in the Discovery phase.
+- Lateral movement follows the discovery of network information.
+
+**Final Answer: B: Discovery**

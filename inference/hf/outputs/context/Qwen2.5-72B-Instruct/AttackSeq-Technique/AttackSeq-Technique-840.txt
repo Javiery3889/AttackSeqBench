@@ -1,0 +1,87 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- The WinDealer malware executes by reading its configuration from a file located under `C:\ProgramData`.
+- It loads a DLL module into memory.
+- The malware steals information from the victim's PC, including network configuration and details from SNS applications.
+- Stolen data is saved with a ".a" extension in the `%TEMP%` directory.
+- This information is sent to a C2 server.
+
+**Defense Evasion:**
+- The malware encodes its configuration files using XOR with the key value "b6a7%7486".
+- It communicates with C2 servers using encrypted channels, specifically encrypting an AES key with RSA and sending it to the C2 server.
+- The malware encrypts stolen information using AES128bit ECB mode before transmission.
+
+**Collection:**
+- The malware collects data from the victim's PC, including files stored on USB memory, documents, desktop items, and recycle bin contents.
+- It targets folders related to SNS applications.
+- Collected data is processed into ".a" files by a module and categorized into different directories based on the data type.
+
+**Command and Control:**
+- The malware communicates with C2 servers using UDP port 6999 or TCP port 55556.
+- It encrypts an AES key with RSA and sends it to the C2 server, which then sends commands back to the victim PC.
+- The malware executes these commands and sends the results back to the C2 server after encryption.
+- It communicates with non-existent domains and uses icanhazip[.]com for IP address verification.
+
+**Exfiltration:**
+- The malware exfiltrates stolen data to a C2 server after processing and encrypting it.
+- The data is sent from the `%TEMP%` directory where it is staged as ".a" files.
+
+**Others:**
+- The LuoYu Attack Group has been targeting Korean and Japanese organizations since 2014.
+- The WinDealer malware is one of the tools used by this group and operates on various platforms.
+- The malware's configuration is stored in several folders under `C:\ProgramData`.
+- It uses a hardcoded RSA1024bit public key for encryption.
+- The malware's DLL module, named "MozillaDll.dll", has export functions for stealing data, setting configuration, and initiating commands.
+- The malware monitors items such as files stored in USB memory and folders related to SNS applications, saving related items in separate files to be sent to a C2 server.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After executing the WinDealer malware and configuring its data by reading the configuration file and loading a DLL module, which ATT&CK technique most likely occurred before the malware discovered information about the infected PC and network configuration?
+
+**Answer Choices:**
+- A: T1090.002-External Proxy
+- B: T1497-Virtualization/Sandbox Evasion
+- C: T1036-Masquerading
+- D: T1518-Software Discovery
+
+#### 3. Compare and Evaluate
+
+**Execution:**
+- The malware reads its configuration from a file and loads a DLL module.
+- This is the initial execution phase.
+
+**Discovery:**
+- The malware then discovers information about the infected PC and network configuration.
+- This is a critical step before the malware can collect and exfiltrate data.
+
+**Defense Evasion:**
+- The malware uses various techniques to evade detection, such as encoding configuration files and using encrypted communication.
+
+**Collection:**
+- The malware collects data from various sources on the victim's PC.
+
+**Command and Control:**
+- The malware communicates with C2 servers to receive commands and send data.
+
+**Exfiltration:**
+- The malware exfiltrates the collected data to a C2 server.
+
+**Evaluation of Answer Choices:**
+- **A: T1090.002-External Proxy**: This technique involves using external proxies to route traffic. It is not directly related to the discovery of information about the infected PC and network configuration.
+- **B: T1497-Virtualization/Sandbox Evasion**: This technique involves evading virtualization and sandbox environments. It is not directly related to the discovery of information about the infected PC and network configuration.
+- **C: T1036-Masquerading**: This technique involves masquerading as legitimate software. It is not directly related to the discovery of information about the infected PC and network configuration.
+- **D: T1518-Software Discovery**: This technique involves discovering software and system information on the infected PC. This is a logical step before the malware can collect and exfiltrate data.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The malware executes and configures itself by reading a configuration file and loading a DLL module.
+- After this initial setup, the malware needs to discover information about the infected PC and network configuration to know what data to collect and how to exfiltrate it.
+- The most logical step before the malware can start collecting and exfiltrating data is to discover the software and system information on the infected PC.
+- Therefore, the most plausible technique that occurred before the malware discovered information about the infected PC and network configuration is **T1518-Software Discovery**.
+
+**Final Answer: D: T1518-Software Discovery**

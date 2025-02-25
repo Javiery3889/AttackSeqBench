@@ -1,0 +1,61 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The PIVY variant uses DLL sideloading.
+- It drops a decoy document, a DLL named ActiveUpdate.dll, and the PIVY shellcode file as Active.dat.
+- It copies rundll32.exe to ActiveFlash.exe and executes the new file with the path to the DLL.
+- It installs itself for automatic startup via a .lnk in the Windows Startup folder.
+
+**Persistence:**
+- The PIVY variant installs itself for automatic startup via a .lnk in the Windows Startup folder.
+
+**Defense Evasion:**
+- The PIVY variant uses DLL sideloading to load the dropped DLL and perform its malicious actions.
+- The malware's configuration has been modified to confuse some publicly available tools.
+- The C2s are no longer null-padded, and each hostname ends with a null-byte followed by a string that changes slightly with each C2 server.
+
+**Command and Control:**
+- The PIVY samples communicate with C2 servers such as webserver.servehttp[.]com and admin.nslookupdns[.]com.
+- The IP resolved to by these hostnames overlapped with fileshare.serveftp[.]com, which was used in an earlier PIVY sample.
+
+**Others:**
+- PIVY samples were observed targeting Myanmar and several other countries in Asia.
+- The targeting of post-election Myanmar appears to be following the same style as what was mentioned in the "Uncovering the Seven Pointed Dagger" paper by ASERT.
+- A possible connection exists given that the C2 for these samples resolved to an IP contained within 103.240.203.0/22, as did a 9002 RAT sample in the Seven Pointed Dagger exploitation campaign.
+- A "LURK0" Gh0strat and another PIVY domain were also observed to have resolved to IPs contained within this range, making this subnet more suspicious from a targeted attack perspective.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After establishing persistence by installing a .lnk in the Windows Startup folder, which ATT&CK technique most likely occurred when the PIVY variant executed a copied version of rundll32.exe with the path to the malicious DLL?
+
+**Answer Choices:**
+- A: T1609-Container Administration Command
+- B: T1071-Application Layer Protocol
+- C: T1059-Command and Scripting Interpreter
+- D: T1542.005-TFTP Boot
+
+#### 3. Compare and Evaluate
+
+**Persistence:**
+- The PIVY variant installs itself for automatic startup via a .lnk in the Windows Startup folder.
+
+**Execution:**
+- The PIVY variant copies rundll32.exe to ActiveFlash.exe and executes the new file with the path to the DLL.
+
+**Relevant ATT&CK Techniques:**
+- **T1059-Command and Scripting Interpreter:** This technique involves adversaries using command-line interfaces and scripts to execute commands and scripts. This is relevant because the execution of rundll32.exe with the path to the DLL is a form of command execution.
+- **T1071-Application Layer Protocol:** This technique involves adversaries using common, trusted protocols to communicate with C2 servers. This is not directly relevant to the execution of rundll32.exe.
+- **T1609-Container Administration Command:** This technique involves adversaries using commands to manage containerized environments. This is not relevant to the execution of rundll32.exe.
+- **T1542.005-TFTP Boot:** This technique involves adversaries using the Trivial File Transfer Protocol (TFTP) to boot systems. This is not relevant to the execution of rundll32.exe.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The PIVY variant copies rundll32.exe to ActiveFlash.exe and executes it with the path to the malicious DLL. This action is a form of command execution, which aligns with the T1059-Command and Scripting Interpreter technique.
+- The other techniques (T1071, T1609, T1542.005) do not directly relate to the execution of rundll32.exe with the path to the DLL.
+
+**Final Answer:**
+- Final Answer: C: T1059-Command and Scripting Interpreter

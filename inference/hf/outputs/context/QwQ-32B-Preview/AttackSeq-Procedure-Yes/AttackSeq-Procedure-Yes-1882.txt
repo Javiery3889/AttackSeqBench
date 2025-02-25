@@ -1,0 +1,77 @@
+Alright, I've got this CTI outline about FIN13, a cyber threat group that's been active since 2016, mainly targeting organizations in Mexico, especially in finance, retail, and hospitality. They're known for long-term intrusions, mapping networks, stealing credentials and sensitive documents to carry out fraudulent money transfers. Unlike typical ransomware groups, they don't deploy ransomware; instead, they use custom passive backdoors and tools to maintain a persistent presence in victim networks for extended periods.
+
+First, I need to understand the attack sequence based on the MITRE ATT&CK tactics outlined in the CTI report. Let's break it down step by step.
+
+1. **Reconnaissance**: FIN13 has been tracking targets since 2017, with activities dating back to 2016. They focus on financial, retail, and hospitality industries in Mexico. This suggests they do thorough research to identify their targets.
+
+2. **Initial Access**: They exploit external servers to deploy web shells and custom malware like BLUEAGAVE and SIXPACK. Specific vulnerabilities aren't clear, but web shells on external servers are a consistent entry point.
+
+3. **Execution**: They use JSPRAT for command execution, file upload/download, and proxying network traffic. Also, they use passive backdoors like BLUEAGAVE, which sets up a local HTTP server to listen for commands.
+
+4. **Persistence**: FIN13 uses various methods to maintain access, such as replacing legitimate KeePass binaries with trojanized versions to log passwords, and deploying malware like SIXPACK, SWEARJAR, and MAILSLOT for email-based command and control.
+
+5. **Privilege Escalation**: They use common techniques like dumping LSASS process memory with ProcDump and extracting credentials with Mimikatz. They also use certutil to launch obfuscated utilities and trojanized KeePass for credential harvesting.
+
+6. **Defense Evasion**: They employ passive backdoors for stealth, chain web shells for complex pivots, and use legitimate utilities like certutil to evade detection. Custom droppers like LATCHKEY and malware like DRAWSTRING with recon functionality are also used.
+
+7. **Credential Access**: Techniques include process memory dumping of LSASS, network sniffing, and targeting unsecured credentials. Trojanized KeePass binaries are used to log newly entered passwords.
+
+8. **Discovery**: They use native OS binaries, scripts, third-party tools, and custom malware for internal network reconnaissance to gather information on network and host configurations, user accounts, and services.
+
+9. **Lateral Movement**: FIN13 uses WMI for remote command execution and lateral movement, employing utilities like Invoke-WMIExec and custom web shells like BUSTEDPIPE. They also use Invoke-SMBExec and NIGHTJAR for cross-platform operations.
+
+10. **Collection**: They collect data from network shared drives and stage it locally or remotely, archiving it using utilities and libraries, focusing on data that aids in fraudulent transactions.
+
+11. **Exfiltration**: FIN13 exfiltrates data over web services using tools like web shells and JSP tools in web-accessible directories to steal targeted data for fraudulent transactions.
+
+Now, the question is: After collecting sensitive data from network shared drives and archiving it locally or remotely using utilities and libraries, is FIN13 likely to use proxies for communication and command and control before exfiltrating the data over web services with tools like web shells and JSP tools?
+
+Answer choices are:
+
+A: Yes
+
+B: No
+
+To answer this, I need to evaluate whether FIN13 uses proxies in their command and control (C2) communications and during the exfiltration process.
+
+Looking back at the CTI outline:
+
+- Under **Execution**, it mentions JSPRAT for local command execution, file upload/download, and network traffic proxying. So, they do use proxying capabilities with JSPRAT.
+
+- Under **Defense Evasion**, they employ passive backdoors for stealth and chain web shells for complex pivots. They also use legitimate utilities like certutil for detection evasion.
+
+- Under **Exfiltration**, they exfiltrate data over web services using web shells and JSP tools in web-accessible directories.
+
+Given that they use JSPRAT with proxying capabilities and chain web shells for complex pivots, it suggests that they might use proxies to obfuscate their C2 communications and exfiltration activities to avoid detection.
+
+However, the CTI outline doesn't explicitly state that they use external proxies or proxy servers in their operations. The mention of proxying with JSPRAT could refer to proxying network traffic through the compromised host itself, rather than using external proxies.
+
+Moreover, their focus on stealth and long dwell times indicates that they are cautious and prefer methods that minimize detection risk. Using proxies could be part of their strategy to mask the origin of their C2 communications and exfiltration activities.
+
+But, considering that the outline doesn't specifically mention the use of proxies outside of the compromised network, I might lean towards answer B: No.
+
+Wait, but JSPRAT has proxying capabilities, and they chain web shells, which could imply that they are proxying traffic through multiple compromised hosts within the network.
+
+Perhaps, in this context, "proxies" refer to using compromised internal systems to route their C2 and exfiltration traffic, rather than using external commercial proxies.
+
+Given that, it's likely that they do use "proxies" in the sense of routing traffic through compromised internal systems.
+
+Therefore, answer A: Yes, seems plausible.
+
+But to make sure, let's consider the entire sequence:
+
+- They collect data from network shared drives.
+
+- Archive it locally or remotely.
+
+- Then, exfiltrate it over web services using web shells and JSP tools.
+
+If they are using web shells and JSP tools in web-accessible directories for exfiltration, it's possible that they are routing this traffic through their established footholds within the network, which could be considered as proxies.
+
+Additionally, using such methods allows them to blend in with normal network traffic, making detection harder.
+
+Hence, it's reasonable to conclude that they likely use proxies for communication and C2 before exfiltrating the data.
+
+Therefore, the answer is A: Yes.
+
+**Final Answer: A**

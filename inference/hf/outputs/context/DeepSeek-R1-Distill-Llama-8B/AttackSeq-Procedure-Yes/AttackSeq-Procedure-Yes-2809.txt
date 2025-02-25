@@ -1,0 +1,22 @@
+Okay, so I'm trying to figure out whether the Turbo Linux Kernel Module (LKM) will be dropped to disk, loaded into the kernel, and then deleted by Derusbi malware to avoid detection. Let me break this down step by step.
+
+First, from the CTI outline, I know that the attacker gained SSH access to a system and used wget to download malware. The malware's name has a date string, so it's likely compiled recently, suggesting it's active.
+
+Looking at the persistence part, the LKM provides persistence by hiding processes. This means once the LKM is loaded, it's harder to detect the attacker's malicious activities. The LKM is a kernel module, so it operates in kernel space, which is more powerful but also harder to detect.
+
+For defense evasion, Derusbi and the LKM use cloaking and anti-analysis techniques. The LKM modifies the system call table, specifically the process IDs (PIDs), to hide and unhide processes. It also disables the CPU's CR0 write protection to alter the system call table, which could help in evading detection.
+
+In the discovery phase, Derusbi collects system info and sends it back via network beacons. This suggests that the malware is actively communicating with its C2 server, which is using port 443 without encryption and also has a backup HTTP beacon with obfuscation.
+
+Now, the question is about whether the LKM is dropped to disk, loaded into the kernel, and then deleted by Derusbi. Let's think about how kernel modules work. Kernel modules are loaded into the kernel when they're needed. If the LKM is used for persistence, it's probably loaded after initial access. Once loaded, it can hide processes and modify system behavior.
+
+Persistence mechanisms often involve ensuring that the module remains loaded even after reboots. The LKM's ability to hide processes would help in evading detection. Derusbi, as part of its defense evasion, might use this module to stay undetected.
+
+When the system reboots, the LKM would need to be reloaded. If Derusbi deletes it after loading, that might not make much sense because the module is meant for persistence. Instead, it's more likely that the LKM remains active to maintain persistence and help in evading detection.
+
+So, the process would be: SSH access, download malware, load LKM for persistence and evasion, and then keep it active to maintain access and avoid detection. Therefore, it's unlikely that Derusbi would delete the LKM after loading it because that would remove a tool that's essential for their persistence and evasion.
+</think>
+
+The attacker uses the LKM for persistence and evasion, so it's unlikely that Derusbi would delete it. The module is essential for maintaining access and avoiding detection.
+
+Final Answer: B: No

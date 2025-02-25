@@ -1,0 +1,63 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The initial access was through a malicious installer named 20SPEED-VPN-v9.2.exe.
+- The installer placed spyware components in the %LOCALAPPDATA%\Microsoft\WindowsApps directory and launched sysCrt32.exe.
+
+**Execution:**
+- sysCrt32.exe ensures persistence and adds the WindowsApps folder to the %PATH% environment variable.
+- It sets up scheduled tasks to run sysBus32.exe every 3 hours.
+- sysBus32.exe downloads and executes the second stage from the C2 server.
+- Other executables like libCache32.exe, libTemp32.exe, and libchrome.exe perform keylogging, clipboard logging, and Chrome password extraction, respectively.
+
+**Persistence:**
+- Persistence is established by adding the WindowsApps folder to the %PATH% environment variable and setting up scheduled tasks to run sysBus32.exe every 3 hours.
+
+**Credential Access:**
+- libchrome.exe queries Google Chrome's SQLite databases to log usernames and passwords.
+
+**Collection:**
+- sysOptimizer.bat collects and archives personal files from the infected system.
+- libCache32.exe and libTemp32.exe perform keylogging and clipboard content logging.
+
+**Command and Control:**
+- The C2 servers belong to SecondEye and are hosted on Novinhost.
+- The malware uses curl.exe to access the FTP servers.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After sysOptimizer.bat collects personal files and sysCrt32.exe initializes execution components, which ATT&CK technique most likely occurred to transfer collected data securely to the FTP servers?
+
+**Answer Choices:**
+- A: T1020-Automated Exfiltration
+- B: T1053-Scheduled Task/Job
+- C: T1552.001-Credentials In Files
+- D: T1567.003-Exfiltration to Text Storage Sites
+
+#### 3. Compare and Evaluate
+
+**T1020-Automated Exfiltration:**
+- This technique involves the automatic transfer of collected data to a remote system.
+- The report mentions that the malware uses curl.exe to access FTP servers, which aligns with automated exfiltration.
+
+**T1053-Scheduled Task/Job:**
+- This technique involves setting up scheduled tasks to run malicious code.
+- While the report mentions scheduled tasks for persistence, it does not specifically mention scheduled tasks for exfiltration.
+
+**T1552.001-Credentials In Files:**
+- This technique involves stealing credentials from files.
+- The report mentions credential access but does not discuss the exfiltration of credentials specifically.
+
+**T1567.003-Exfiltration to Text Storage Sites:**
+- This technique involves exfiltrating data to text storage sites.
+- The report does not mention exfiltration to text storage sites; it specifically mentions FTP servers.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The report clearly states that the malware uses curl.exe to access FTP servers, which is a method of automated exfiltration.
+- The other techniques (scheduled tasks, credential access, and exfiltration to text storage sites) do not align as closely with the described exfiltration method.
+
+**Final Answer: A: T1020-Automated Exfiltration**

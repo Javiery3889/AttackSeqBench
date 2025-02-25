@@ -1,0 +1,71 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Reconnaissance:**
+- The campaign used job recruitment techniques to gather information.
+- Targets were defense and government-related organizations.
+
+**Initial Access:**
+- Malicious documents were distributed via an IP address in the United States and through Dropbox.
+- The documents contained a malicious macro that injected the Sharpshooter downloader into the memory of Word.
+- The downloader retrieved the second-stage implant, Rising Sun, from a control server.
+
+**Execution:**
+- The shellcode executed by the macro in winword.exe acted as a downloader for the Rising Sun implant.
+- It resolved Libraries and APIs using LoadLibraryA() and GetProcAddress().
+- It downloaded the second-stage payload and a decoy document to the startup folder and %LOCALAPPDATA% respectively.
+- It executed both payloads using CreateProcessA() and ShellExecuteA().
+
+**Persistence:**
+- The Rising Sun implant ensured persistence by downloading the second-stage binary to the startup folder during the download process.
+
+**Command and Control:**
+- The Rising Sun implant communicated with control servers using HTTP POST requests.
+- Data was encrypted with RC4 and obfuscated with Base64 encoding.
+
+**Exfiltration:**
+- The Rising Sun implant encrypted data using RC4 and obfuscated it with Base64 encoding before exfiltrating it to the control server via HTTP POST requests.
+
+**Others:**
+- The implant shares similarities with Lazarus Group attacks but may include false flags.
+- The campaign targeted nuclear, defense, energy, and financial companies globally, predominantly in the United States.
+- The implant has 14 backdoor capabilities, including executing commands, gathering drive and process information, reading and writing files, and modifying file attributes.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After communicating with control servers using HTTP POST requests, is it likely that the Rising Sun implant will fetch computer name and user name information as part of its discovery activities only after ensuring persistence by downloading the second-stage binary to the startup folder during the download process?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- The Rising Sun implant ensures persistence by downloading the second-stage binary to the startup folder during the download process.
+- The implant communicates with control servers using HTTP POST requests.
+- The implant has 14 backdoor capabilities, including gathering drive and process information, which suggests it can perform discovery activities.
+
+**Evaluation:**
+- The report indicates that the Rising Sun implant ensures persistence by downloading the second-stage binary to the startup folder during the download process.
+- The implant communicates with control servers using HTTP POST requests, which is a key step in the attack sequence.
+- The implant's capabilities include gathering drive and process information, which implies it can fetch computer name and user name information as part of its discovery activities.
+
+**Sequence Analysis:**
+1. **Initial Access and Execution:**
+   - The malicious macro injects the Sharpshooter downloader.
+   - The downloader retrieves the Rising Sun implant.
+2. **Persistence:**
+   - The Rising Sun implant ensures persistence by downloading the second-stage binary to the startup folder.
+3. **Command and Control:**
+   - The implant communicates with control servers using HTTP POST requests.
+4. **Discovery:**
+   - The implant can gather drive and process information, which includes fetching computer name and user name information.
+
+Given the sequence, it is logical that the implant would perform discovery activities after ensuring persistence and establishing command and control.
+
+#### 4. Final Answer
+
+**Final Answer: A: Yes**

@@ -1,0 +1,57 @@
+I have a CTI outline describing a cyber attack that occurred in 2019, targeting a customer's company. The attack involved a new backdoor malware that used Dropbox API for C&C activities. The threat actor loaded a malicious DLL by leveraging the legitimate Windows Defender Core Process (MsMpEng.exe), which had a legal digital signature. The infection process involved different loader filenames placed in C:\ProgramData\Microsoft, which called the function ServiceCrtMain from mpsvc.dll. There were two variants of mpsvc.dll: an older one that read shellcode from an English.rtf payload file and a newer one with hardcoded shellcode that injected and executed to load additional shellcode from mpsvc.mui, ultimately releasing a fully functional backdoor executable.
+
+The execution phase mentions that the final malicious executable had upgraded features, including interaction with Dropbox API. It could bypass UAC using a .NET technique disclosed in 2017 and had persistence mechanisms, either by registering as a startup program or as a system service.
+
+For persistence, the malware registered itself in the registry path HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run if it lacked privileges, or as a system service if it had higher privileges.
+
+In terms of defense evasion, the malware used a UAC bypass technique using .NET, which was disclosed in 2017. The threat actor only changed the GUID to evade detection.
+
+During the discovery phase, the malware collected basic information such as IP address, hostname, username, OS version, and searched for Bitcoin wallet addresses in the registry key HKEY_CURRENT_USER\Software\Bitcoin\Bitcoin-Qt. This information was uploaded to Dropbox with a log file named with the format %Y-%m-%d %H-%M-%S.log.
+
+The collection phase involved recording features like keylogging, clipboard logging, and screen recording. Screen recording files were named with the format [%y-%m-%d]%H-%M-%S.avi, while key-log and clipboard log were encoded and saved with filenames <hash>.pas and <hash>.log, respectively.
+
+Additional information includes that the Dropbox API token was hardcoded in the malware. The Dropbox folder structure included a unique hash for each infected victim, log files, and payload files such as bin.asc. The malware's second stage involved establishing a connection to the C&C server and Dropbox, with Dropbox becoming a secondary C&C server with full remote control features if the primary C&C server's IP address was blocked. The malware could execute various commands, including listing drives, managing files, and opening terminals. The threat actor's approximate working hours were inferred from the decoded command files. Monitoring of the Dropbox tokens showed nearly 200 infected computers at the peak, with a drop in activity on August 21, 2019, when the threat actor cleared the Dropbox folder. Monitoring ended on September 20, 2019, when all tokens were revoked by the threat actor.
+
+Now, the question is: Is it likely that the malware, after collecting information such as IP address, hostname, and Bitcoin wallet addresses from registry keys and uploading them to Dropbox, will use steganography to hide its C2 communications for command and control operations?
+
+Answer choices are:
+
+A: Yes
+
+B: No
+
+First, I need to understand what steganography is. Steganography is the practice of concealing a file, message, image, or video within another file, message, image, or video. The goal is to hide the fact that there is hidden information being sent.
+
+Given the CTI outline, the malware uses Dropbox API for C&C activities. It uploads log files and other data to Dropbox, and Dropbox serves as a secondary C&C server if the primary one is blocked.
+
+The question is asking whether it's likely that the malware uses steganography to hide its C2 communications.
+
+To answer this, I need to look for any indications in the CTI outline that suggest the use of steganography.
+
+Looking back at the outline:
+
+- The malware uploads log files and other data to Dropbox.
+
+- The log files are named with a specific format: %Y-%m-%d %H-%M-%S.log
+
+- Screen recording files are named with [%y-%m-%d]%H-%M-%S.avi
+
+- Key-log and clipboard log files are encoded and saved with filenames <hash>.pas and <hash>.log
+
+- The Dropbox folder structure includes unique hashes for each infected victim, log files, and payload files such as bin.asc
+
+There is no mention of steganography or any techniques used to hide data within other files.
+
+The malware seems to be uploading files directly to Dropbox, using specific naming conventions, but there's no indication that it's hiding this data within other files or using steganography to conceal the C2 communications.
+
+Additionally, the malware has features like keylogging, clipboard logging, and screen recording, and it uploads these logs and recordings to Dropbox. These activities are being conducted openly, without any mention of attempting to hide the data within other files.
+
+Furthermore, the persistence mechanisms involve registering as a startup program or a system service, which are standard techniques and don't involve steganography.
+
+The defense evasion technique mentioned is a UAC bypass using a .NET technique, which again doesn't relate to steganography.
+
+Given that there's no mention of steganography in the CTI outline and that the malware is uploading data directly to Dropbox using specific file names and structures, it seems unlikely that the malware is using steganography for its C2 communications.
+
+Therefore, the answer is B: No.
+
+**Final Answer: B**

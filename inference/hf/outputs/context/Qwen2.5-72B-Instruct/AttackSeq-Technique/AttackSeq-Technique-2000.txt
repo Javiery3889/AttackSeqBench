@@ -1,0 +1,60 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- Creates an unnamed event object and two new threads.
+- Uses GetMessage to process messages and breaks the loop if the message is WM_ENDSESSION.
+- Creates an anonymous pipe and uses GetStartupInfoA to retrieve the STARTUPINFO structure.
+- Creates a new process to run the systeminfo command and reads the output via ReadFile.
+- Runs the tasklist command and reads the output.
+
+**Defense Evasion:**
+- Uses GetTempPathW to retrieve the %TEMP% directory.
+- Initializes WinINet functions with InternetOpenW, setting the user agent to "Opera".
+- Sets send and receive timeouts to 600 seconds using InternetSetOptionW.
+- Establishes a connection to the C2 server updaterweb[.]com on port 443 (or port 80 if it fails).
+- Uses HttpOpenRequestW to create an HTTP POST request handle and adds an HTTP request header.
+
+**Discovery:**
+- Enumerates files and directories from the Desktop directory using FindFirstFileW and FindNextFileW.
+- Targets directories such as 'C:\Program Files', 'C:\Program Files (x86)', and user-specific AppData folders.
+- Uses SHGetFolderPathW to obtain folder names.
+- Retrieves the NetBIOS name of the local computer and the name of the user associated with the current thread.
+- Extracts the volume serial number of the root directory using GetVolumeInformationW.
+
+**Collection:**
+- Base64 encodes the output of the systeminfo and tasklist commands, along with the list of targeted directories and their content, using CryptBinaryToStringA.
+
+**Command and Control:**
+- Communicates with the C2 server updaterweb[.]com, sending exfiltrated data in a POST request.
+- Downloads a DLL file from the C2 server, loads it using LoadLibraryW, and executes the first ordinal function.
+- Creates a file called fvjoik.dll in the %TEMP% directory, populates it with the downloaded DLL, and executes an exported function with ordinal 1.
+- Uses WinExec to delete the DLL file after execution.
+- Retrieves the termination status of the two threads using GetExitCodeThread.
+
+#### 2. Analyze the Question
+
+**Question:**
+After SkinnyBoy collects the base64 encoded output of the systeminfo and tasklist commands along with targeted directory contents, which ATT&CK technique most likely occurred before the malware communicates with the C2 server updaterweb[.]com to exfiltrate data?
+
+**Answer Choices:**
+A: T1546.011-Application Shimming
+B: T1041-Exfiltration Over C2 Channel
+C: T1564-Hide Artifacts
+D: T1011.001-Exfiltration Over Bluetooth
+
+#### 3. Compare and Evaluate
+
+- **T1546.011-Application Shimming:** This technique involves modifying the execution of legitimate applications to run malicious code. The CTI report does not mention any application shimming.
+- **T1041-Exfiltration Over C2 Channel:** This technique involves sending data to a C2 server. The CTI report clearly states that the malware communicates with the C2 server updaterweb[.]com to exfiltrate data.
+- **T1564-Hide Artifacts:** This technique involves hiding files, directories, or other artifacts to avoid detection. The CTI report does not mention any specific actions to hide artifacts.
+- **T1011.001-Exfiltration Over Bluetooth:** This technique involves using Bluetooth to exfiltrate data. The CTI report does not mention any use of Bluetooth.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The CTI report describes the malware collecting data and then communicating with the C2 server to exfiltrate the data.
+- The sequence of events is: Collection (base64 encoding of data) → Command and Control (exfiltration over C2 channel).
+- The most relevant technique that fits this sequence is T1041-Exfiltration Over C2 Channel.
+
+**Final Answer: B: T1041-Exfiltration Over C2 Channel**

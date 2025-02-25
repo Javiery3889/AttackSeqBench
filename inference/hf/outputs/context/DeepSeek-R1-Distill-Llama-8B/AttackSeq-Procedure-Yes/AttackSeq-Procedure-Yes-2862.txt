@@ -1,0 +1,24 @@
+Okay, so I'm trying to figure out whether the malware payload in the CCleaner attack attempted to evade detection by zeroing out the IMAGE_DOS_HEADER and modifying CBkdr.dll before establishing a Command and Control (C2) channel. Let me break this down step by step.
+
+First, I'll look at the CTI outline provided. The report from September 18, 2017, by Cisco's Talos Intelligence Group describes a supply chain attack on CCleaner. The malicious version of CCleaner 5.33 was distributed through their download servers. The key points I remember from the outline are:
+
+1. The malicious binary was modified to call CC_InfectionBase(0x0040102C), which redirected execution to the malicious code.
+2. This code decrypted two stages of the payload: a Position Independent Code (PIC) PE loader and a DLL file.
+3. The malware tried to evade detection by zeroing out the IMAGE_DOS_HEADER.
+4. It created an executable heap, copied the decrypted malware into it, and then called the PE loader to start the infection.
+5. After that, it erased the memory regions containing the PE loader and the DLL, destroyed the heap, and continued with normal operations.
+6. The C2 communication used HTTPS POST with a hardcoded Host header and ignored SSL errors.
+7. The impact was severe, affecting many systems, and the report mentions indicators of compromise and recommended solutions.
+
+Now, the question is specifically about whether the malware attempted to evade detection by zeroing out IMAGE_DOS_HEADER and modifying CBkdr.dll before establishing the C2 channel. 
+
+From the outline, I see that the malware did zero out the IMAGE_DOS_HEADER to evade detection. It also created a heap, copied the payload into it, and then deleted the PE loader and DLL after execution. However, the outline doesn't mention anything about modifying CBkdr.dll. It does mention that the binary was signed with a valid certificate, but that's more about how it was distributed rather than an evasion technique.
+
+The question is asking if the malware did two things: zeroing out IMAGE_DOS_HEADER and modifying CBkdr.dll. From the outline, only the first part is confirmed. There's no mention of modifying CBkdr.dll. So, the answer should be whether both actions happened. Since only the first is confirmed, the answer would be "No" because the second part isn't supported by the outline.
+
+Wait, but the outline says the malware modified the binary to redirect execution, decrypted the payload, and then erased the memory. It specifically mentions zeroing out the IMAGE_DOS_HEADER as an evasion technique. It doesn't mention CBkdr.dll. So the answer is that the malware did attempt to evade detection by zeroing out the header but didn't modify CBkdr.dll. Therefore, the statement in the question includes both actions, but only the first is true, making the answer "No" because both parts of the question's statement aren't fully supported.
+</think>
+
+The CTI outline confirms that the malware zeroed out the IMAGE_DOS_HEADER to evade detection but does not mention modifying CBkdr.dll. Therefore, the answer is:
+
+Final Answer: B: No

@@ -1,0 +1,20 @@
+Okay, so I'm trying to figure out whether TeamTNT gains initial access via exposed Weave Scope services before executing the coin miner. Let me go through the CTI report step by step.
+
+First, the report mentions that during reconnaissance, TeamTNT uses the image pause-amd64:3.4 on Kubernetes clusters. The entry point is a shell script that downloads a coin miner from a server in Germany. Then, the script uses masscan to scan for open Docker API endpoints and deploys the same image on those exposed endpoints. It also tries to kill competitor images.
+
+Next, in the Execution phase, the coin miner is downloaded and saved as /usr/sbin/docker-update. Its attributes are made immutable, and it's executed for mining.
+
+In the Discovery phase, the script scans IP ranges for open Docker API endpoints and uses iplogger.org to track infections.
+
+The Others section says that Azure Security Center detects the attack by monitoring the AKS management layer and containers. It detects exposed services like Weave Scope and Docker API. Recommendations include using Azure Policy and trusted registries.
+
+Now, the question is whether TeamTNT gains initial access via Weave Scope before executing the coin miner.
+
+Looking at the attack sequence: They use masscan to find open Docker API endpoints. Once found, they deploy their image. The initial access is through the Docker API, not directly through Weave Scope. Weave Scope is mentioned as a service that ASC detects as exposed, but the report doesn't say TeamTNT uses it for initial access. Instead, they use the Docker API.
+
+So, the initial access is via Docker API, not Weave Scope. Therefore, the answer is No.
+</think>
+
+The CTI report indicates that TeamTNT gains initial access through open Docker API endpoints, not via Weave Scope. Weave Scope is detected as an exposed service but isn't used for initial access. 
+
+Final Answer: B: No

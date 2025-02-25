@@ -1,0 +1,71 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- Blind Eagle uses a JavaScript downloader with ActiveXObject to execute PowerShell commands.
+- The script is hosted on Discord CDNs and downloaded from a specific URL.
+
+**Execution:**
+- A PowerShell script loads a DLL from an obfuscated Base64 string.
+- The DLL contains an AMSI bypass method.
+- The script checks for and creates a registry key if it doesn't exist.
+- It drops two files: myScript.ps1 and SystemLogin.bat.
+- A VBScript (Login1.vbs) is placed in the Startup folder to execute SystemLogin.bat on startup.
+- Another batch script deobfuscates and executes myScript.ps1.
+- A new PowerShell script loads the AMSI bypass DLL and an AES256 Decryptor.
+- The decrypted content is a PowerShell script leading to njRAT (Bladabindi).
+
+**Persistence:**
+- A VBScript (Login1.vbs) in the Startup folder ensures the execution of SystemLogin.bat on system startup.
+
+**Defense Evasion:**
+- The PowerShell script includes an AMSI bypass method.
+- Scripts and registry values are obfuscated to evade detection.
+
+**Others:**
+- APT Blind Eagle targets Colombian government and corporate sectors.
+- They use sophisticated techniques and custom malware.
+- IoCs and a YARA rule are provided for detection.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK technique most likely occurred after the PowerShell script decrypted the registry contents and executed a new script leading to the establishment of njRAT as a remote access tool?
+
+**Answer Choices:**
+A: T1008-Fallback Channels
+B: T1071-Application Layer Protocol
+C: T1573.002-Asymmetric Cryptography
+D: T1129-Shared Modules
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- The PowerShell script decrypts the registry contents.
+- The decrypted content is a new PowerShell script leading to njRAT (Bladabindi).
+- njRAT is a remote access tool (RAT) that allows the attacker to control the victim's computer.
+
+**Evaluating the Answer Choices:**
+
+- **A: T1008-Fallback Channels**
+  - This technique involves using multiple communication channels to maintain access to a compromised system. While njRAT could use fallback channels, the report does not specifically mention this.
+
+- **B: T1071-Application Layer Protocol**
+  - This technique involves using common network protocols to communicate with the C2 server. njRAT, as a RAT, would likely use standard protocols (e.g., HTTP, HTTPS) to communicate with the C2 server. This is a strong candidate.
+
+- **C: T1573.002-Asymmetric Cryptography**
+  - This technique involves using asymmetric cryptography for secure communication. The report mentions AES256 decryption but not asymmetric cryptography.
+
+- **D: T1129-Shared Modules**
+  - This technique involves using shared modules to load and execute code. The report mentions loading DLLs, but this is more about execution and not the communication aspect.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The PowerShell script decrypts the registry contents and executes a new script leading to njRAT.
+- njRAT is a remote access tool that allows the attacker to control the victim's computer.
+- For njRAT to function, it needs to communicate with the C2 server.
+- The most likely technique for this communication is using common network protocols, which is covered by T1071-Application Layer Protocol.
+
+**Final Answer: B: T1071-Application Layer Protocol**

@@ -1,0 +1,63 @@
+Alright, I've got this CTI outline and a question to answer based on it. Let's break this down step by step.
+
+First, the CTI outline describes an attack on a large public research institution in the U.S. The attack started with initial access through SSH, where the adversary used wget to download malware from a specific IP address. The malware was named with a date string matching the download day, suggesting it was freshly compiled.
+
+Then, upon execution, a custom loader brought in Derusbi malware into memory. Derusbi dropped the Turbo Linux Kernel Module (LKM) to disk, loaded it into the kernel, and then deleted it from disk to hide its presence. The Turbo LKM helps in hiding processes, which is part of the persistence and defense evasion tactics.
+
+The persistence is achieved by the Turbo LKM modifying the system's global call table to hide processes, making it harder to detect the malicious applications. The defense evasion techniques include cloaking and anti-analysis methods, with the LKM disabling CPU write protection to alter the system call table.
+
+For discovery, Derusbi gathers information like the local host name, GCC version, and system information, which is then sent back to the command and control (C2) server via network beacons.
+
+Now, the question is asking about what happened after Derusbi gathered system information for discovery. Specifically, it's about establishing communication with the C2 server via HTTP POST requests to /photos/photo.asp. I need to choose the most likely ATT&CK technique from the given options.
+
+Let's look at the answer choices:
+
+A: T1082 - System Information Discovery
+
+B: T1102.002 - Bidirectional Communication
+
+C: T1055.004 - Asynchronous Procedure Call
+
+D: T1071 - Application Layer Protocol
+
+First, T1082 is System Information Discovery, which is already mentioned in the discovery phase. Derusbi gathered system information, so this has already occurred before the communication with C2.
+
+Option B is T1102.002 - Bidirectional Communication. T1102 is "Command and Control," and the sub-technique 002 is "Bidirectional Communication." This seems relevant because after gathering information, the malware needs to send it back to the C2 server. Bidirectional communication implies that there's a back-and-forth between the malware and the C2 server, which makes sense for sending gathered data and possibly receiving further commands.
+
+Option C is T1055.004 - Asynchronous Procedure Call. T1055 is "Process Injection," and sub-technique 004 is "Asynchronous Procedure Call." This seems less directly related to the communication with C2. Process injection is more about executing code within another process, which might have been part of the execution phase but isn't directly about communicating with the C2 server.
+
+Option D is T1071 - Application Layer Protocol. This is about communicating using protocols within the application layer of the TCP/IP model. This could include HTTP, HTTPS, FTP, etc. Since the question specifies that the communication is via HTTP POST requests, this seems highly relevant.
+
+Between options B and D, both seem plausible, but let's think about which one more directly answers the question.
+
+The question is about establishing communication with the C2 server via HTTP POST requests. T1102 (Command and Control) is broadly about communicating with C2 servers, and the sub-technique 002 specifies bidirectional communication, which is likely, but it doesn't specify the protocol used.
+
+On the other hand, T1071 (Application Layer Protocol) specifically refers to the protocol used for communication, which in this case is HTTP. Since the question mentions "via HTTP POST requests," this seems to align more closely with T1071.
+
+Moreover, in the MITRE ATT&CK framework, T1071 is a technique under Command and Control, so choosing T1071 still falls under the broader category of C2 communication.
+
+Therefore, while both B and D are related, T1071 (Application Layer Protocol) is more specific to the method of communication described in the question.
+
+Let me double-check this reasoning.
+
+The sequence is:
+
+1. Initial Access: SSH and wget to download malware.
+
+2. Execution: Custom loader executes Derusbi, which uses Turbo LKM for persistence and defense evasion.
+
+3. Discovery: Derusbi gathers system information.
+
+4. Then, communication with C2 via HTTP POST to a specific URL.
+
+So, after discovery, the next step is to exfiltrate the gathered information to the C2 server. The way this communication happens is via HTTP POST requests to a specific URL (/photos/photo.asp).
+
+T1102 (Command and Control) is about maintaining communication with the C2 server, but it's a broad category. T1071 (Application Layer Protocol) specifies the protocol used for this communication, which in this case is HTTP.
+
+Given that the question specifies the method of communication (HTTP POST to a specific URL), the most precise answer would be T1071 - Application Layer Protocol.
+
+Therefore, the final answer is D: T1071 - Application Layer Protocol.
+
+**Final Answer**
+
+\[ \boxed{D} \]

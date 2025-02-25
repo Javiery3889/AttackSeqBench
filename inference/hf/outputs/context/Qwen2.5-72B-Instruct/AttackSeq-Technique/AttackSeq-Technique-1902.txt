@@ -1,0 +1,64 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Reconnaissance:**
+- TeamTNT uses the image `pause-amd64:3.4` to conduct reconnaissance.
+- The image is deployed on Kubernetes clusters and uses a shell script as its entry point.
+- The script downloads a coin miner from a server in Germany.
+- The script scans for open Docker API endpoints using the `masscan` tool.
+- The script attempts to kill competitor images using `docker rm` commands.
+
+**Initial Access:**
+- TeamTNT spreads malware via exposed Docker API servers.
+- A new access vector involves the use of an open Weave Scope service.
+- Weave Scope, when exposed to the Internet without authentication, allows attackers to run shell commands on the pods or nodes in the cluster.
+
+**Execution:**
+- The main payload, a coin miner, is executed after being downloaded and saved on the host as `/usr/sbin/docker-update`.
+- The attributes of the miner are changed to immutable.
+- The miner is executed to perform cryptocurrency mining.
+
+**Others:**
+- Azure Security Center (ASC) detects the attack by monitoring the behavior of the AKS management layer and the containers.
+- Recommendations include using Azure Policy for Kubernetes to restrict and audit sensitive actions and deploying images from trusted registries only.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After executing the coin miner saved on the host as `/usr/sbin/docker-update`, which ATT&CK technique most likely occurred before TeamTNT's script used `iplogger.org` to track the number of infected hosts and obtain their details?
+
+**Answer Choices:**
+- A: T1542.004-ROMMONkit
+- B: T1049-System Network Connections Discovery
+- C: T1595-Active Scanning
+- D: T1087-Account Discovery
+
+#### 3. Compare and Evaluate
+
+**Reconnaissance:**
+- The script uses `masscan` to scan for open Docker API endpoints, which aligns with **T1595-Active Scanning**.
+
+**Initial Access:**
+- The script uses an open Weave Scope service to gain initial access, which is a form of **T1190-Exploit Public-Facing Application**.
+
+**Execution:**
+- The coin miner is executed after being downloaded and saved on the host, which aligns with **T1059-Command and Scripting Interpreter**.
+
+**Tracking Infection:**
+- The script uses `iplogger.org` to track the number of infected hosts and obtain their details. This suggests that the script needs to discover the network connections or details of the infected hosts before reporting them.
+
+**Evaluating Answer Choices:**
+- **A: T1542.004-ROMMONkit** - This technique involves modifying firmware, which is not mentioned in the report.
+- **B: T1049-System Network Connections Discovery** - This technique involves discovering network connections, which is necessary to track infected hosts.
+- **C: T1595-Active Scanning** - This technique involves scanning for open endpoints, which is already part of the reconnaissance phase.
+- **D: T1087-Account Discovery** - This technique involves discovering account details, which is not mentioned in the report.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The script needs to discover the network connections of the infected hosts before it can use `iplogger.org` to track them.
+- **T1049-System Network Connections Discovery** is the most relevant technique for this purpose.
+
+**Final Answer:**
+- **B: T1049-System Network Connections Discovery**

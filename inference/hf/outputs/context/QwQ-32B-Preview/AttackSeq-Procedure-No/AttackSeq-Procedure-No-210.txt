@@ -1,0 +1,101 @@
+Alright, I've got this CTI outline to analyze, and there's a question about a sequence of tactics and techniques used by a cyber threat group called Deep Panda. They're a Chinese APT group that's been exploiting the Log4Shell vulnerability in VMware Horizon servers. The attack targets multiple sectors like finance, academia, cosmetics, and travel across different countries. So, first things first, I need to understand the attack sequence based on the MITRE ATT&CK tactics.
+
+Starting with the CTI outline:
+
+1. **Resource Development**: Deep Panda used the Log4Shell vulnerability to target multiple sectors. They deployed a backdoor and used a stolen digital certificate associated with another Chinese APT group, Winnti, to sign their tools.
+
+2. **Initial Access**: They exploited the Log4Shell vulnerability in VMware Horizon servers to gain initial access. This allowed them to spawn new PowerShell processes to download and execute a chain of scripts, leading to the installation of a malicious DLL.
+
+3. **Execution**: The attack chain involved executing PowerShell scripts and a batch file to download and run additional files, specifically syn.exe and 1.dll. The 1.dll module is a backdoor called Milestone, based on Gh0st RAT/Netbot Attacker's leaked source code, and it's packed with Themida. It creates a service named msupdate2 and masquerades as a legitimate Microsoft file, newdev.dll.
+
+4. **Persistence**: Milestone ensures persistence by copying itself to %APPDATA%\newdev.dll and creating a service named msupdate2 in the registry. This service has various names and descriptions across different samples.
+
+5. **Privilege Escalation**: In the 2016 version of Milestone, it creates a new administrator user with username ANONYMOUS and password MileSt0ne2@16, executes another instance of itself with elevated privileges, and then removes the user.
+
+6. **Defense Evasion**: Deep Panda uses a kernel rootkit called Fire Chili to hide and protect malicious artifacts, including files, processes, registry keys, and network connections. The rootkit uses Direct Kernel Object Modification (DKOM) and is signed with stolen certificates from game development companies. They also use Themida for software packing and masquerading techniques to evade detection.
+
+7. **Discovery**: Milestone has capabilities for system information discovery, file and directory discovery, and screen capture.
+
+8. **Exfiltration**: Milestone exfiltrates data over the C2 channel.
+
+Additionally, the "Others" section provides context about the attribution to Deep Panda and Winnti based on the use of Milestone backdoor and Fire Chili rootkit, and the use of stolen certificates and C2 infrastructure suggesting resource sharing between the groups. FortiEDR detects and blocks these threats, and all network IOCs have been added to the FortiGuard WebFiltering blocklist.
+
+Now, the question is: "After employing system information discovery and screen capture capabilities, is it likely that the Milestone backdoor will communicate with a C2 server over a non-standard port before exfiltrating data through the same C2 channel?"
+
+Answer choices are:
+
+A: Yes
+
+B: No
+
+So, I need to determine whether it's likely that Milestone will communicate with a C2 server over a non-standard port before exfiltrating data.
+
+First, let's recall what we know about Milestone from the CTI outline:
+
+- It's a backdoor based on Gh0st RAT/Netbot Attacker's leaked source code.
+
+- It's packed with Themida.
+
+- It masquerades as a legitimate Microsoft file (newdev.dll).
+
+- It creates a service named msupdate2.
+
+- It has capabilities for system information discovery, file and directory discovery, and screen capture.
+
+- It exfiltrates data over the C2 channel.
+
+Also, the campaign employs a kernel rootkit called Fire Chili for defense evasion, which hides and protects malicious artifacts, including network connections.
+
+Given this information, I need to assess whether it's likely that Milestone communicates over a non-standard port before exfiltrating data.
+
+Let's think about this step by step.
+
+First, what are standard and non-standard ports?
+
+Standard ports are typically those below 1024, which are well-known for specific services (e.g., HTTP on port 80, HTTPS on 443). Non-standard ports are those above 1024 and are not typically associated with specific services.
+
+Attackers often use non-standard ports to evade detection because network security devices may be configured to monitor only standard ports or may have rules that allow traffic on non-standard ports under certain conditions.
+
+Given that Deep Panda is a sophisticated APT group, it's likely that they employ techniques to evade detection, including using non-standard ports for C2 communications.
+
+Moreover, the CTI outline mentions that the campaign uses a kernel rootkit, Fire Chili, which is designed to hide and protect network connections, among other things. This suggests that the group is concerned about hiding their network activities, which could include using non-standard ports.
+
+Additionally, the fact that Milestone is packed with Themida and masquerades as a legitimate file indicates a level of sophistication in evasion techniques. It's plausible that their C2 communications also employ evasion methods, such as using non-standard ports.
+
+However, the CTI outline doesn't explicitly state that Milestone uses non-standard ports for C2 communications. It's possible that they use standard ports to blend in with normal traffic or to take advantage of less scrutinized ports.
+
+On the other hand, using non-standard ports could help avoid detection by firewalls and other network security devices that may have rules allowing traffic on those ports.
+
+Given the emphasis on evasion in the CTI outline, it seems more likely that Milestone would use non-standard ports for C2 communications.
+
+But let's consider the question again: "After employing system information discovery and screen capture capabilities, is it likely that the Milestone backdoor will communicate with a C2 server over a non-standard port before exfiltrating data through the same C2 channel?"
+
+The question specifies "before exfiltrating data through the same C2 channel." This suggests that the communication over a non-standard port is part of the exfiltration process.
+
+However, in many APT scenarios, C2 communications can happen over any port, and exfiltration is often done through the same C2 channel.
+
+Given that, if Milestone is communicating with the C2 server for exfiltration, and considering the group's focus on evasion, it's plausible that they would use a non-standard port for this communication.
+
+But, again, the CTI outline doesn't specify the port used for C2 communications.
+
+Looking back at the MITRE ATT&CK framework, under the "Command and Control" technique, it mentions that adversaries may use non-standard ports to avoid detection.
+
+Given that Deep Panda is employing various defense evasion techniques, including a kernel rootkit and packing their malware, it's reasonable to assume that they would also use non-standard ports for C2 communications.
+
+Therefore, considering the group's sophistication and their focus on evasion, it's likely that Milestone communicates with the C2 server over a non-standard port before exfiltrating data.
+
+Hence, the answer should be:
+
+A: Yes
+
+But to be thorough, let's consider why "No" might not be the correct answer.
+
+If I choose "No," it implies that it's not likely for Milestone to use a non-standard port for C2 communications before exfiltrating data.
+
+However, given the group's emphasis on evasion and the use of a rootkit to hide their activities, using a non-standard port would align with their overall strategy to avoid detection.
+
+Therefore, "No" seems less plausible in this context.
+
+In conclusion, based on the information provided in the CTI outline and the analysis of the group's tactics and techniques, it's likely that Milestone will communicate with the C2 server over a non-standard port before exfiltrating data through the same C2 channel.
+
+**Final Answer: A**

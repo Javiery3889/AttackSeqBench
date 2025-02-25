@@ -1,0 +1,18 @@
+Okay, so I'm trying to figure out whether TClient will use SSL to connect to Tropic Trooper's C&C server after the Defense Evasion phase. Let me break this down step by step.
+
+First, from the CTI outline, I know that Tropic Trooper uses an initial access method called Tropic Trooper, which is also known as KeyBoy. They exploited CVE-2017-11882 or CVE-2018-0802 in Microsoft Office's Equation Editor. This allowed them to execute commands and download an installer package, which they then installed using msiexec. 
+
+After installation, the system configuration file (in.sys) was dropped, which then deleted itself. The backdoor installer, UserInstall.exe, was also dropped. This UserInstall.exe created a malicious loader and some files like sidebar.exe, a Windows Gadget tool, and a malicious DLL called wab32res.dll. The UserInstall.exe used BITSadmin to create a job and launch sidebar.exe. The loader then did DLL hijacking on sidebar.exe, launching dllhost.exe, and injected a backdoor DLL into it. 
+
+In the Persistence phase, the backdoor loads an encrypted config file and uses SSL to connect to C&C servers. So, during the Command and Control phase, it's using SSL for communication.
+
+Looking at the Defense Evasion part, Tropic Trooper used DLL hijacking by having wab32res.dll loaded by the benign sidebar.exe. This evades antivirus detection because the malicious DLL is loaded by a legitimate process. They also created a hidden directory (UFile) in ProgramData\Apple\Update, which is a ruse to cover their tracks.
+
+The question is whether, after using DLL hijacking during Defense Evasion, TClient (which I assume is the backdoor) will use SSL to connect to the C&C server during Command and Control.
+
+From the outline, during the Execution phase, the backdoor uses SSL to connect to C&C. So, it's already using SSL there. The Defense Evasion phase involved using DLL hijacking, but that doesn't change the fact that the backdoor uses SSL for C&C. So, yes, TClient (the backdoor) would still use SSL to communicate with the C&C server.
+</think>
+
+The backdoor uses SSL during the Command and Control phase as indicated in the Execution phase of the CTI outline. Therefore, after using DLL hijacking for evasion, it will still use SSL for communication.
+
+Final Answer: A: Yes

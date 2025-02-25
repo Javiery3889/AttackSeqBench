@@ -1,0 +1,68 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attackers used a watering hole attack to compromise a website.
+- They added code to redirect visitors to the infecting code, exploiting CVE-2018-8174.
+
+**Execution:**
+- The malware exploits the VBScript engine vulnerability to download a DLL.
+- The DLL is run in PowerShell.
+- The downloader checks for antivirus software processes and exits if any are found.
+- It exploits CVE-2015-1701 for Local Privilege Escalation.
+- The second stage involves downloading and executing the SLUB backdoor.
+
+**Persistence:**
+- The SLUB backdoor achieves persistence by copying itself to ProgramData\update\ and creating a Run registry key with a typo in the ValueName.
+
+**Privilege Escalation:**
+- The downloader exploits CVE-2015-1701 to acquire Local Privilege Escalation.
+
+**Defense Evasion:**
+- The first stage downloader exits if it detects any antivirus software processes.
+
+**Discovery:**
+- The SLUB backdoor performs discovery by downloading a 'gist' snippet from GitHub and parsing it for commands.
+- It retrieves the username and computer name.
+
+**Command and Control:**
+- The backdoor communicates with the attackers via Slack, using hardcoded authentication tokens to post messages and command results to a private Slack channel.
+
+**Exfiltration:**
+- The attackers exfiltrate data by uploading files to the file.io website and posting download links to the Slack channel.
+- They create archive files of user's Desktop folders and build CAB files containing the file tree for exfiltration.
+
+#### 2. Analyze the Question
+
+**Question:**
+After the attackers utilized the SLUB backdoor to perform discovery tasks such as downloading GitHub snippets for command parsing and retrieving the username and computer name, which ATT&CK tactic most likely followed next in the attack sequence?
+
+**Answer Choices:**
+A: Defense Evasion
+B: Lateral Movement
+C: Command and Control
+D: Collection
+
+#### 3. Compare and Evaluate
+
+**Discovery:**
+- The SLUB backdoor performs discovery by downloading a 'gist' snippet from GitHub and parsing it for commands.
+- It retrieves the username and computer name.
+
+**Next Steps:**
+- **Defense Evasion:** The downloader already performed defense evasion by exiting if it detected any antivirus software processes. This is not a likely next step.
+- **Lateral Movement:** There is no mention of lateral movement in the report. This is not a likely next step.
+- **Command and Control:** The backdoor communicates with the attackers via Slack, using hardcoded authentication tokens to post messages and command results to a private Slack channel. This is a logical next step after discovery.
+- **Collection:** The report mentions exfiltration, which involves collecting data. However, the communication with the attackers (Command and Control) is a necessary step before exfiltration.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+1. The SLUB backdoor performs discovery by downloading GitHub snippets and retrieving system information.
+2. After discovery, the backdoor needs to communicate with the attackers to receive further commands and exfiltrate data.
+3. The report explicitly states that the backdoor communicates with the attackers via Slack, which is a Command and Control tactic.
+4. Collection and exfiltration follow Command and Control, as the attackers need to control the backdoor to collect and exfiltrate data.
+
+**Final Answer:**
+C: Command and Control

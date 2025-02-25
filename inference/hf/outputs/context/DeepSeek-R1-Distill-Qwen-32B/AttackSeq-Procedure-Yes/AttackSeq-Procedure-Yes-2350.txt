@@ -1,0 +1,20 @@
+Okay, so I need to figure out whether BRONZE PRESIDENT uses vssadmin to create volume shadow copies and retrieve NTDS.dit files during privilege escalation before deleting those shadow copies to minimize detection. Let me break this down step by step.
+
+First, I'll look at the CTI report provided. The report details the tactics, techniques, and procedures (TTPs) of the BRONZE PRESIDENT group. I'm particularly interested in the sections related to persistence, credential access, and defense evasion.
+
+From the report, under Persistence, it says that BRONZE PRESIDENT uses WMI event consumers and scheduled tasks, like the Sysdriver scheduled task, to maintain persistence. So they definitely use these methods for staying in the network.
+
+Next, looking at Credential Access, the group collects credentials from high-privilege accounts and extracts password hashes from NTDS.dit files. NTDS.dit is a file in Windows that contains the Active Directory database, so accessing it would require high-level privileges, likely through some form of privilege escalation.
+
+Now, the question is about whether they use vssadmin to create volume shadow copies. Volume shadow copies are snapshots of the system, which can be used to restore files or access data that's otherwise protected. Vssadmin is a command-line tool used to manage these shadow copies. Creating a shadow copy could allow them to access NTDS.dit without affecting the live system, which might be a way to escalate privileges or extract data without being detected immediately.
+
+The report mentions that during Defense Evasion, BRONZE PRESIDENT deletes volume shadow copies after use and kills processes post-execution. This suggests that they do create shadow copies but then delete them to cover their tracks. So the sequence would be: create shadow copies (using vssadmin), retrieve NTDS.dit, then delete the shadow copies to minimize detection.
+
+Putting it all together, the attack sequence would involve using scheduled tasks and WMI for persistence, then using vssadmin to create shadow copies, accessing NTDS.dit for credentials, and then cleaning up by deleting the shadow copies. This aligns with the report's details on their methods for credential access and defense evasion.
+
+So, the answer should be yes, they are likely to use vssadmin in that way.
+</think>
+
+The BRONZE PRESIDENT group uses scheduled tasks and WMI for persistence. They create volume shadow copies with vssadmin to access NTDS.dit for credentials and then delete these copies to avoid detection, as per their defense evasion tactics.
+
+Final Answer: A: Yes

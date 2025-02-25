@@ -1,0 +1,71 @@
+Alright, I've got this CTI outline here about an attack by the Konni APT Group. They're a North Korean group mainly going after South Korea, and they use spear-phishing and malicious documents. So, in this particular case, they delivered an ISO file from some URL, and inside that ISO was a zip with malicious scripts.
+
+First, I need to understand the sequence of events based on the MITRE ATT&CK tactics mentioned in the outline. Let's break it down:
+
+1. **Initial Access**: They used an ISO file downloaded from an in-the-wild URL, which contained a zip with malicious scripts. So, the entry point is through this ISO file.
+
+2. **Execution**: There are several scripts involved here:
+
+   - `install.vbs`: When deobfuscated, it runs `resolve.dns` (which is probably a batch file).
+
+   - `update.vbs`: Similar to `install.vbs`, it runs `stopedge.bat`.
+
+   - `activate.vbs`: Sends an HTTP request and saves the content.
+
+   - `unactivate.vbs`: Can exfiltrate data via a POST request.
+
+   - `stopedge.bat`: If `paycom.ini` exists, it schedules `install.vbs` to run every 33 minutes and manages file deletions.
+
+   - `resolvedns.bat`: Initiates the download of a file from the C2 server.
+
+   - `versioninfo.bat`: Collects information about the user's computer and exfiltrates data using `unactivate.vbs`.
+
+3. **Persistence**: The `stopedge.bat` schedules `install.vbs` to run every 33 minutes if `paycom.ini` is present.
+
+4. **Discovery**: `versioninfo.bat` gathers information about the system, like directory listings, IP addresses, running processes, etc.
+
+5. **Collection**: Same as discovery, it collects information for exfiltration.
+
+6. **Command and Control**: `activate.vbs` communicates with the C2 server to send requests and receive content, and `resolvedns.bat` also interacts with the C2 for file downloads.
+
+7. **Exfiltration**: `unactivate.vbs` is used to exfiltrate data via POST requests, and `versioninfo.bat` uses it to send collected information.
+
+Now, the question is: Is it likely that after `versioninfo.bat` discovers system details and collects information for exfiltration, `stopedge.bat` will manage the deletion of files like `versioninfo.bat` and `update.vbs` to evade detection?
+
+Answer choices are:
+
+A: Yes
+
+B: No
+
+Okay, so I need to decide between A and B based on the information provided in the CTI outline.
+
+First, let's look at what `stopedge.bat` does according to the outline. It says that if `paycom.ini` exists, it schedules `install.vbs` to run every 33 minutes and manages file deletions.
+
+So, it mentions that it manages file deletions, but it doesn't specify which files it deletes. However, given that it's part of the same script suite, it's plausible that it would clean up traces by deleting certain files to avoid detection.
+
+`versioninfo.bat` is responsible for collecting information and exfiltrating it using `unactivate.vbs`. After this task is completed, there might be a need to clean up to reduce the footprint on the system.
+
+Looking back at `stopedge.bat`, it seems to be involved in maintaining persistence by scheduling `install.vbs`, but it also manages file deletions. So, it's possible that as part of its cleanup process, it deletes certain files, possibly including `versioninfo.bat` and `update.vbs`.
+
+Additionally, `update.vbs` runs `stopedge.bat`, so there might be a relationship there in terms of cleanup.
+
+Given that APT groups often employ tactics to evade detection, including deleting files and cleaning up logs, it's likely that this group would implement such measures.
+
+Therefore, answer choice A: Yes, seems plausible.
+
+But let's consider answer choice B: No. Why might this not be the case?
+
+Well, maybe the group wants to keep some files around for future use or to maintain a presence on the system. However, considering that they have persistence mechanisms in place through scheduling `install.vbs`, they might not need to keep all the other files around.
+
+Moreover, keeping unnecessary files could increase the risk of detection, so it would make sense to delete them.
+
+Another point is that `stopedge.bat` is scheduled to run periodically, so it could perform cleanup tasks at those intervals.
+
+Also, the fact that it manages file deletions suggests that it has the capability to remove specific files as needed.
+
+Therefore, it's reasonable to conclude that after `versioninfo.bat` has collected and exfiltrated the data, `stopedge.bat` would delete files like `versioninfo.bat` and `update.vbs` to reduce the chances of being detected.
+
+Hence, the most likely answer is A: Yes.
+
+**Final Answer: A**

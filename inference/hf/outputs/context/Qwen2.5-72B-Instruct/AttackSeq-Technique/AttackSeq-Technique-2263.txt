@@ -1,0 +1,69 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Reconnaissance:**
+- The attack targets user credentials of Mexican banking institutions.
+- The campaign is linked to another campaign targeting users from Brazil's banking institutions.
+- The final phase executable contains specific Portuguese comments, suggesting a link with the Banload malware.
+
+**Initial Access:**
+- The attack begins with an email impersonating Mexico's tax department (SAT).
+- The email includes a link to download a malicious attachment, COMPROBANTE FISCAL.zip, containing a malicious .bat file and a legitimate file GoogleUpdate.exe.
+- Clicking either .bat file triggers the attack.
+
+**Persistence:**
+- The PowerShell script includes base64 coded text strings associated with startup persistence features, such as creating shortcuts in the startup folder and manipulating scheduled tasks.
+
+**Defense Evasion:**
+- The main malicious file 12.dll is renamed to a random name with the .LNS extension and saved in the %Public% folder.
+- The malware is protected with the VMProtect packer, making static analysis difficult.
+
+**Credential Access:**
+- The malware aims to steal bank credentials from Mexican financial institution users.
+- It accesses Outlook info to collect email accounts from the contacts list for BEC attacks.
+
+**Collection:**
+- The malware accesses Microsoft Outlook MAPI to try to access contacts' email accounts and sends them to the cyber actors through a POST web request.
+
+**Command and Control:**
+- The PowerShell script communicates with the following domains to download the malware and send collected data: h1m2en.ddns.net and dgi1b2n3m4.ddns.net.
+
+**Exfiltration:**
+- The collected email accounts are exfiltrated to the cyber actors through a POST web request to the resource hxxp://dgi1b2n3m4.ddns.net/lists/kk/index.php?list.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After a phishing email impersonating Mexico's tax department and delivering a malicious .bat file for gaining initial access, which ATT&CK technique most likely occurred before the malware established persistence through startup folder shortcuts and scheduled tasks?
+
+**Answer Choices:**
+- A: T1591.002-Business Relationships
+- B: T1567-Exfiltration Over Web Service
+- C: T1059-Command and Scripting Interpreter
+- D: T1072-Software Deployment Tools
+
+#### 3. Compare and Evaluate
+
+**Initial Access:**
+- The attack begins with a phishing email and a malicious .bat file, which is a clear example of T1566.001 (Phishing: Spearphishing Attachment).
+
+**Persistence:**
+- The malware establishes persistence through startup folder shortcuts and scheduled tasks, which is T1547 (Persistence: Boot or Logon Autostart Execution).
+
+**Sequence of Events:**
+1. **Initial Access (T1566.001):** The user clicks on the malicious .bat file in the email.
+2. **Command and Scripting Interpreter (T1059):** The .bat file runs a PowerShell script to establish persistence.
+3. **Persistence (T1547):** The PowerShell script creates shortcuts in the startup folder and manipulates scheduled tasks.
+
+**Evaluation of Answer Choices:**
+- **A: T1591.002-Business Relationships:** This technique involves gathering information about business relationships, which is not relevant to the sequence of events described.
+- **B: T1567-Exfiltration Over Web Service:** This technique involves exfiltrating data over web services, which occurs after the malware has established persistence and collected data.
+- **C: T1059-Command and Scripting Interpreter:** This technique involves using command-line interfaces and scripts, which is relevant to the .bat file and PowerShell script used to establish persistence.
+- **D: T1072-Software Deployment Tools:** This technique involves using software deployment tools, which is not relevant to the sequence of events described.
+
+#### 4. Final Answer
+
+**Final Answer: C: T1059-Command and Scripting Interpreter**
+
+The .bat file and PowerShell script are used to execute commands and establish persistence, making T1059 the most plausible technique that occurred before the malware established persistence.

@@ -1,0 +1,82 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Defense Evasion:**
+- Uses GetTempPathW to retrieve the %TEMP% directory.
+- Initializes WinINet functions with InternetOpenW, setting the user agent to "Opera".
+- Sets send and receive timeouts to 600 seconds using InternetSetOptionW.
+- Establishes a connection to the C2 server updaterweb[.]com on port 443, and if it fails, tries port 80.
+- Uses HttpOpenRequestW to create an HTTP POST request handle and adds an HTTP request header.
+
+**Discovery:**
+- Enumerates files and directories from the Desktop directory using FindFirstFileW and FindNextFileW.
+- Targets directories such as 'C:\Program Files', 'C:\Program Files (x86)', and user-specific AppData folders.
+- Uses SHGetFolderPathW to obtain folder names.
+- Retrieves the NetBIOS name of the local computer and the name of the user associated with the current thread using GetComputerNameA and GetUserNameA.
+- Extracts the volume serial number of the root directory using GetVolumeInformationW.
+
+**Collection:**
+- Base64 encodes the output of the systeminfo and tasklist commands, along with the list of targeted directories and their content, using the CryptBinaryToStringA API.
+
+**Command and Control:**
+- Communicates with the C2 server updaterweb[.]com, sending exfiltrated data in a POST request.
+- Downloads a DLL file from the C2 server, which is loaded using the LoadLibraryW API, and executes the first ordinal function.
+
+**Exfiltration:**
+- Exfiltrates collected information to the C2 server updaterweb[.]com using an HTTP POST request.
+
+**Others:**
+- Uses CryptAcquireContextA to acquire a handle to the Microsoft RSA and AES Cryptographic Provider.
+- Creates a hash object using CryptCreateHash.
+- Verifies the hash value of a downloaded DLL file against a provided buffer.
+- Creates a file called fvjoik.dll in the %TEMP% directory, populates it with the DLL downloaded from the C2 server, and executes an exported function with ordinal 1.
+- Uses WinExec to delete the DLL file.
+- Retrieves the termination status of the two threads using the GetExitCodeThread API.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK tactic most likely occurred before SkinnyBoy created a new process to run systeminfo and tasklist commands for subsequent data collection?
+
+**Answer Choices:**
+A: Discovery
+B: Execution
+C: Resource Development
+D: Defense Evasion
+
+#### 3. Compare and Evaluate
+
+- **Discovery:**
+  - The malware enumerates files and directories and retrieves system information (NetBIOS name, user name, volume serial number).
+  - This information is necessary to understand the environment and target specific data for collection.
+
+- **Execution:**
+  - The malware runs systeminfo and tasklist commands to collect data.
+  - This step is part of the data collection process, not a prerequisite for it.
+
+- **Resource Development:**
+  - This tactic involves preparing the infrastructure needed for an attack, such as setting up C2 servers or creating malware.
+  - It is not directly related to the execution of systeminfo and tasklist commands.
+
+- **Defense Evasion:**
+  - The malware uses various techniques to avoid detection, such as setting up network connections and using specific APIs.
+  - This is a prerequisite for the malware to operate, but it does not directly lead to the execution of systeminfo and tasklist commands.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- **Step 1:** Identify the sequence of actions in the CTI report.
+  - The malware first performs defense evasion to set up its environment.
+  - It then conducts discovery to understand the system and target specific data.
+  - After discovery, it collects data by running systeminfo and tasklist commands.
+
+- **Step 2:** Determine the logical order of events.
+  - Defense Evasion → Discovery → Collection
+
+- **Step 3:** Match the sequence with the question.
+  - The question asks which tactic occurred before running systeminfo and tasklist commands.
+  - Running these commands is part of the Collection phase.
+  - The Discovery phase must occur before Collection to gather the necessary information to target specific data.
+
+- **Final Answer:**
+  A: Discovery

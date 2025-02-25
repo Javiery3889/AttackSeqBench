@@ -1,0 +1,59 @@
+To answer this question, I need to carefully analyze the provided CTI outline and determine whether SkinnyBoy obfuscates its C2 traffic with an altered version of base64 before sending an HTTP POST request to the server updaterweb[.]com.
+
+First, let's break down the relevant parts of the CTI outline:
+
+1. **Execution:**
+   - SkinnyBoy creates an unnamed event object and two new threads.
+   - It uses GetMessage to process messages and breaks the loop if the message is WM_ENDSESSION.
+   - It creates an anonymous pipe and uses GetStartupInfoA to retrieve the STARTUPINFO structure.
+   - It creates a new process to run systeminfo and tasklist commands, using the pipe for inter-process communication.
+   - The output is read via ReadFile.
+
+2. **Defense Evasion:**
+   - Uses GetTempPathW to retrieve the path of the %TEMP% directory.
+   - Initializes WinINet functions with InternetOpenW, setting the user agent to "Opera".
+   - Sets send and receive timeouts to 600 seconds using InternetSetOptionW.
+   - Establishes a connection to the C2 server updaterweb[.]com on port 443, and if it fails, tries port 80.
+   - Uses HttpOpenRequestW to create an HTTP POST request handle and adds an HTTP request header.
+
+3. **Discovery:**
+   - Enumerates files and directories from the Desktop directory using FindFirstFileW and FindNextFileW.
+   - Targets specific directories like 'C:\Program Files', 'C:\Program Files (x86)', and user-specific AppData folders.
+   - Uses SHGetFolderPathW to obtain folder names.
+   - Retrieves the NetBIOS name of the local computer and the name of the user associated with the current thread using GetComputerNameA and GetUserNameA.
+   - Extracts the volume serial number of the root directory using GetVolumeInformationW.
+
+4. **Collection:**
+   - Base64 encodes the output of systeminfo and tasklist commands, along with the list of targeted directories and their content, using CryptBinaryToStringA.
+
+5. **Exfiltration:**
+   - Exfiltrates collected information to the C2 server updaterweb[.]com using an HTTP POST request with the structure "id=<hostname>#Username#<Serial number in decimal>&current=1&total=1&data=<base-64 encoded data>".
+
+6. **Others:**
+   - Uses CryptAcquireContextA to acquire a handle to the Microsoft RSA and AES Cryptographic Provider.
+   - Uses CryptCreateHash to create a hash object and verifies the hash value of a downloaded DLL file against a provided buffer.
+   - Creates a file called fvjoik.dll in the %TEMP% directory, populates it with the DLL downloaded from the C2 server, and executes an exported function with ordinal 1.
+   - After execution, it uses WinExec to delete the DLL file.
+   - The main thread retrieves the termination status of the two threads using GetExitCodeThread.
+
+Now, focusing on the exfiltration part, the outline states that SkinnyBoy exfiltrates collected information to the C2 server updaterweb[.]com using an HTTP POST request. The data is structured as "id=<hostname>#Username#<Serial number in decimal>&current=1&total=1&data=<base-64 encoded data>".
+
+The key point here is that the data is base64 encoded. However, the question asks whether SkinnyBoy is likely to obfuscate C2 traffic with an altered version of base64.
+
+Base64 is a standard encoding scheme that represents binary data in an ASCII string format. It is commonly used for transmitting data over media that are designed to deal with text. In the context of malware, using base64 encoding can help obfuscate the payload, making it less recognizable to network monitoring tools that look for specific patterns.
+
+However, standard base64 encoding is easily decodable, and many security tools can detect and decode base64 strings. Therefore, some malware authors might alter the base64 encoding in an attempt to further obfuscate the data and evade detection.
+
+Looking back at the CTI outline, there is no explicit mention of SkinnyBoy using an altered version of base64. It simply states that the data is base64 encoded using the CryptBinaryToStringA API.
+
+The CryptBinaryToStringA function is a Windows API function that converts binary data to a string representation, and it can use base64 encoding among other formats. There is no indication in the outline that SkinnyBoy modifies the base64 encoding in any way.
+
+Moreover, in the "Others" section, it mentions that SkinnyBoy uses cryptographic functions like CryptAcquireContextA and CryptCreateHash for verifying the hash of a downloaded DLL, but there is no mention of modifying the base64 encoding.
+
+Given this information, it seems that SkinnyBoy uses standard base64 encoding for its C2 communications, without any alterations to obfuscate the traffic further.
+
+Therefore, the answer to the question "Before SkinnyBoy communicates with the C2 server updaterweb[.]com as part of the command and control process using an HTTP POST request, is it likely to obfuscate C2 traffic with an altered version of base64?" would be "No."
+
+So, the final answer is:
+
+**Final Answer: B**

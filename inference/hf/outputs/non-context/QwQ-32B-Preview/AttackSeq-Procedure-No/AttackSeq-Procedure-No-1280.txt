@@ -1,0 +1,73 @@
+So I've got this question here about APT10's tactics, techniques, and procedures (TTPs). It mentions that they use DLL side-loading with legitimate executables to load malicious DLLs during initial access. Then it asks whether it's likely that APT10 will connect to the IPC$ share on remote machines before establishing persistence through services or the Run registry key.
+
+First, I need to understand what each of these terms means and how they fit into the broader context of an APT's attack lifecycle. Let's break it down.
+
+**DLL Side-Loading:**
+This is a technique where an attacker places a malicious DLL in the same directory as a legitimate executable that is configured to load DLLs from the current directory. When the legitimate executable runs, it loads the malicious DLL, giving the attacker code execution.
+
+**IPC$ Share:**
+IPC$ is a named pipe share in Windows that allows for inter-process communication. Attackers can use it to enumerate and potentially exploit services running on a target machine.
+
+**Persistence through Services:**
+Creating a new service or modifying an existing one to run malicious code at system startup or at specific intervals.
+
+**Persistence through Run Registry Key:**
+Adding a registry key under HKEY_LOCAL_MACHINE\Software\Microsoft\Windows\CurrentVersion\Run or HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run to execute a program or script during system startup.
+
+Now, the question is asking about the sequence of these actions. Specifically, after using DLL side-loading for initial access, is it likely that APT10 will connect to the IPC$ share on remote machines before establishing persistence through services or the Run registry key.
+
+To answer this, I need to think about the typical sequence of events in an APT attack.
+
+1. **Initial Access:** This is where the attacker gains their first foothold in the network, often through phishing, exploiting vulnerabilities, or using stolen credentials.
+
+2. **Execution:** The malicious code is run on the target system.
+
+3. **Persistence:** The attacker ensures that they can maintain access to the system, even after reboots or other interruptions.
+
+4. **Privilege Escalation:** The attacker tries to gain higher-level permissions on the system.
+
+5. **Defense Evasion:** The attacker takes steps to avoid detection by security solutions.
+
+6. **Credential Access:** The attacker attempts to steal credentials to access other systems.
+
+7. **Discovery:** The attacker maps out the network and identifies valuable targets.
+
+8. **Lateral Movement:** The attacker moves across the network to access other systems.
+
+9. **Collection:** The attacker gathers data of interest.
+
+10. **Exfiltration:** The attacker sends the stolen data out of the network.
+
+11. **Impact:** The attacker may cause disruption or damage to the target environment.
+
+Given this framework, let's look at the sequence in question.
+
+- **Initial Access:** DLL side-loading is used to execute malicious code.
+
+- **Persistence:** The attacker wants to ensure they can maintain access, possibly through services or the Run registry key.
+
+- **Connecting to IPC$ Share:** This seems like an action related to discovery or lateral movement.
+
+So, the question is whether connecting to the IPC$ share would typically happen before establishing persistence.
+
+In most attack sequences, persistence is established early on, right after initial access, to ensure that the attacker can come back to the system even if the initial foothold is disrupted. Then, the attacker would proceed with discovery and lateral movement.
+
+However, in some cases, an attacker might perform some reconnaissance or lateral movement before setting up persistence, but this is less common because if they get kicked off the system before setting up persistence, they've lost their access.
+
+Given that, it seems less likely that APT10 would connect to the IPC$ share before establishing persistence. It makes more sense to set up persistence first, ensuring they can come back, and then proceed with further actions like connecting to IPC$ for discovery purposes.
+
+Moreover, connecting to IPC$ is more related to lateral movement and discovery, which typically happen after persistence has been established.
+
+Therefore, my answer would be "No," it is not likely that APT10 will connect to the IPC$ share on remote machines before establishing persistence.
+
+But to be thorough, I should consider if there are any scenarios where this might make sense.
+
+One possible scenario is if the attacker needs to quickly move laterally to other machines before being detected, and they don't have time to set up persistence on the initial machine. However, this is risky because they might lose access to the initial machine without ensuring they can come back.
+
+Another scenario is if the attacker is using a living-off-the-land approach, where they rely on existing tools and techniques that don't require persistent access. But even in such cases, establishing persistence is generally a priority.
+
+Given these considerations, it still seems more plausible that persistence would be established before lateral movement actions like connecting to IPC$ shares.
+
+Therefore, I think the correct answer is "No."
+
+**Final Answer: B**

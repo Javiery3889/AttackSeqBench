@@ -1,0 +1,69 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attack began with a spear phishing campaign using macro-embedded documents.
+- The documents were designed to appear as job opportunities from Lockheed Martin.
+- The documents contained malicious macros that, when executed, initiated the attack.
+
+**Execution:**
+- The malicious macros used the KernelCallbackTable to hijack control flow and execute malicious code.
+- The malware retrieved the address of the 'WMIsAvailableOffline' function from 'wmvcore.dll,' modified memory protection permissions, and overwrote the code with malicious shellcode.
+- The shellcode contained an encrypted DLL that was decrypted at runtime and manually mapped into memory.
+
+**Persistence:**
+- The malware achieved persistence by dropping a malicious LNK file named 'WindowsUpdateConf.lnk' into the startup folder.
+- This LNK file was designed to execute 'C:\Windows\system32\wuauclt.exe' with arguments to run a malicious DLL using the Windows Update Client.
+
+**Defense Evasion:**
+- The Lazarus Group used the KernelCallbackTable for control flow hijacking.
+- The malware executed malicious code through the Windows Update client.
+- The group leveraged GitHub for command and control (C2) communication.
+
+**Command and Control:**
+- The core_module.dll communicated with a C2 server hosted on GitHub.
+- The malware used a hardcoded username, repository name, directory, and token to make HTTP requests to GitHub and retrieve files from the 'images' directory.
+- The retrieved files, such as 'readme.png,' contained malicious modules that were executed on the target system.
+
+**Others:**
+- The campaign targeted individuals seeking job opportunities at Lockheed Martin.
+- The campaign was linked to past activities of Lazarus through document metadata and infrastructure overlap.
+- The malicious documents were well-designed and contained large icons of known companies to appear legitimate.
+- The campaign used a GitHub account with the username 'DanielManwarningRep' created on January 17th, 2022, to operate the malware.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After achieving persistence by dropping a malicious LNK file into the startup folder to execute a malicious DLL via the Windows Update Client, is the Lazarus Group likely to enumerate AWS storage services, such as S3 buckets and Elastic Block Store volumes, before communicating with a command and control server hosted on GitHub?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- The attack sequence includes initial access, execution, persistence, defense evasion, and command and control.
+- The persistence mechanism involves dropping a malicious LNK file into the startup folder to execute a malicious DLL via the Windows Update Client.
+- The command and control communication is established with a server hosted on GitHub.
+
+**Evaluation of Answer Choices:**
+- **A: Yes**
+  - This choice suggests that the Lazarus Group would enumerate AWS storage services before communicating with the C2 server.
+  - The CTI report does not mention any activities related to AWS storage services.
+  - The focus of the report is on the initial access, execution, persistence, and C2 communication using GitHub.
+- **B: No**
+  - This choice suggests that the Lazarus Group would not enumerate AWS storage services before communicating with the C2 server.
+  - The CTI report clearly outlines the sequence of actions, and there is no indication of AWS storage service enumeration.
+  - The report emphasizes the use of GitHub for C2 communication immediately after achieving persistence.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The CTI report provides a detailed sequence of the attack, including initial access, execution, persistence, and C2 communication.
+- The report does not mention any activities related to AWS storage services.
+- The focus is on the use of GitHub for C2 communication, which is the next logical step after achieving persistence.
+- Therefore, it is unlikely that the Lazarus Group would enumerate AWS storage services before communicating with the C2 server.
+
+**Final Answer: B: No**

@@ -1,0 +1,18 @@
+Okay, so I'm trying to figure out whether a UEFI rootkit like LoJax would delete the 'versioninfo.bat' and 'update.vbs' files after the 'versioninfo.bat' script collects information for exfiltration. Let me break this down step by step.
+
+First, I need to understand the attack sequence from the CTI outline. The attack starts with an ISO file download, which contains malicious scripts. The initial execution involves VBScripts and batch files: install.vbs, resolve.dns, update.vbs, activate.vbs, unactivate.vbs, and stopedge.bat. These scripts do various things like execute other scripts, communicate with C2 servers, and schedule tasks.
+
+Looking at the Persistence section, stopedge.bat schedules install.vbs to run every 33 minutes if paycom.ini exists. This persistence mechanism is important because it keeps the attack going even after the initial phase.
+
+In the Discovery phase, versioninfo.bat collects system information. Then, in Collection, the same script prepares this info for exfiltration using unactivate.vbs. For Command and Control, activate.vbs and resolvedns.bat communicate with the C2 server. Exfiltration happens via unactivate.vbs and versioninfo.bat.
+
+Now, the question is about whether a UEFI rootkit like LoJax would delete versioninfo.bat and update.vbs after they've been used. UEFI rootkits can manipulate the UEFI firmware, allowing them to hide malware in the system's boot process, making it hard to detect.
+
+So, after versioninfo.bat collects data, it's possible that the adversary would want to clean up their traces. Deleting these files would prevent forensic analysis from finding the scripts used. Since the CTI mentions that stopedge.bat schedules install.vbs, which in turn runs other scripts, it's part of the attack chain. If the rootkit is involved, it could be used to delete these files as part of the exfiltration phase or after.
+
+The question is specifically about whether this deletion would happen. The answer choices are Yes or No. Based on the attack sequence, after exfiltration, it's logical that the adversary would attempt to remove their tools to avoid detection. Therefore, using a UEFI rootkit like LoJax to delete these files makes sense as a common evasive action.
+</think>
+
+The attack sequence involves the use of various VBScripts and batch files, with versioninfo.bat collecting data and preparing it for exfiltration. Given the adversary's interest in evading detection, it's plausible that a UEFI rootkit like LoJax would delete these files post-exfiltration to prevent forensic traces. Thus, the answer is Yes.
+
+Final Answer: A

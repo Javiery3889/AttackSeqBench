@@ -1,0 +1,62 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+- **Execution**:
+  - The skip-2.0 backdoor is launched via a VMProtected launcher.
+  - The backdoor is executed with the SessionEnv service.
+  - DLL hijacking technique is used against the SessionEnv service for persistence.
+
+- **Persistence**:
+  - The skip-2.0 backdoor achieves persistence by exploiting a DLL hijacking vulnerability.
+  - The DLL is installed at `C:\Windows\System32\TSVIPSrv.DLL`.
+  - The DLL is loaded by the standard Windows SessionEnv service at system startup.
+
+- **Discovery**:
+  - The Inner-Loader component of the skip-2.0 backdoor lists running processes to find the process running MSSQL Server.
+
+- **Impact**:
+  - The skip-2.0 backdoor allows unauthorized access to MSSQL databases.
+  - It manipulates event logging at runtime and enables manipulation of stored data.
+  - It impacts the integrity of the data within the MSSQL databases.
+
+- **Others**:
+  - The Winnti Group is known for high-profile supply-chain attacks.
+  - The backdoor targets MSSQL Server 11 and 12.
+  - It uses a 'magic password' to connect stealthily to any MSSQL account.
+  - It shares similarities with the PortReuse backdoor and ShadowPad.
+  - The backdoor hooks functions related to authentication and event logging in `sqllang.dll`.
+
+#### 2. Analyze the Question
+
+- **Question**: After the skip-2.0 backdoor bypasses authentication using hooks in the `sqllang.dll` service for defense evasion, is it likely that the Inner-Loader component lists running processes for discovery of MSSQL Server processes before executing the VMProtected launcher?
+
+- **Answer Choices**:
+  - A: Yes
+  - B: No
+
+#### 3. Compare and Evaluate
+
+- **Sequence of TTPs**:
+  1. **Defense Evasion**: The backdoor bypasses authentication using hooks in the `sqllang.dll` service.
+  2. **Discovery**: The Inner-Loader component lists running processes to find the process running MSSQL Server.
+  3. **Execution**: The VMProtected launcher is used to execute the backdoor.
+
+- **Logical Order**:
+  - The backdoor first needs to bypass authentication to gain access to the MSSQL Server.
+  - Once it has access, it can then list running processes to identify the MSSQL Server process.
+  - After identifying the process, it can execute the VMProtected launcher to launch the backdoor.
+
+- **Contextual Information**:
+  - The report mentions that the Inner-Loader component lists running processes to find the process running MSSQL Server, which is a discovery technique.
+  - The VMProtected launcher is used to execute the backdoor, which is an execution technique.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- **Reasoning**:
+  - The backdoor must first bypass authentication to gain access to the MSSQL Server.
+  - Once it has access, it can then discover the MSSQL Server process.
+  - After discovering the process, it can execute the VMProtected launcher to launch the backdoor.
+  - The sequence of TTPs (Defense Evasion -> Discovery -> Execution) aligns with the logical order of operations.
+
+- **Final Answer**: A: Yes

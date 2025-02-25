@@ -1,0 +1,68 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- The Adwind RAT executes a dropped JAR payload.
+- It creates a parent Java process and copies itself into the %User% directory.
+- It performs three actions:
+  - Executes the copy.
+  - Creates a registry entry in HKCU/CurrentVersion/Run for persistence.
+  - Creates WMI scripts in %temp% to disable firewall and antivirus services.
+- Subsequent JARs perform AES decryption routines and execute as new Java threads, leading to the loading of the JRAT class responsible for major RAT functionality.
+
+**Persistence:**
+- The Adwind RAT achieves persistence through registry modifications, specifically by creating a registry entry in HKCU/CurrentVersion/Run.
+
+**Defense Evasion:**
+- The Adwind RAT employs multi-layer obfuscation techniques, including the use of multiple embedded JAR archives before unpacking the actual payload.
+- It uses WMI scripts to disable firewall and antivirus services.
+- The RAT's obfuscation techniques have been successful in evading detection, as indicated by low VirusTotal detection ratios.
+
+**Collection:**
+- The RAT's core functionalities include capturing webcam images, scanning the hard-drive for files based on extensions defined in the RAT's config, spinning up multiple process threads, and performing injection into known legitimate Windows processes.
+
+**Command and Control:**
+- The JRAT class within the Adwind RAT tries connecting to its command and control server at the IP address 185[.]205[.]210[.]48.
+- It encrypts and exfiltrates data to this server.
+
+**Exfiltration:**
+- The Adwind RAT encrypts and exfiltrates data to its command and control server.
+
+**Others:**
+- The URLs hosting the Adwind RAT were reported to Westnet on September 9th, 2019.
+- The VirusTotal detection ratio for the top-level JAR was 5/56, while that of the final decrypted JAR was 49/58.
+- The campaign has been active over the last couple of years, with the RAT supporting cross-platform functionality for Windows, Linux, and Mac.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK tactic most likely occurred before the Adwind RAT executed the payload through multiple levels of JAR extractions?
+
+**Answer Choices:**
+A: Execution
+B: Discovery
+C: Resource Development
+D: Initial Access
+
+#### 3. Compare and Evaluate
+
+**Execution:**
+- The report clearly states that the Adwind RAT executes a dropped JAR payload, which involves creating a parent Java process and copying itself into the %User% directory. This is the initial execution phase.
+
+**Discovery:**
+- Discovery involves the adversary gathering information about the system and network. The report does not mention any discovery activities before the execution of the payload.
+
+**Resource Development:**
+- Resource Development involves preparing the infrastructure and tools needed for the attack. The report does not provide any information about the development of resources before the execution of the payload.
+
+**Initial Access:**
+- Initial Access involves the methods used to gain a foothold in the target environment. The report does not explicitly mention how the initial access was achieved, but it is implied that the RAT was delivered to the target system before the execution phase.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The report describes the execution of the Adwind RAT, which involves the initial execution of a dropped JAR payload.
+- Before the execution phase, the RAT must have been delivered to the target system, which is part of the Initial Access tactic.
+- The other answer choices (Discovery and Resource Development) do not fit the sequence described in the report as they are not mentioned as occurring before the execution phase.
+
+**Final Answer: D: Initial Access**

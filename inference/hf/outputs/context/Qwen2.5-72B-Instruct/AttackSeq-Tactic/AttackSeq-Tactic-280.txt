@@ -1,0 +1,67 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The adversaries used weaponized exploit documents to gain initial access.
+- They exploited the Microsoft Office vulnerability CVE-2012-0158.
+- A spear-phishing email was sent from an impersonated individual of the Russian-based organization Vigstar, containing a malicious document.
+- Once opened, the document infects the system and leaves a Russian language decoy document.
+
+**Execution:**
+- The BBSRAT malware is executed.
+- The dropper generates a path in the %TEMP% directory and writes an embedded cab file.
+- Directories are created based on the Windows version.
+- The expand.exe utility is used to write three files to the SSONSVR directory: aclmain.sdb, pnipcn.dll, and ssonsvr.exe.
+- The legitimate Citrix executable ssonsvr.exe is used to sideload the malicious pnipcn.dll file.
+- The pnipcn.dll identifies the path to msiexec.exe, spawns a suspended instance of it, and performs process hollowing before resuming the process.
+- A registry key is written to run ssonsvr.exe on startup for persistence.
+
+**Command and Control:**
+- The BBSRAT malware uses the same C2 domains as the 'Roaming Tiger' campaign.
+- C2 domains include transactiona[.]com and futuresgold[.]com.
+- BBSRAT communicates with the C2 server using HTTP or HTTPS requests and exfiltrates data about the victim's machine via POST requests.
+
+**Exfiltration:**
+- Data is exfiltrated using POST requests with a custom binary structure.
+- Data is compressed using ZLIB and, if sent via HTTP, an additional encryption algorithm is applied.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After executing the BBSRAT malware using ssonsvr.exe for DLL sideloading and process hollowing, which ATT&CK tactic most likely occurred before the adversaries established connection with their C2 infrastructure using purpose-built variants?
+
+**Answer Choices:**
+- A: Persistence
+- B: Initial Access
+- C: Credential Access
+- D: Execution
+
+#### 3. Compare and Evaluate
+
+**Execution:**
+- The execution process involves the dropper generating a path, writing files, and using ssonsvr.exe to sideload the malicious pnipcn.dll.
+- Process hollowing is performed to inject the malicious code into a suspended instance of msiexec.exe.
+
+**Persistence:**
+- A registry key is written to run ssonsvr.exe on startup, ensuring the malware persists across system reboots.
+
+**Command and Control:**
+- The malware establishes a connection with the C2 infrastructure using HTTP or HTTPS requests.
+
+**Sequence Analysis:**
+- The execution of the BBSRAT malware (using ssonsvr.exe for DLL sideloading and process hollowing) is a critical step.
+- After execution, the malware ensures persistence by writing a registry key.
+- The next logical step is to establish a connection with the C2 infrastructure to communicate and exfiltrate data.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The execution of the BBSRAT malware is the initial step where the malware is loaded and executed on the victim's system.
+- After execution, the malware ensures persistence by writing a registry key to run ssonsvr.exe on startup.
+- The next step is to establish a connection with the C2 infrastructure to communicate and exfiltrate data.
+
+**Final Answer:**
+- The most likely ATT&CK tactic that occurred before the adversaries established connection with their C2 infrastructure is **Persistence**.
+
+**Final Answer: A: Persistence**

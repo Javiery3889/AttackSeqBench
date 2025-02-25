@@ -1,0 +1,54 @@
+Okay, so I need to figure out whether the FHAPPI campaign uses fileless techniques after connecting to the C2 server. Let me start by going through the CTI report step by step.
+
+First, the report mentions that the attack starts with a phishing email containing a link to malware on a Geocities website. The malware is a VBScript encoded script. When executed, it downloads a .doc file and opens it, which then runs a PowerShell attack to infect the system with Poison Ivy. 
+
+In the Execution section, the VBScript creates a shell object and runs a PowerShell command with base64 encoded code. This code downloads and executes a .ps1 file from another URL. The .ps1 file has more base64 code, which when decoded, has infection code for both 32-bit and 64-bit systems. The malware pretends to be a 'Security Update' process and uses PowerShell to execute the code.
+
+The Command and Control part says the malware communicates with a C2 server at 61.97.243.15, which is a dial-up IP in South Korea. The domain used is 'web.outlooksysm.net', registered to someone in China.
+
+In the Others section, it's noted that the campaign used modified PowerSploit PoC code and injected Poison Ivy into 'userinit.exe'. The malware extracts victim info and communicates back to the C2. They also targeted Mongolian users with documents in Mongolian. The campaign used specific email addresses for phishing, and the malware files were deleted with help from security teams.
+
+Now, the question is whether after executing the PowerShell commands to download and execute payloads, the campaign would use fileless techniques to avoid detection only after connecting to the C2 server.
+
+Looking at the attack sequence: The initial access is via a phishing email with a link to VBScript. The VBScript runs PowerShell, which downloads a .ps1 file. The .ps1 file has more encoded code that executes the infection. The malware then communicates with the C2.
+
+Fileless techniques typically involve executing code in memory without writing to disk, which helps avoid detection. The report mentions that the VBScript uses PowerShell to execute base64 encoded code, which is a common fileless method. The .ps1 file is downloaded and executed, but the fact that it's a .ps1 file suggests it's a script, which can be fileless if it's executed directly in memory without saving to disk.
+
+However, the question is about whether they use fileless techniques after establishing a connection with the C2. The report says the malware communicates with the C2 server, but it doesn't explicitly state whether the techniques after that are fileless. The initial execution uses fileless methods (PowerShell), but once the C2 is connected, the main payload is Poison Ivy, which is a known malware that typically operates in memory but may also write to disk.
+
+Wait, the report says the malware masquerades as a 'Security Update' process and uses PowerShell to execute the base64 code. It also mentions that the .ps1 file contains more base64 code, which when decoded, has the infection code. So the initial execution is fileless, but the infection code might be written to disk or run in memory.
+
+The question is about after establishing the C2 connection. If the C2 is already connected, does the campaign then use fileless techniques? The report doesn't specify, but the initial steps are fileless. However, the main payload is Poison Ivy, which is often fileless but can also use file-based methods.
+
+But the question is whether they would utilize fileless techniques only after connecting to the C2. The report doesn't mention any post-C2 fileless activities. The initial execution is fileless, but after that, the malware communicates with the C2. It's possible that the initial infection is fileless, but once the C2 is established, the malware might switch to file-based activities for persistence or further actions.
+
+Alternatively, the entire process could remain fileless, using PowerShell and in-memory execution. But the report doesn't explicitly state that. It just says the malware communicates with the C2.
+
+So, considering the information, the initial execution uses fileless techniques, but after connecting to the C2, it's unclear if they continue to use fileless methods. However, the question is whether it's likely that they would use fileless techniques only after establishing the C2 connection.
+
+Given that the initial steps are fileless, it's possible that the campaign continues to use such techniques. But the question is about after the C2 connection, which might involve more traditional methods for command and control, which could be file-based.
+
+Alternatively, since the initial infection is fileless, maybe the C2 communication is also done via fileless methods. But without explicit information, it's hard to say.
+
+Wait, the report says the malware communicates with the C2 server, but it doesn't specify the method. If the initial infection is fileless, perhaps the C2 communication is also done via in-memory processes, making it fileless. But I'm not sure.
+
+Alternatively, maybe after the C2 connection is established, the malware might download additional payloads or tools, which could be file-based. But the question is about whether they use fileless techniques after the C2 connection, not necessarily about downloading more files.
+
+Hmm, I'm a bit confused. Let me think again.
+
+The question is: After executing the PowerShell commands to download and execute payloads, would they use fileless techniques only after connecting to the C2?
+
+The initial execution is fileless (PowerShell, base64). The C2 communication is mentioned, but the report doesn't specify if the techniques after that are fileless. However, the fact that the malware is Poison Ivy, which is often fileless, suggests that it might continue to use such methods.
+
+But the question is about whether it's likely that they would use fileless techniques only after establishing the C2 connection. So, the initial steps are fileless, and after connecting to C2, they might continue to use fileless techniques for further activities.
+
+Alternatively, maybe the C2 communication is done via file-based methods, but that's less likely if the initial infection is fileless.
+
+I think the answer is likely yes, they would continue to use fileless techniques after connecting to the C2 server because the initial infection and execution are fileless, and the malware is designed to avoid detection, which fileless techniques help with.
+
+But I'm not entirely sure. The report doesn't explicitly state that, but the initial steps are fileless, so it's plausible that they continue that way.
+</think>
+
+The FHAPPI campaign utilized fileless techniques in its initial stages, employing PowerShell and base64 encoded scripts to execute payloads without writing to disk. The malware communicated with a C2 server, but the report does not explicitly detail whether fileless methods continued post-connection. However, given the initial use of fileless techniques and the nature of Poison Ivy, it is plausible that the campaign maintained such methods to avoid detection. 
+
+Final Answer: A: Yes

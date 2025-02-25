@@ -1,0 +1,22 @@
+Okay, so I'm trying to figure out the answer to this question about Tropic Trooper's attack sequence and whether TClient uses SSL to connect to the C&C server before the Defense Evasion phase. Let me break this down step by step.
+
+First, I'll read through the CTI report carefully to understand the attack sequence. The report mentions several MITRE ATT&CK tactics: Initial Access, Execution, Persistence, and Defense Evasion. 
+
+In the Initial Access phase, Tropic Trooper uses exploits in Microsoft Office documents to deliver malware. They execute commands using CVE-2017-11882 or CVE-2018-0802, which are Equation Editor vulnerabilities. They download an .msi installer and execute it, which installs some files.
+
+Moving to Execution, the installer drops a backdoor installer (UserInstall.exe), which then deletes itself. This installer drops a legitimate sidebar.exe, a malicious loader (wab32res.dll), and an encrypted config file. UserInstall.exe uses the BITSadmin tool to create a job and launch sidebar.exe. The loader uses DLL hijacking on sidebar.exe, which is a benign file, to inject a DLL backdoor into dllhost.exe. So, the malicious activity is hidden within a legitimate process.
+
+In the Persistence phase, the backdoor loads and decrypts the config file, then uses SSL to connect to the C&C server. This suggests that the SSL connection happens after the backdoor is established.
+
+Defense Evasion is addressed by using DLL hijacking, where the malicious DLL is loaded by a benign file, evading AV detection. The installer also drops files into the Apple/Update directory and creates a hidden directory, possibly as a ruse to avoid detection.
+
+Now, the question is asking whether TClient will use SSL to connect to the C&C server only before the Defense Evasion phase. The options are Yes or No.
+
+From the report, the Defense Evasion phase involves the use of DLL hijacking to load the malicious DLL. The Persistence phase is where the backdoor uses SSL to connect to the C&C. So, the SSL connection happens after the Defense Evasion phase, not before.
+
+Therefore, the answer should be No because the SSL connection occurs during the Persistence phase, which is after Defense Evasion.
+</think>
+
+The attack sequence shows that TClient uses SSL during the Persistence phase, which comes after Defense Evasion. Therefore, it's unlikely that SSL is used before Defense Evasion.
+
+Final Answer: B: No

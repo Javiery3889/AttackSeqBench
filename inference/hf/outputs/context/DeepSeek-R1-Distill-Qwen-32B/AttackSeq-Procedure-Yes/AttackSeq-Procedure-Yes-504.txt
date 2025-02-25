@@ -1,0 +1,32 @@
+Okay, so I'm trying to figure out whether the SombRAT backdoor from the CostaRicto Campaign uses protocol tunneling over DNS and HTTP for C2 communication after performing process and system information discovery. Let me break this down step by step.
+
+First, I'll look at the CTI report provided. The report outlines the attack sequence using MITRE ATT&CK tactics. Let's go through each part:
+
+1. **Initial Access**: The attackers used stolen credentials and SSH tools to set up remote tunneling, redirecting traffic from malicious domains to a proxy. They used their private keys for authentication. Payload stagers were executed via scheduled tasks to download the backdoor.
+
+2. **Execution**: The backdoor was deployed using scripts and encrypted files. For the 64-bit version, they used a PowerShell loader (Invoke-ReflectivePEInjection) to inject the payload DLL into memory. The 32-bit version used a custom VM-based loader called CostaBricks.
+
+3. **Defense Evasion**: They used process injection (again with the same PowerShell module) and deobfuscation to decode files related to SombRAT.
+
+4. **Discovery**: The SombRAT backdoor can perform process discovery, system info discovery, and system time discovery. They also used tools like pscan and nmap for network scanning.
+
+5. **Collection**: The backdoor archives data using a custom format.
+
+6. **Exfiltration**: Data is exfiltrated over the C2 channel.
+
+Now, the question is about whether after the Discovery phase, the backdoor would use protocol tunneling over DNS and HTTP for C2 communication.
+
+Looking at the Exfiltration section, it says data is exfiltrated over the C2 channel. But the report doesn't explicitly mention the protocols used for the C2 channel. However, in the Initial Access phase, they used SSH tunneling and HTTP/HTTPS for payload delivery. The payload stagers were either HTTP or reverse-DNS.
+
+Wait, the Initial Access part mentions that the payload stagers were executed using scheduled tasks, and they were either HTTP or reverse-DNS. So, the initial access used reverse-DNS as a stager. But does that mean the C2 channel also uses DNS and HTTP?
+
+In the Exfiltration phase, it's stated that data is exfiltrated over the C2 channel, but the specifics of the protocol aren't given. However, considering that the initial access used reverse-DNS and HTTP, it's plausible that the C2 channel might use similar or related protocols for communication.
+
+Moreover, the use of reverse-DNS in the initial access suggests that the attackers might have set up a C2 infrastructure that can handle DNS-based communication. Additionally, using HTTP for exfiltration is common because it's a standard protocol and less likely to be blocked.
+
+So, putting it together, the backdoor likely uses DNS and HTTP for C2 communication, especially since the initial access involved these methods. Therefore, the answer would be yes.
+</think>
+
+The CostaRicto Campaign's SombRAT backdoor likely uses DNS and HTTP for C2 communication, as indicated by the initial access methods involving reverse-DNS and HTTP. This makes it plausible that the same or similar protocols are used post-discovery for command and control.
+
+Final Answer: A: Yes

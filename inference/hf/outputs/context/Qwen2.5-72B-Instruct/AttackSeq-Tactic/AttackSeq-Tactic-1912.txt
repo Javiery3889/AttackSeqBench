@@ -1,0 +1,68 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The threat actor used spearphishing emails with XLS or DOC attachments containing a VBA macro.
+- The macro executed an embedded JScript file when the user enabled macro execution.
+
+**Execution:**
+- The VBA macro decodes and runs, writing JScript data to '%appdata%\Microsoft\Network\network.js' and executing it.
+- The macro also decodes a decoy XLS file, saves it with the same filename as the malicious XLS, and loads the decoy.
+- A VBScript file is created to delete the original file.
+- The network.js file modifies the '%regrun%' registry to point to itself as its autostart mechanism.
+
+**Defense Evasion:**
+- The malware uses base64 encoding to embed the decoy XLS and JScript file.
+- The URL string used inside the JScript code was obfuscated in two layers.
+
+**Discovery:**
+- NanHaiShu gathers system information from the infected machine and uploads it to the C&C server.
+
+**Command and Control:**
+- NanHaiShu communicates with C&C servers using dynamic DNS providers.
+- The malware uses HTTP POST to upload encoded system information and HTTP GET to download and execute JScript and VBScript code.
+
+**Exfiltration:**
+- The malware can receive and execute additional JScript and VBScript code for data exfiltration.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After executing the malicious macro from the VBA code, which ATT&CK tactic most likely occurred before NanHaiShu ensured that the '%regrun%' registry entry pointed to the network.js file for autostart?
+
+**Answer Choices:**
+- A: Collection
+- B: Impact
+- C: Persistence
+- D: Defense Evasion
+
+#### 3. Compare and Evaluate
+
+**Execution:**
+- The VBA macro decodes and runs, writing JScript data to '%appdata%\Microsoft\Network\network.js' and executing it.
+- The macro also decodes a decoy XLS file, saves it with the same filename as the malicious XLS, and loads the decoy.
+- A VBScript file is created to delete the original file.
+
+**Persistence:**
+- The network.js file modifies the '%regrun%' registry to point to itself as its autostart mechanism.
+
+**Defense Evasion:**
+- The malware uses base64 encoding to embed the decoy XLS and JScript file.
+- The URL string used inside the JScript code was obfuscated in two layers.
+
+**Sequence Analysis:**
+- The execution of the VBA macro leads to the writing and execution of the JScript file.
+- Before the malware ensures persistence by modifying the '%regrun%' registry, it likely uses defense evasion techniques to obfuscate the JScript code and the URL string.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+1. The VBA macro is executed, which decodes and runs the JScript file.
+2. The JScript file is written to '%appdata%\Microsoft\Network\network.js'.
+3. The JScript file is executed.
+4. The malware uses defense evasion techniques to obfuscate the JScript code and the URL string.
+5. The malware then ensures persistence by modifying the '%regrun%' registry to point to the network.js file.
+
+**Final Answer:**
+D: Defense Evasion

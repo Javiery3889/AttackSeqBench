@@ -1,0 +1,62 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- APT Sidewinder exploited CVE-2017-11882 using an RTF document to download an HTA file from the domain webserv-redir.net.
+
+**Execution:**
+- The HTA file contained within the RTF document executed a script that stopped if certain antivirus software was detected. If not detected, it proceeded to run a backdoor named FinalBot.exe, which was extracted from a zip file and renamed to Srvstr.exe in the directory. The backdoor was developed in VB and utilized a modified msvbvm60.dll, renamed to 8EBECD7C.dll.
+
+**Persistence:**
+- The backdoor established persistence by creating a Run key in the registry: HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run\WinSrv.
+
+**Discovery:**
+- The HTA file used WMI to discover installed antivirus products on the victim's system.
+
+**Command and Control:**
+- The HTA file communicated with the C2 server to send information about the installed antivirus software. The domain used for C2 communication was webserv-redir.net.
+
+**Others:**
+- Indicators of compromise (IOCs) associated with the Sidewinder campaign include various hashes for files such as Test.Zip, FinalBot.exe, hj1.txt, hj.txt, and the domain webserv-redir.net with its associated IP address 185.106.120.43. Additional related domains include heartissuehigh.win, mail.webserv-redir.net, and www.webserv-redir.net. An RTF document was also identified as an IOC with the URL hxxp://www.webserv-redir.net/images/67381F0B/-1/5272/3cdc4fcb/main.RTF.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After the HTA file discovered installed antivirus products using WMI and before the backdoor was made persistent by creating a Run key in the Windows Registry, which ATT&CK tactic most likely occurred?
+
+**Answer Choices:**
+- A: Discovery
+- B: Impact
+- C: Defense Evasion
+- D: Persistence
+
+#### 3. Compare and Evaluate
+
+**Sequence of TTPs from the CTI Report:**
+1. **Initial Access:** Exploited CVE-2017-11882 using an RTF document to download an HTA file.
+2. **Execution:** The HTA file executed a script.
+3. **Discovery:** The HTA file used WMI to discover installed antivirus products.
+4. **Command and Control:** The HTA file communicated with the C2 server.
+5. **Defense Evasion:** The script stopped if certain antivirus software was detected, and the backdoor was renamed to Srvstr.exe.
+6. **Persistence:** The backdoor established persistence by creating a Run key in the registry.
+
+**Key Points:**
+- The HTA file discovered installed antivirus products using WMI (Discovery).
+- The script stopped if certain antivirus software was detected (Defense Evasion).
+- The backdoor was made persistent by creating a Run key in the registry (Persistence).
+
+**Evaluation of Answer Choices:**
+- **A: Discovery** - This occurred before the backdoor was made persistent.
+- **B: Impact** - This is not mentioned in the sequence of events.
+- **C: Defense Evasion** - This occurred after the discovery and before the persistence.
+- **D: Persistence** - This is the final step in the sequence.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The sequence of events shows that after the discovery of installed antivirus products, the script performed a check to stop if certain antivirus software was detected. This is a clear example of **Defense Evasion**.
+- The backdoor was then made persistent by creating a Run key in the registry, which is the next step in the sequence.
+
+**Final Answer:**
+- **C: Defense Evasion**

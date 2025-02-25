@@ -1,0 +1,66 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attack began with a spear phishing campaign using macro-embedded documents.
+- The documents were designed to appear as job opportunities from Lockheed Martin.
+
+**Execution:**
+- Malicious macros in the documents used the KernelCallbackTable to hijack control flow.
+- The malware retrieved the address of the 'WMIsAvailableOffline' function from 'wmvcore.dll,' modified memory protection permissions, and overwrote the code with malicious shellcode.
+- The shellcode contained an encrypted DLL that was decrypted and manually mapped into memory.
+
+**Persistence:**
+- The malware achieved persistence by dropping a malicious LNK file named 'WindowsUpdateConf.lnk' into the startup folder.
+- This LNK file executed 'C:\Windows\system32\wuauclt.exe' with arguments to run a malicious DLL using the Windows Update Client.
+
+**Defense Evasion:**
+- The Lazarus Group used the KernelCallbackTable for control flow hijacking.
+- The malware executed malicious code through the Windows Update client.
+- GitHub was leveraged for command and control (C2) communication.
+
+**Command and Control:**
+- The core_module.dll communicated with a C2 server hosted on GitHub.
+- The malware used a hardcoded username, repository name, directory, and token to make HTTP requests to GitHub.
+- Retrieved files, such as 'readme.png,' contained malicious modules that were executed on the target system.
+
+**Others:**
+- The campaign targeted individuals seeking job opportunities at Lockheed Martin.
+- The campaign was linked to past activities of Lazarus through document metadata and infrastructure overlap.
+- The malicious documents were well-designed and contained large icons of known companies to appear legitimate.
+- A GitHub account with the username 'DanielManwarningRep' was created on January 17th, 2022, to operate the malware.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After achieving persistence by dropping a malicious LNK file into the startup folder to execute a malicious DLL via the Windows Update Client, is the Lazarus Group likely to retrieve the username and computer name using the 'GetBaseInfo.dll' module before communicating with a command and control server hosted on GitHub?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Persistence and C2 Communication:**
+- The report clearly states that the malware achieved persistence by dropping a malicious LNK file into the startup folder.
+- The LNK file executed 'C:\Windows\system32\wuauclt.exe' with arguments to run a malicious DLL using the Windows Update Client.
+- The core_module.dll communicated with a C2 server hosted on GitHub.
+
+**Retrieving Username and Computer Name:**
+- The report does not explicitly mention the use of a 'GetBaseInfo.dll' module to retrieve the username and computer name.
+- However, it is common for malware to gather system information such as the username and computer name before communicating with a C2 server to provide context about the compromised system.
+
+**Plausibility:**
+- While the report does not explicitly state the use of 'GetBaseInfo.dll,' it is a plausible step in the attack sequence. Malware often collects system information to tailor its actions and report back to the C2 server.
+- The use of a module to retrieve system information is a common practice in advanced malware operations.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The report details the persistence mechanism and C2 communication.
+- Although the report does not explicitly mention 'GetBaseInfo.dll,' it is a plausible step in the attack sequence.
+- Collecting system information is a common practice in malware operations to provide context to the C2 server.
+
+**Final Answer:**
+- Final Answer: A: Yes

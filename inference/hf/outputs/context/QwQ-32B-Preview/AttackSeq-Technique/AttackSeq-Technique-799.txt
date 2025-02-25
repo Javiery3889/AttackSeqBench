@@ -1,0 +1,51 @@
+Alright, I've got this CTI outline about an attack by the Higaisa APT group. They're using malicious LNK files inside RAR archives, probably sent through spear-phishing emails. There are two variants of this campaign, and they're targeting different groups with different lures, like CVs and IELTS results, or product teams using zeplin.io.
+
+So, the initial access is through these LNK files. When the user executes the LNK file, it starts a multi-stage attack. It copies the LNK content to a temp directory, renames certutil.exe to gosia.exe to bypass security, decodes a base64 blob, decompresses some content along with a decoy PDF, and then executes a JavaScript file.
+
+This JavaScript file does several things: it creates and executes 'd3reEW.exe' with the command 'cmd /c ipconfig' to discover IP address information. It also copies 'svchhast.exe' to the startup directory, which means it's setting up persistence because anything in the startup folder runs automatically when the system starts.
+
+Then, there's a POST request sent to a hardcoded URL, and later on, there's shellcode that resolves imports, allocates memory, and creates a thread to make HTTPS requests to a C&C server. But the server was down, so we don't know exactly what it was supposed to do.
+
+The outline also mentions that this group has been active since at least 2016 and has used various Trojans and mobile malware, targeting government officials, human rights organizations, and entities related to North Korea.
+
+Now, the question is asking about what technique Higaisa likely used to maintain persistence on the target system after creating 'd3reEW.exe' and executing 'svchhast.exe'.
+
+The answer choices are:
+
+A: T1070.006 - Timestomp
+
+B: T1547 - Boot or Logon Autostart Execution
+
+C: T1016 - System Network Configuration Discovery
+
+D: T1098.006 - Additional Container Cluster Roles
+
+Okay, so I need to think about which of these techniques would help maintain persistence.
+
+First, let's recall what persistence means in the context of ATT&CK. Persistence techniques are those that allow an adversary to maintain access to or control of a system over time, even through system reboots or other interruptions.
+
+Looking back at the outline, it mentions that 'svchhast.exe' is copied to the startup directory. That sounds like a persistence mechanism because programs in the startup directory run automatically when the system starts.
+
+So, let's look at the answer choices:
+
+A: T1070.006 - Timestomp: This is about modifying the timestamp of a file to make it look like it hasn't been changed, which could be used for evasion, but it's not directly related to persistence.
+
+B: T1547 - Boot or Logon Autostart Execution: This tactic involves software that executes during system boot or user logon, which is exactly what happens when you place something in the startup directory. So, this seems relevant.
+
+C: T1016 - System Network Configuration Discovery: This is about an adversary gathering information about network configuration, which is more related to discovery than persistence.
+
+D: T1098.006 - Additional Container Cluster Roles: This seems related to container technologies and assigning additional roles to clusters, which doesn't directly relate to persistence on a system.
+
+Given this, option B: T1547 - Boot or Logon Autostart Execution, seems to be the most plausible technique for maintaining persistence, as it aligns with copying 'svchhast.exe' to the startup directory.
+
+Additionally, the outline mentions that the JavaScript file copies 'svchhast.exe' to the startup directory, which directly correlates with the Boot or Logon Autostart Execution tactic.
+
+Option A, Timestomp, might be used for evasion, but it doesn't contribute to persistence.
+
+Option C, System Network Configuration Discovery, is about gathering information, not maintaining access.
+
+Option D seems unrelated to the context of this attack.
+
+Therefore, the most logical choice is B: T1547 - Boot or Logon Autostart Execution.
+
+**Final Answer: B**

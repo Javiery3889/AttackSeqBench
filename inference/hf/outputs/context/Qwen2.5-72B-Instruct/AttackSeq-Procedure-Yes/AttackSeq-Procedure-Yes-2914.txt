@@ -1,0 +1,59 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attackers used a backdoor included in version 5.33 of the CCleaner application.
+- The C2 server contained web server configuration files and a MySQL database.
+- The attackers targeted specific organizations, including Cisco, through the delivery of a second-stage loader.
+- At least 20 victim machines were served specialized secondary payloads.
+
+**Execution:**
+- The web directory from the C2 server contained PHP files responsible for controlling communications with infected systems.
+- The PHP files included checks to determine whether to proceed with standard operations or redirect to the legitimate Piriform website.
+- The PHP script compared the system beaconing to the C2 to three values: $DomainList, $IPList, and $HostList, to determine if the infected system should be delivered a Stage 2 payload.
+- The attackers controlled which infected systems were delivered a Stage 2 payload, with 20 unique hosts identified as affected.
+
+**Command and Control:**
+- The C2 MySQL database contained two tables: one describing all machines that reported to the server and one describing all machines that received the second-stage download.
+- Over 700,000 machines reported to the C2 server, and more than 20 machines received the second-stage payload.
+- The attackers could add or remove domains at any time, based on the environments or organizations they chose to target.
+
+**Others:**
+- The stage 2 installer, GeeSetup_x86.dll, checked the OS version and dropped either a 32-bit or 64-bit version of a trojanized tool.
+- The x86 version used a trojanized TSMSISrv.dll, while the x64 version dropped a trojanized EFACli64.dll.
+- The setup put an encoded PE in the registry, which was executed by the trojanized files.
+- The stage 3 payload reached out to additional C2 servers and executed in-memory PE files.
+- A lightweight backdoor module in the registry retrieved an IP from data steganographically hidden in a GitHub or WordPress search, from which an additional PE module was downloaded and run.
+- Talos reviewed claims of code overlap with malware samples known to be used by Group 72, confirming the overlap.
+- The attack was sophisticated, targeting technology companies through a supply chain attack to compromise a large number of victims persistently, in hopes to land payloads on computers at specific target networks.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After executing checks on the infected systems to determine whether to deliver a Stage 2 payload, is it likely that the PHP script will perform aggressive system profiling and gather information from infected systems before storing the reconnaissance results in the MySQL database?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- The PHP script checks the system beaconing to the C2 against $DomainList, $IPList, and $HostList to determine if the infected system should receive a Stage 2 payload.
+- The C2 MySQL database contains information about all machines that reported to the server and those that received the second-stage download.
+- The report does not explicitly mention aggressive system profiling or the collection of detailed reconnaissance results before storing them in the MySQL database.
+
+**Evaluation:**
+- The report indicates that the PHP script performs checks to determine if a system should receive a Stage 2 payload, but it does not mention any aggressive system profiling or detailed reconnaissance.
+- The database contains information about the machines that reported to the server and those that received the second-stage payload, but it does not specify that this information is the result of aggressive system profiling.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The CTI report focuses on the checks performed by the PHP script to determine if a system should receive a Stage 2 payload.
+- There is no explicit mention of aggressive system profiling or the collection of detailed reconnaissance results before storing them in the MySQL database.
+- The information stored in the database is primarily about the machines that reported to the server and those that received the second-stage payload, which suggests a more basic level of tracking rather than aggressive profiling.
+
+**Final Answer:**
+- B: No

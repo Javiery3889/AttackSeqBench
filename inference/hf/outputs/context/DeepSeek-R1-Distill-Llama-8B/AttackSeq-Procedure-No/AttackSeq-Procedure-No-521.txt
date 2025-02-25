@@ -1,0 +1,22 @@
+Okay, so I'm trying to figure out whether the attack executed the embedded .hta file using mshta.exe after exploiting CVE-2017-0199 through Microsoft Word documents. Let me break this down step by step.
+
+First, I'll look at the CTI outline provided. The attack starts with Execution, where a .hta file is delivered via an embedded link in a Word document. The .hta file is executed by mshta.exe, but it shows a warning message. The attackers disabled this warning by sending an 'Enter' command, which probably bypasses the prompt.
+
+Next, the attack uses a scheduled task named 'GoogleUpdateTasksMachineUI' to execute a VBS file every 3 minutes for persistence. The VBS files are installed in a specific folder, which helps keep the infection alive.
+
+Looking at the Credential Access part, a customized Mimikatz script is used to gather information. This script handles non-ASCII characters and validates the scheduled task, which ties into the persistence mechanism.
+
+For Command and Control, the DnE1.Ps1 file communicates with a C&C server via DNS, which is hard to block. The server was registered in 2017, and the script's job is to download another script, execute it, and send results back, then clean up.
+
+The Others section mentions the attackers are from the OilRig group, sponsored by the Iranian government, and the attack is sophisticated with improved infrastructure.
+
+Now, the question is whether the attack used Word documents to exploit CVE-2017-0199 to execute the .hta file after achieving persistence. The CTI outline says the .hta was delivered via a Word document, so that's the initial vector. The persistence is through a scheduled task, but the question is about the order: did they use Word to exploit and then use mshta.exe, or the other way around?
+
+The Execution step mentions that the .hta was executed by mshta.exe, which is a known exploit. The CVE-2017-0199 is related to Office documents, so the initial delivery was through that vector. The scheduled task comes after persistence, so the initial exploit using Word happened before the scheduled execution.
+
+So, the attack first used Word to deliver the .hta, then used mshta.exe to execute it, and then set up persistence. Therefore, the answer should be Yes.
+</think>
+
+The attack first exploited CVE-2017-0199 through Microsoft Word to deliver the .hta file, which was then executed by mshta.exe. The scheduled task for persistence was established afterward.
+
+Final Answer: A: Yes

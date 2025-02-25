@@ -1,0 +1,20 @@
+Okay, so I'm trying to figure out whether Tropic Trooper would execute the FakeRun loader to launch dllhost.exe after using Equation Editor exploits to run an installer package with malicious payloads. Let me break this down step by step.
+
+First, I'll look at the CTI outline provided. The attack starts with Initial Access using Tropic Trooper, which uses exploits like CVE-2017-11882 or CVE-2018-0802 in Microsoft Office's Equation Editor. These exploits allow them to execute commands, specifically running an installer package via msiexec. The installer is downloaded from a URL, and it's a .msi file.
+
+The Execution phase says that the system configuration file (in.sys) is dropped, which then installs a backdoor installer called UserInstall.exe. This UserInstall.exe deletes itself after dropping some files. It creates a hidden directory and installs a malicious DLL (wab32res.dll) and an encrypted config file. The UserInstall.exe uses BITSadmin to create a job and launch sidebar.exe, which is a Windows Gadget tool. 
+
+The malicious loader in wab32res.dll does DLL hijacking on sidebar.exe, which is a normal file. This loader injects a backdoor into dllhost.exe, which is a legitimate process. So, the backdoor is loaded into a legitimate process to avoid detection.
+
+Looking at the Persistence part, the backdoor uses an encrypted config file and SSL to connect to C&C servers. The TClient backdoor uses symmetric encryption with a 16-byte key and custom SSL libraries for communication.
+
+Now, the question is about whether Tropic Trooper would use the FakeRun loader to launch dllhost.exe after using Equation Editor to execute the installer. From the outline, after the initial exploit, the system drops UserInstall.exe, which then creates and runs sidebar.exe via BITSadmin. The malicious loader in wab32res.dll injects into dllhost.exe, which is a legitimate process. 
+
+I don't see any mention of FakeRun in the CTI outline. FakeRun is a tool used in some attacks to inject malicious code into legitimate processes. Since the CTI here uses DLL hijacking through wab32res.dll, it's likely they're using that method instead. There's no indication that they're using FakeRun. The outline specifically mentions that the loader uses DLL hijacking on sidebar.exe, which is then loaded by a normal file, and the backdoor is injected into dllhost.exe. 
+
+So, the answer would be that Tropic Trooper does not use FakeRun in this case. They're using DLL hijacking, not FakeRun. Therefore, the answer is No.
+</think>
+
+The CTI outline describes Tropic Trooper using DLL hijacking to inject a backdoor into dllhost.exe, not FakeRun. Thus, the correct answer is:
+
+Final Answer: B: No

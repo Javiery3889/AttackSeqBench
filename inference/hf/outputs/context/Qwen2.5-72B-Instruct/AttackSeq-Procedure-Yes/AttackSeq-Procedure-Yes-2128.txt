@@ -1,0 +1,35 @@
+### Step-by-Step Analysis
+
+1. **Analyze the CTI Report:**
+   - **Initial Access:** The attack starts with the delivery of an ISO file containing a zip file with malicious scripts.
+   - **Execution:** Various VBScripts and batch files are executed:
+     - `install.vbs` deobfuscates and executes `resolve.dns`.
+     - `update.vbs` executes `stopedge.bat`.
+     - `activate.vbs` sends an HTTP request and saves content.
+     - `unactivate.vbs` exfiltrates data through a POST request.
+     - `stopedge.bat` schedules `install.vbs` to run every 33 minutes if `paycom.ini` exists and manages file deletions.
+     - `resolvedns.bat` downloads a file from the C2 server.
+     - `versioninfo.bat` collects and exfiltrates user's computer information.
+   - **Persistence:** `stopedge.bat` schedules `install.vbs` to run every 33 minutes if `paycom.ini` is present.
+   - **Discovery:** `versioninfo.bat` discovers system details.
+   - **Collection:** `versioninfo.bat` collects information.
+   - **Command and Control:** `activate.vbs` and `resolvedns.bat` communicate with the C2 server.
+   - **Exfiltration:** `unactivate.vbs` and `versioninfo.bat` exfiltrate data.
+
+2. **Analyze the Question:**
+   - The question asks if it is likely that after `versioninfo.bat` discovers system details and collects information for exfiltration, `stopedge.bat` will manage the deletion of files such as `versioninfo.bat` and `update.vbs` to evade detection.
+
+3. **Compare and Evaluate:**
+   - **Discovery and Collection:** `versioninfo.bat` is responsible for discovering and collecting system details.
+   - **Exfiltration:** `versioninfo.bat` uses `unactivate.vbs` to exfiltrate the collected information.
+   - **File Management:** `stopedge.bat` is responsible for scheduling `install.vbs` and managing file deletions.
+   - **Context:** The Konni APT Group aims to evade detection and maintain persistence. Deleting files like `versioninfo.bat` and `update.vbs` after their use would help in evading detection and maintaining a low profile.
+
+4. **Step-by-Step Reasoning:**
+   - **Discovery and Collection:** `versioninfo.bat` discovers and collects system details.
+   - **Exfiltration:** The collected information is exfiltrated using `unactivate.vbs`.
+   - **File Deletion:** `stopedge.bat` is designed to manage file deletions, which is a common tactic to evade detection.
+   - **APT Group Behavior:** The Konni APT Group is known for sophisticated and stealthy operations, including file deletion to avoid leaving traces.
+
+### Final Answer
+Final Answer: A: Yes

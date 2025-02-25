@@ -1,0 +1,63 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- Turla uses PowerShell to run malware directly in memory, bypassing disk-based detection mechanisms.
+
+**Persistence:**
+- Turla employs WMI event subscriptions and modifies the PowerShell profile (profile.ps1) to ensure persistence.
+- WMI event filters and consumers execute base64-encoded PowerShell commands that load scripts from the Windows registry.
+- The PowerShell profile is modified to run a script on startup, which includes commands to load and execute the malware.
+
+**Defense Evasion:**
+- Turla's PowerShell scripts are encrypted and obfuscated.
+- They use an AMSI bypass technique to patch the AmsiScanBuffer function in memory, preventing antimalware products from scanning the buffer.
+
+**Discovery:**
+- Turla uses the RPC backdoor and PowerStallion backdoor for lateral movement and control within a local network.
+- PowerStallion monitors antimalware logs and the Windows process list.
+- The RPC backdoor supports plugins for gathering file and directory information and monitoring USB drives.
+
+**Command and Control:**
+- The RPC backdoor uses the RPC protocol for command and control.
+- PowerStallion uses Microsoft OneDrive, accessed via SMB, as its command and control server.
+
+**Exfiltration:**
+- PowerStallion exfiltrates information through the command and control channel by writing command results to a OneDrive subfolder and encrypting them with XOR key 0xAA.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After monitoring antimalware logs and the Windows process list using PowerStallion, is it likely that Turla will use Microsoft OneDrive as part of its command and control infrastructure before executing additional PowerShell scripts for collecting recent files from the local file system?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- PowerStallion is used to monitor antimalware logs and the Windows process list.
+- PowerStallion uses Microsoft OneDrive as its command and control server.
+- PowerStallion exfiltrates information through the command and control channel by writing command results to a OneDrive subfolder.
+
+**Sequence of TTPs in the Question:**
+1. Monitoring antimalware logs and the Windows process list using PowerStallion.
+2. Using Microsoft OneDrive as part of the command and control infrastructure.
+3. Executing additional PowerShell scripts for collecting recent files from the local file system.
+
+**Evaluation:**
+- The CTI report confirms that PowerStallion is used to monitor antimalware logs and the Windows process list.
+- The report also confirms that PowerStallion uses Microsoft OneDrive for command and control.
+- The report does not explicitly state that Turla will execute additional PowerShell scripts for collecting recent files from the local file system after using OneDrive for command and control. However, given the sophisticated nature of Turla's operations and the use of PowerShell for various tasks, it is plausible that they would use additional PowerShell scripts for file collection.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- PowerStallion is used to monitor antimalware logs and the Windows process list.
+- PowerStallion uses Microsoft OneDrive for command and control.
+- Given Turla's sophisticated operations and the use of PowerShell for various tasks, it is reasonable to infer that they would use additional PowerShell scripts for file collection as part of their exfiltration process.
+
+**Final Answer:**
+A: Yes

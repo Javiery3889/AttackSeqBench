@@ -1,0 +1,81 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- Spearphishing email campaign with shortened URLs.
+- URLs led to an IP-address-based URL with an archived payload.
+- Payload contained an executable and a decoy PDF.
+- Executable prompted for a password and opened the decoy PDF while the downloader ran in the background.
+
+**Execution:**
+- Operators took control of the backdoor and sent commands.
+- Commands included taking screenshots, gathering system information, network scanning, and executing system commands.
+- Stage-1 downloader downloaded and executed a new downloader, which then downloaded a Delphi backdoor.
+
+**Persistence:**
+- COM object hijacking for persistence.
+- Registry keys for a custom backdoor executed using the CMD_EXECUTE command.
+- Backdoor installed for a few hours and then removed.
+
+**Defense Evasion:**
+- Malware deleted files and killed processes to disable security tools.
+
+**Credential Access:**
+- Dumpers used to target browsers and Microsoft Outlook.
+- Retrieved databases related to credentials from software like Firefox, The Bat! email client, and Opera.
+
+**Discovery:**
+- Gathered information about the victim's computer and environment.
+- Enumerated registry keys, listed running processes, and used system commands to gather information.
+
+**Command and Control:**
+- Communicated with C&C server using ports 80 or 443.
+- Data sent were hex-encoded and encrypted with AES or a custom algorithm.
+- Fallback C&C server embedded in the configuration.
+
+**Exfiltration:**
+- Data prepared with file paths to retrieve.
+- Data sent to the C&C server, hex-encoded and encrypted.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK technique most likely occurred after the Sednit group's malware scanned for files matching specific extensions and staged data containing paths of files to exfiltrate, but before the group sent the data to the C&C server?
+
+**Answer Choices:**
+A: T1113-Screen Capture
+B: T1056.003-Web Portal Capture
+C: T1070-Indicator Removal
+D: T1599-Network Boundary Bridging
+
+#### 3. Compare and Evaluate
+
+**Sequence of TTPs in the CTI Report:**
+1. **Initial Access** (T1566.001 - Spearphishing Link)
+2. **Execution** (T1059 - Command and Scripting Interpreter, T1106 - Native API)
+3. **Persistence** (T1546 - Event Triggered Execution, T1547 - Boot or Logon Autostart Execution)
+4. **Defense Evasion** (T1070 - Indicator Removal, T1089 - Disabling Security Tools)
+5. **Credential Access** (T1003 - OS Credential Dumping)
+6. **Discovery** (T1082 - System Information Discovery, T1057 - Process Discovery)
+7. **Command and Control** (T1071 - Application Layer Protocol, T1105 - Ingress Tool Transfer)
+8. **Exfiltration** (T1020 - Automated Exfiltration, T1041 - Exfiltration Over Other Network Medium)
+
+**Key Points:**
+- The malware scanned for files matching specific extensions and staged data containing paths of files to exfiltrate.
+- This occurred before the data was sent to the C&C server.
+
+**Evaluation of Answer Choices:**
+- **A: T1113-Screen Capture** - This technique involves capturing the contents of the screen, which is not mentioned in the report as occurring after file scanning and before exfiltration.
+- **B: T1056.003-Web Portal Capture** - This technique involves capturing credentials from web portals, which is not mentioned in the report as occurring after file scanning and before exfiltration.
+- **C: T1070-Indicator Removal** - This technique involves removing or altering indicators of compromise, which is mentioned in the report under Defense Evasion. It is plausible that the malware would remove indicators before exfiltrating data to avoid detection.
+- **D: T1599-Network Boundary Bridging** - This technique involves bridging network boundaries, which is not mentioned in the report as occurring after file scanning and before exfiltration.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The CTI report mentions that the malware deleted files and killed processes to disable security tools, which aligns with the T1070-Indicator Removal technique.
+- This technique is likely to occur after the malware has scanned for files and staged data for exfiltration to ensure that the exfiltration process is not detected or interrupted.
+
+**Final Answer:**
+C: T1070-Indicator Removal

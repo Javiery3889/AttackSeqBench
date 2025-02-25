@@ -1,0 +1,67 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- Watering hole tactics were used to compromise websites related to North Korea.
+- Exploits for CVE-2020-0674 and CVE-2019-5782 were injected into these websites.
+- The campaign avoided South Korean IP addresses, targeting the global Korean diaspora.
+
+**Execution:**
+- Chrome exploit vector: Chained CVE-2019-5782 and an unnamed Chrome bug to execute custom shellcode.
+- Shellcode de-obfuscated strings, initialized a network connection, and downloaded 'dropper.dll' from a C&C server.
+- 'dropper.dll' checked for security software and, if none were detected, downloaded and executed three additional malware samples.
+- Internet Explorer exploit vector: Used CVE-2020-0674 to run a PowerShell loader, which infected victims with the same three malware variants.
+
+**Privilege Escalation:**
+- PowerShell loader could download and execute an LPE binary exploiting CVE-2019-1458, potentially allowing backdoors to execute with system privileges.
+
+**Defense Evasion:**
+- Malware checked for security software during deployment to avoid detection and targeted unprotected systems.
+
+**Discovery:**
+- SLUB variant interacted with a Mattermost server to collect system information.
+- Executed commands to exfiltrate system information and captured screenshots.
+- Sent the collected data back to the attacker-controlled Mattermost server.
+
+**Command and Control:**
+- SLUB malware communicated with a Mattermost server using HTTP on port 443.
+- Created individual channels for each infected machine and used a notification channel for real-time updates.
+- Mattermost server hosted multiple channels and users, indicating an organized campaign.
+
+**Others:**
+- GNUBOARD CMS on compromised websites had known RCE vulnerabilities.
+- Attackers set up their own Mattermost server to control the infrastructure.
+- Mattermost server installation date of March 10, 2020, suggests the start of 'mm' (SLUB) samples' activity.
+- Campaign used multiple C&C servers, seven samples, and exploits for four N-day bugs.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After SLUB malware collects system information and captures screenshots during its interaction with a Mattermost server under the Discovery phase, is it likely that the malware will automatically exfiltrate the collected data and log files to the C2 server as part of the Exfiltration phase?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- **Discovery Phase:** SLUB variant collected system information and captured screenshots.
+- **Exfiltration:** The collected data was sent back to the attacker-controlled Mattermost server.
+
+**Evaluation:**
+- The report explicitly states that the SLUB variant "sent the collected data back to the attacker-controlled Mattermost server."
+- This indicates that the exfiltration of data is a part of the malware's behavior.
+- The Mattermost server is used as a C2 server, as it hosts multiple channels and users and is used for real-time updates.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+1. The CTI report clearly states that the SLUB variant collects system information and captures screenshots.
+2. The report also explicitly mentions that this collected data is sent back to the attacker-controlled Mattermost server.
+3. The Mattermost server is used as a C2 server, indicating that it is part of the exfiltration process.
+4. Therefore, it is highly likely that the malware will automatically exfiltrate the collected data and log files to the C2 server as part of the Exfiltration phase.
+
+**Final Answer:**
+A: Yes

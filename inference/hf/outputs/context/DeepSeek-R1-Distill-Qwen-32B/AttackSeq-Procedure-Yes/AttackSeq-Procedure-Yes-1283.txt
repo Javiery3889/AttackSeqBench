@@ -1,0 +1,16 @@
+Okay, so I'm trying to figure out whether Tropic Trooper uses the FakeRun loader to launch dllhost.exe before injecting a malicious DLL backdoor. Let me go through the CTI report step by step.
+
+First, the report mentions that Tropic Trooper uses Equation Editor exploits (CVE-2017-11882 and CVE-2018-0802) to execute an installer package. The installer is an .msi file, which they run using msiexec. Once installed, the system configuration file (in.sys) drops a backdoor installer called UserInstall.exe and then deletes itself. 
+
+UserInstall.exe then uses the BITSadmin tool to create a job and launch sidebar.exe, which is a legitimate Windows Gadget tool. The malicious loader, wab32res.dll, is placed in the directory C:\ProgramData\Apple\Update\. This loader uses DLL hijacking on sidebar.exe, which in turn launches dllhost.exe. The loader then injects a DLL backdoor into dllhost.exe.
+
+The question is asking if Tropic Trooper uses the FakeRun loader in this process. From the report, I don't see any mention of "FakeRun." Instead, the loader used is wab32res.dll, which is detected as TROJ_TCLT.ZDFB. The report details the use of DLL hijacking with this specific DLL, not FakeRun.
+
+So, the sequence is: Equation Editor exploit → installer package → UserInstall.exe →BITSadmin → sidebar.exe → DLL hijacking via wab32res.dll → dllhost.exe → inject backdoor DLL. There's no indication of FakeRun being involved here.
+
+Therefore, the answer should be No, because the report doesn't mention FakeRun; it uses a different loader.
+</think>
+
+The CTI report describes Tropic Trooper's attack sequence, which involves using Equation Editor exploits to execute an installer package. This installer drops a backdoor installer (UserInstall.exe), which then uses BITSadmin to launch sidebar.exe. The malicious loader, wab32res.dll, employs DLL hijacking on sidebar.exe to launch dllhost.exe and inject a backdoor DLL. The report does not mention the use of FakeRun; instead, it specifies wab32res.dll as the loader. 
+
+Final Answer: B: No

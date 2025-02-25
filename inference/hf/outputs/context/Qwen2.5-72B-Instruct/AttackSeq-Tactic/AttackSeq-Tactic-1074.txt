@@ -1,0 +1,71 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attackers used a watering hole attack to compromise a website.
+- They added code to redirect visitors to the infecting code, exploiting CVE-2018-8174.
+
+**Execution:**
+- The malware exploits the VBScript engine vulnerability to download a DLL.
+- The DLL is run in PowerShell.
+- The downloader checks for antivirus software processes and exits if any are found.
+- It exploits CVE-2015-1701 for Local Privilege Escalation.
+- The second stage involves downloading and executing the SLUB backdoor.
+
+**Persistence:**
+- The SLUB backdoor achieves persistence by copying itself to ProgramData\update\ and creating a Run registry key with a typo in the ValueName, 'Microsoft Setup Initializazion', to call the export function UpdateMPUnits with rundll32.exe.
+
+**Privilege Escalation:**
+- The downloader exploits CVE-2015-1701 to acquire Local Privilege Escalation.
+
+**Defense Evasion:**
+- The first stage downloader exits if it detects any antivirus software processes.
+
+**Collection:**
+- The backdoor supports various commands for data collection, including taking screenshots, listing files, copying files, and uploading files to the file.io website.
+- It also collects information from registry keys and creates archives of user's Desktop folders for exfiltration.
+
+**Command and Control:**
+- The backdoor communicates with the attackers via Slack, using two hardcoded authentication tokens to post messages and command results to a private Slack channel.
+
+**Exfiltration:**
+- The attackers exfiltrate data by uploading files to the file.io website and posting download links to the Slack channel.
+- They also create archive files of user's Desktop folders and build CAB files containing the file tree for exfiltration.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After the SLUB backdoor achieves persistence by creating a Run registry key and before it performs data collection commands such as taking screenshots or listing files, which ATT&CK tactic most likely occurred as the backdoor retrieves the username and computer name?
+
+**Answer Choices:**
+- A: Credential Access
+- B: Defense Evasion
+- C: Discovery
+- D: Reconnaissance
+
+#### 3. Compare and Evaluate
+
+**Persistence:**
+- The backdoor achieves persistence by creating a Run registry key.
+
+**Data Collection:**
+- The backdoor performs data collection commands such as taking screenshots, listing files, copying files, and uploading files.
+
+**Retrieving Username and Computer Name:**
+- The question asks about the tactic that occurs when the backdoor retrieves the username and computer name.
+
+**Evaluation of Answer Choices:**
+- **A: Credential Access** - This tactic involves obtaining credentials, which is not directly related to retrieving the username and computer name.
+- **B: Defense Evasion** - This tactic involves techniques to avoid detection, which is not directly related to retrieving the username and computer name.
+- **C: Discovery** - This tactic involves techniques to gather information about the system, including the username and computer name.
+- **D: Reconnaissance** - This tactic involves gathering information about the target before the attack, which is not relevant to the post-persistence phase.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The backdoor retrieves the username and computer name to understand the environment it is operating in.
+- This action is part of the Discovery tactic, which involves gathering information about the system to aid in further actions such as data collection and command execution.
+
+**Final Answer:**
+- Final Answer: C: Discovery

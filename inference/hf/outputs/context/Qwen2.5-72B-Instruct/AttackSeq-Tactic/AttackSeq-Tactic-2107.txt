@@ -1,0 +1,64 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attack began with a supply chain compromise where the download servers of Avast were compromised.
+- A malicious version of CCleaner 5.33 was distributed, which included a multi-stage malware payload.
+- The malicious binary was signed with a valid certificate, making it appear legitimate.
+
+**Defense Evasion:**
+- The malware attempted to evade detection by zeroing out the IMAGE_DOS_HEADER and using a valid digital signature.
+- The malicious DLL file, CBkdr.dll, was modified to avoid detection.
+- The DLLEntryPoint created an execution thread to return control to the loader, which called CCBkdr_GetShellcodeFromC2AndCall and set up a ROP chain to deallocate memory and exit the thread.
+
+**Command and Control:**
+- The malware established a C2 channel by encrypting and encoding system information using modified Base64.
+- The communications were sent via an HTTPS POST request to a hardcoded IP address.
+- If no response was received, the malware fell back to a DGA.
+- The C2 IP address and the current system time plus two days were stored in the registry.
+
+**Impact:**
+- The attack had a significant impact due to the high number of systems potentially affected.
+- Affected systems needed to be restored to a state before August 15, 2017, or reinstalled.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After the malicious CCleaner binary was downloaded by users as part of the 5.33 version installer, which ATT&CK tactic most likely occurred before the attackers redirected code execution flow to the malicious payload through the infected binary?
+
+**Answer Choices:**
+- A: Resource Development
+- B: Privilege Escalation
+- C: Defense Evasion
+- D: Execution
+
+#### 3. Compare and Evaluate
+
+**Initial Access:**
+- The initial access was achieved by compromising the download servers and distributing the malicious version of CCleaner 5.33.
+
+**Defense Evasion:**
+- The malware used various techniques to evade detection, such as zeroing out the IMAGE_DOS_HEADER and using a valid digital signature.
+
+**Command and Control:**
+- The malware established a C2 channel to communicate with the attackers.
+
+**Execution:**
+- The malicious payload was executed after the user downloaded and ran the infected CCleaner binary.
+
+**Sequence Analysis:**
+- The sequence of events in the CTI report suggests that after the malicious binary was downloaded, the next step was to execute the payload.
+- Before the payload could be executed, the malware needed to evade detection to ensure it could run without being detected by security software.
+
+**Evaluation of Answer Choices:**
+- **A: Resource Development** - This tactic involves gathering resources to support the attack, which is not relevant to the sequence after the binary is downloaded.
+- **B: Privilege Escalation** - This tactic involves gaining higher-level permissions, which is not mentioned in the report as occurring before the payload execution.
+- **C: Defense Evasion** - This tactic involves techniques to avoid detection, which is described in the report as occurring before the payload execution.
+- **D: Execution** - This tactic involves running the malicious code, which is the next step after the binary is downloaded and defense evasion techniques are applied.
+
+#### 4. Final Answer
+
+**Final Answer: C: Defense Evasion**
+
+The most plausible sequence of TTPs based on the CTI report is that the attackers used defense evasion techniques to ensure the malicious payload could execute without being detected. Therefore, the correct answer is C: Defense Evasion.

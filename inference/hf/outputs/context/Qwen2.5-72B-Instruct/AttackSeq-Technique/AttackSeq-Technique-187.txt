@@ -1,0 +1,71 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- Infamous Chisel is a multi-call binary with utilities like dropbear, dropbearkey, ssh, scp, nmap, dbclient, watchdog, rmflag, mkflag.
+- It replaces the legitimate netd and is executed by init, inheriting root privileges.
+
+**Persistence:**
+- Infamous Chisel persists by replacing the legitimate netd system binary at /system/bin/netd.
+- The malicious netd checks if init is the parent process and executes the legitimate process backed up at /system/bin/netd_.
+
+**Privilege Escalation:**
+- Infamous Chisel replaces the legitimate netd and is executed by init, inheriting root privileges.
+- It executes shell scripts as the root user of the device.
+
+**Defense Evasion:**
+- Infamous Chisel decompresses executables from bzip archives.
+- It ensures it is run as intended by checking that it is executed by init and at the path for the legitimate netd.
+
+**Credential Access:**
+- Infamous Chisel scrapes multiple files containing credentials and key information.
+- It deploys tcpdump to sniff network interfaces and monitor network traffic.
+
+**Collection:**
+- Infamous Chisel's netd component collects files from the local system based on a predefined list of file extensions.
+- It also collects files from application and data directories containing communication data.
+
+**Command and Control:**
+- Infamous Chisel's db component provides SCP functionality.
+- td is deployed alongside the malware, providing a Tor hidden service relaying connections to SSH program.
+- The malware provides a local Socks connection for db, and db provides a SSH server and client.
+
+**Exfiltration:**
+- Infamous Chisel's netd component automatically exfiltrates files at regular intervals using a Tor hidden service and SSH connections.
+
+**Impact:**
+- Infamous Chisel replaces the legitimate netd, potentially impacting the service.
+
+#### 2. Analyze the Question
+
+**Question:**
+After Infamous Chisel's netd component collects files from application and data directories during the Collection phase, which ATT&CK technique most likely occurred before the malware automatically exfiltrates files using a Tor hidden service during the Exfiltration phase?
+
+**Answer Choices:**
+A: T1606 - Forge Web Credentials
+B: T1056 - Input Capture
+C: T1538 - Cloud Service Dashboard
+D: T1518 - Software Discovery
+
+#### 3. Compare and Evaluate
+
+**Collection Phase:**
+- Infamous Chisel collects files from application and data directories containing communication data.
+
+**Exfiltration Phase:**
+- Infamous Chisel exfiltrates files using a Tor hidden service and SSH connections.
+
+**Possible Techniques:**
+- **T1606 - Forge Web Credentials:** This technique involves creating fake web credentials, which is not mentioned in the report.
+- **T1056 - Input Capture:** This technique involves capturing user input, such as keystrokes, which is not directly mentioned in the report.
+- **T1538 - Cloud Service Dashboard:** This technique involves using cloud service dashboards, which is not mentioned in the report.
+- **T1518 - Software Discovery:** This technique involves discovering software and tools on the system, which is relevant to the collection of files from application and data directories.
+
+**Reasoning:**
+- The report mentions that Infamous Chisel collects files from application and data directories containing communication data. This suggests that the malware is discovering and identifying relevant files before exfiltrating them.
+- The technique T1518 - Software Discovery aligns with the collection of files from application and data directories, as it involves identifying and gathering information about software and tools on the system.
+
+#### 4. Final Answer
+
+**Final Answer: D: T1518 - Software Discovery**

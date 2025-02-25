@@ -1,0 +1,63 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- Malware sent via email to a Vietnam government domain.
+- The email contained a zip file with a .lnk file simulating a document icon.
+
+**Execution:**
+- The .lnk file contained MS-DOS obfuscated code.
+- The code carved out a base64 encoded PowerShell script (s.ps1) and saved it in the %TEMP% directory.
+- The PowerShell script executed another PowerShell script in memory, which ran a WScript Shell.
+- The WScript Shell created three files: a decoy DOC file, a legitimate tool for installing .NET files, and a .NET DLL file containing the actual malicious payload.
+
+**Persistence:**
+- The PowerShell script checked for administrative privileges and copied the DLL file to WINDIR\debug\ or %TEMP%.
+- It created a scheduled task with SYSTEM privileges if the user was an administrator, or with lower privileges otherwise.
+- The malware checked for Kaspersky antivirus and adjusted its behavior accordingly, either running a VBS script or renaming it to TXT and executing it with wbscript /E:vbscript.
+
+**Command and Control:**
+- The payload was identified as a Cobalt Strike beacon, communicating with the command and control server.
+
+**Others:**
+- The attack used sophisticated techniques to evade sandboxes and EDR systems.
+- The infrastructure was not associated with any other known attacks.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After creating a scheduled task with appropriate privileges to ensure persistence, is the malware likely to configure payloads to load via LD_PRELOAD to evade detection during its execution?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- The malware used a combination of techniques to evade detection, including:
+  - Using a .lnk file to evade sandboxes.
+  - Obfuscation techniques to keep the malware under the radar.
+  - Loading through a legitimate binary and working in memory for deobfuscation and injection.
+- The malware created a scheduled task for persistence.
+- The malware checked for the presence of Kaspersky antivirus and adjusted its behavior accordingly.
+
+**Evaluation of Answer Choices:**
+- **A: Yes**
+  - LD_PRELOAD is a technique used in Linux environments to load a shared library before all others. This is not typically used in Windows environments, where the malware in this report is operating.
+  - The report does not mention any use of LD_PRELOAD or similar techniques.
+- **B: No**
+  - The report indicates that the malware used other sophisticated techniques to evade detection, such as obfuscation, memory injection, and using legitimate binaries.
+  - The malware's persistence mechanism involved creating a scheduled task, which is a common technique in Windows environments.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The malware in the CTI report is designed to operate in a Windows environment.
+- The report does not mention any use of LD_PRELOAD, which is a technique more commonly used in Linux environments.
+- The malware uses other sophisticated techniques to evade detection, such as obfuscation, memory injection, and using legitimate binaries.
+- The persistence mechanism involves creating a scheduled task, which is a common and effective method in Windows environments.
+
+**Final Answer:**
+B: No

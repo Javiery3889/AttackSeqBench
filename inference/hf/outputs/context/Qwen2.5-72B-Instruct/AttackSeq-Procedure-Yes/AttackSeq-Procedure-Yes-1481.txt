@@ -1,0 +1,57 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- The dropper fetches an encrypted DLL from its binary, decrypts it, and hides it in the file system.
+- It loads the DLL using `regsvr32.exe`.
+
+**Persistence:**
+- Babar ensures persistence by creating a registry key under `[HKU]\..\CurrentVersion\Run` named `MSSecurity` which executes the command line `regsvr32.exe /s /n /i "%APPDATA%\%DLLNAME%"` at system boot time.
+
+**Collection:**
+- The implant logs keystrokes, captures screenshots, spies on installed softphones and instant messengers, and steals data from office applications.
+- It uses global Windows hooks and a keylogger module.
+
+**Command and Control:**
+- Babar communicates with C&C servers through a separate export called `FindCtxSectionStringW`, which is invoked through remote thread injection.
+- Two hardcoded C&C server addresses are included in its configuration data.
+
+**Exfiltration:**
+- Babar compresses and encrypts data before dumping it to disk.
+- It uses 128-bit AES encryption with a specific key for reading and writing files.
+- The main instance of Babar handles stolen information received through named pipes from other instances or hooked processes.
+
+**Others:**
+- The report credits various contributors and mentions the presentation at SyScan'15.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After ensuring persistence by creating a registry key to execute Babar's DLL using `regsvr32.exe` at system boot time, is it likely that Babar’s dropper will reduce forensic artifacts by using `cmd.exe` to delete the dropper binary on disk for defense evasion?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the Report:**
+- The dropper ensures persistence by creating a registry key.
+- The dropper loads the DLL using `regsvr32.exe`.
+- The report does not explicitly mention any steps to delete the dropper binary after persistence is established.
+
+**Evaluation:**
+- **Persistence Mechanism:** The dropper creates a registry key to ensure that the DLL is loaded at system boot time using `regsvr32.exe`. This is a common technique to maintain persistence.
+- **Defense Evasion:** The report does not mention any steps taken to delete the dropper binary after persistence is established. While deleting the dropper binary could reduce forensic artifacts, it is not a necessary step for the malware to function as described.
+- **Common Malware Behavior:** Some malware does delete the dropper binary to reduce forensic evidence, but this is not a universal behavior. The report does not provide evidence that Babar specifically does this.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The report focuses on the dropper's mechanism for loading the DLL and ensuring persistence.
+- There is no mention of the dropper deleting itself after persistence is established.
+- While deleting the dropper binary is a possible defense evasion technique, it is not explicitly stated in the report and is not a necessary step for the malware to function as described.
+
+**Final Answer:**
+B: No

@@ -1,0 +1,63 @@
+Alright, I've got this CTI outline to analyze, and there's a question about the sequence of tactics used by the threat actor. Let's break this down step by step.
+
+First, the CTI outline describes an attack on a large public research institution in the U.S. The attack starts with initial access through SSH, where the adversary uses wget to download malware from a specific IP address. The malware has a date string in its name, matching the download date, which suggests it's freshly compiled, indicating active development.
+
+So, the initial access is via SSH, and they download some malware using wget. The malware is called Derusbi, and it has a custom loader that loads it into memory. Once executed, Derusbi drops the Turbo Linux Kernel Module to disk, loads it into the kernel, and then deletes it from disk to avoid detection. This suggests that the Turbo LKM is used to hide processes.
+
+The persistence is achieved through the Turbo LKM, which hides relevant user space processes, making it harder to detect the malicious applications.
+
+For defense evasion, the Derusbi malware and the Turbo LKM use cloaking and anti-analysis techniques. The Turbo LKM modifies the system's global call table, particularly regarding process IDs, allowing processes to be hidden or unhidden. It also disables the CPU's CR0 write protection to modify the system call table, which is a sophisticated way to evade detection.
+
+Now, moving on to command and control (C2). The malware binds to a raw socket on a random source port between 31800 and 31900 and communicates to port 443 on the destination. The traffic isn't encrypted with SSL/TLS, which is interesting because port 443 is typically used for HTTPS, which is SSL/TLS encrypted. So, this might be an attempt to blend in with normal traffic.
+
+There's also a backup communication method using HTTP beaconing, with content obfuscated using variable 4-byte XOR keys. The C2 interactions involve HTTP POST requests to /photos/photo.asp, and responses from the server.
+
+Okay, so that's the attack sequence as per the CTI outline.
+
+Now, the question is: After using the Turbo Linux Kernel Module (LKM) to modify the system's global call table and evade detection, is it likely that Derusbi will retrieve metadata for files on disk or list the current working directory before binding to a raw socket and initiating communication with the C2 server?
+
+Answer choices are A: Yes, and B: No.
+
+So, I need to decide whether, after using Turbo LKM for evasion, Derusbi is likely to retrieve file metadata or list the current working directory before setting up the C2 communication.
+
+Let's think about this.
+
+First, the Turbo LKM is used for persistence and evasion by hiding processes. So, once it's loaded, the malicious processes are hidden, and the system is less likely to detect them.
+
+After achieving this evasion, what would the malware typically do next? Well, usually, after gaining access and ensuring persistence and evasion, the next step is to establish communication with the command and control server to receive further instructions or upload data.
+
+So, in this case, the malware binds to a raw socket and starts beaconing to the C2 server on port 443.
+
+Now, the question is whether, before doing this, it's likely to retrieve metadata for files on disk or list the current working directory.
+
+Well, retrieving file metadata or listing the current working directory could be part of the initial reconnaissance or data exfiltration phases. However, in the sequence described, after gaining access and ensuring evasion, the immediate next step seems to be establishing C2 communication.
+
+Looking back at the CTI outline, there's no mention of the malware retrieving file metadata or listing the directory as part of its initial actions. It directly proceeds to bind to a raw socket and start beaconing.
+
+Moreover, the question specifies "before binding to a raw socket and initiating communication with the C2 server." So, it's asking whether these file operations happen prior to setting up the C2 channel.
+
+Given that the primary goal after gaining access and ensuring evasion would be to establish communication back to the attacker, it's more likely that the malware would prioritize setting up the C2 channel over performing file operations.
+
+Additionally, if the malware needs to exfiltrate data or perform further actions, it would typically do so after the C2 channel is established, following instructions from the attacker.
+
+Therefore, it's less likely that Derusbi would retrieve metadata for files on disk or list the current working directory before setting up the C2 communication.
+
+Hence, the answer should be B: No.
+
+But let me double-check.
+
+Is there any indication in the CTI outline that suggests the malware performs file operations as part of the initial access or execution phases?
+
+Well, in the execution phase, it downloads the malware, executes it, drops the Turbo LKM, loads it into the kernel, and deletes it from disk. That's primarily about establishing a foothold and ensuring evasion.
+
+There's no mention of retrieving file metadata or listing directories at this stage.
+
+The persistence is achieved through the Turbo LKM, which focuses on hiding processes.
+
+Therefore, it seems that the immediate actions after ensuring evasion are to set up the C2 communication.
+
+Hence, it's unlikely that the malware would retrieve file metadata or list the directory before binding to the socket and initiating C2 communication.
+
+So, the answer is B: No.
+
+**Final Answer: B**

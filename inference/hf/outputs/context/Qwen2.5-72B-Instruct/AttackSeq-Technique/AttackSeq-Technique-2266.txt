@@ -1,0 +1,74 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Reconnaissance:**
+- The attack targets user credentials of Mexican banking institutions.
+- Linked to a campaign targeting Brazilian banking institutions.
+- Final phase executable contains Portuguese comments, suggesting a link with Banload malware.
+
+**Initial Access:**
+- Begins with a phishing email impersonating Mexico's tax department (SAT).
+- The email includes a link to download a malicious attachment, COMPROBANTE FISCAL.zip.
+- The zip file contains a malicious .bat file and a legitimate file (GoogleUpdate.exe).
+
+**Execution:**
+- The .bat file executes a PowerShell script from the Internet.
+- The script downloads md.zip, which includes the main malware library DLL and other services.
+- The script creates a random variable, a folder in %Public%, extracts files from md.zip, renames them, and creates a file with specific contents.
+
+**Persistence:**
+- The PowerShell script includes base64 coded text strings for startup persistence.
+- Creates shortcuts in the startup folder and manipulates scheduled tasks.
+
+**Credential Access:**
+- The malware steals bank credentials by displaying a data update request.
+- Accesses Outlook info to collect email accounts for BEC attacks.
+
+**Collection:**
+- The malware accesses Microsoft Outlook MAPI to collect contacts' email accounts.
+- Sends collected data to the cyber actors through a POST web request.
+
+**Command and Control:**
+- The PowerShell script communicates with h1m2en.ddns.net and dgi1b2n3m4.ddns.net to download malware and send collected data.
+
+**Exfiltration:**
+- Collected email accounts are exfiltrated to hxxp://dgi1b2n3m4.ddns.net/lists/kk/index.php?list.
+
+**Others:**
+- SCILabs created a YARA rule to identify files.
+- Additional malware found in a private source with the YARA rule.
+- Malware detection rate is low (9 to 27 antivirus engines).
+
+#### 2. Analyze the Question
+
+**Question:**
+- After the PowerShell script communicates with command and control domains to download malware and manage data exchanges, which ATT&CK technique most likely occurred to hinder static analysis through file obfuscation?
+
+**Answer Choices:**
+- A: T1547.010-Port Monitors
+- B: T1055.008-Ptrace System Calls
+- C: T1140-Deobfuscate/Decode Files or Information
+- D: T1059-Command and Scripting Interpreter
+
+#### 3. Compare and Evaluate
+
+**Relevant ATT&CK Techniques:**
+- **T1547.010-Port Monitors:** This technique involves setting up port monitors to intercept and manipulate data. It is not directly related to file obfuscation.
+- **T1055.008-Ptrace System Calls:** This technique involves using ptrace system calls to manipulate processes. It is not related to file obfuscation.
+- **T1140-Deobfuscate/Decode Files or Information:** This technique involves deobfuscating or decoding files or information to hinder static analysis. This is directly related to file obfuscation.
+- **T1059-Command and Scripting Interpreter:** This technique involves using command-line interfaces and scripts to execute commands. While it is used in the attack, it is not specifically about file obfuscation.
+
+**Contextual Information:**
+- The PowerShell script includes base64 coded text strings, which is a form of obfuscation.
+- The script downloads and extracts files, which could be obfuscated to avoid detection.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The PowerShell script uses base64 coded text strings, which is a common method to obfuscate data and hinder static analysis.
+- The script downloads and extracts files, which could be obfuscated to avoid detection by antivirus engines.
+- The technique T1140-Deobfuscate/Decode Files or Information is the most relevant to the context of file obfuscation in the attack sequence.
+
+**Final Answer:**
+C: T1140-Deobfuscate/Decode Files or Information

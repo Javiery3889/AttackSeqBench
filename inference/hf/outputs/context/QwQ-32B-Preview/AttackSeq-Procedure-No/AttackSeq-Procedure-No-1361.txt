@@ -1,0 +1,75 @@
+Alright, I have this CTI outline about a malware called VERMIN, and I need to answer a question based on it. Let's break this down step by step.
+
+First, I need to understand what the CTI outline is saying. It's about a malware called VERMIN, which is a Remote Access Tool (RAT) built with Microsoft .NET. It was found in a sample that looked like it was related to the Ukrainian Ministry of Defense. The malware comes in an SFX executable that shows a decoy document before running the actual malware.
+
+So, the initial access is through this SFX executable with a decoy document. That's interesting because it tricks users into thinking they're opening something legitimate, but really, they're running malware.
+
+Next, the malware uses HTTP with SOAP for command and control (C2). That's unusual because most malware uses more straightforward HTTP requests or other protocols. Using SOAP suggests that the attackers are trying to mimic legitimate web service communications, which might help them blend in or use existing infrastructure.
+
+The campaign goes back to late 2015 and also involves another RAT called Quasar RAT. So, it seems like the actors are using multiple tools in their attacks.
+
+Moving on to execution: after running, the malware checks the installed input language on the system. If it's not Russian or Ukrainian, it tries to exit but due to a coding error, it still runs. So, it's intended to target Russian or Ukrainian speakers, but because of a mistake, it actually runs on other systems too.
+
+Then, it decrypts an embedded resource using a brute-force method to find a 6-byte array that matches a CRC32 sum, which is then hashed with MD5 to create a decryption key. This sounds complicated, but it's just their way of hiding the malware's true payload.
+
+It sets up a scheduled task to run every 30 minutes indefinitely. So, that's how it persists on the system. It also collects information like machine name, username, OS name, architecture, local IP address, and checks for installed anti-virus software.
+
+If anti-virus is detected, it doesn't install the keylogger component. That's an interesting defense-evasion technique. They don't want to risk triggering AV detections by deploying the keylogger, so they skip it if AV is present.
+
+Persistence is established by creating a scheduled task that runs every 30 minutes. It saves and encrypts parameters to a specific location: C:\Users\Admin\AppData\Roaming\Microsoft\AddIns\settings.dat.
+
+For defense evasion, besides checking for AV, they use an obfuscation tool called ConfuserEx to pack and obfuscate the .NET code, making it harder to reverse-engineer.
+
+Discovery involves using WMI queries to gather system information, which makes sense for a RAT.
+
+Command and control communications use SOAP envelopes and WSHttpBinding() API, with 'Username' authentication to control different infected hosts.
+
+In the 'Others' section, it's noted that VERMIN is likely used in targeted attacks in Ukraine, given the themes and the limited samples. The report also mentions that Palo Alto Networks' tools identify the samples as malicious and block the C2 domains.
+
+Now, the question is: After VERMIN malware collects system information, such as machine name, username, and local IP address using WMI queries, will the keylogger component collect keystrokes and clipboard data only before storing them encrypted in a folder under %appdata%\Microsoft\Proof\Settings?
+
+Answer choices are A: Yes and B: No.
+
+Okay, so I need to determine if, after collecting system information, the keylogger component collects keystrokes and clipboard data and stores them encrypted in that specific folder.
+
+First, I need to confirm if the keylogger component is deployed and what it does.
+
+From the outline, it says that if anti-virus is detected, the malware does not install its keylogger component. So, if AV is present, no keylogger is installed. But if AV is not detected, it does install the keylogger.
+
+Assuming that AV is not detected, the keylogger would be installed.
+
+Now, does it collect keystrokes and clipboard data and store them encrypted in %appdata%\Microsoft\Proof\Settings?
+
+I need to check if the outline mentions this specific folder or the keylogger's behavior in detail.
+
+Looking back, under Persistence, it mentions that it saves parameters to C:\Users\Admin\AppData\Roaming\Microsoft\AddIns\settings.dat. But that's for the scheduled task parameters, not necessarily for the keylogger data.
+
+In the Discovery section, it collects machine name, username, OS name, architecture, local IP, and checks for AV. But it doesn't specify where this data is stored.
+
+The keylogger component is mentioned only in the context that it's not installed if AV is detected. There's no detailed description of where it stores its data or what it does with the keystrokes and clipboard data.
+
+Wait, the question assumes that the keylogger component is active and collects keystrokes and clipboard data, and stores them encrypted in that specific folder.
+
+But based on the outline, I don't have information about where the keylogger stores its data or even confirm that it stores data locally before exfiltrating it.
+
+It's possible that the keylogger sends the data directly to the C2 server without storing it locally, or it might store it in a different location.
+
+The folder mentioned is %appdata%\Microsoft\Proof\Settings, but in the Persistence section, it mentions C:\Users\Admin\AppData\Roaming\Microsoft\AddIns\settings.dat. These are different paths.
+
+So, there's inconsistency in the paths mentioned.
+
+Given that, I don't have evidence from the outline that the keylogger stores data in %appdata%\Microsoft\Proof\Settings.
+
+Therefore, the answer should be B: No.
+
+But let me double-check.
+
+Is there any part of the outline that mentions the keylogger storing data in that specific folder? Not that I can see.
+
+The only storage mentioned is the settings.dat file in the AddIns folder, which is for the scheduled task parameters, not for keylogger data.
+
+Hence, it's unlikely that the keylogger stores data in %appdata%\Microsoft\Proof\Settings.
+
+So, the correct answer is B: No.
+
+**Final Answer: B**

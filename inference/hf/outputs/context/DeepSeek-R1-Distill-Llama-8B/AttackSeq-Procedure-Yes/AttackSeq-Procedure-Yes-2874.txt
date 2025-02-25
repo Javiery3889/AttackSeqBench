@@ -1,0 +1,16 @@
+Okay, so I'm trying to figure out whether the Bisonal variant will communicate with its C2 addresses via an HTTP POST request after setting up persistence. Let me break this down step by step.
+
+First, from the CTI outline, I know that the attack started with a spear-phishing email targeting a defense company in Russia and an organization in South Korea. The email was spoofed to look like it was from Rostec, a Russian state corporation. The attachment was a malicious executable posing as a PDF, which when opened, dropped the main payload, Bisonal malware. The dropper executable did a few things: it hid an encrypted DLL and a decoy file, decrypted them using RC4 with key "34123412", saved them, and created a registry entry to run the DLL on reboot.
+
+Looking at the persistence part, the dropper created a registry entry in HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run\"vert" which points to rundll32.exe executing c:\windows\temp\pvcu.dll. So, upon reboot, the DLL will execute, which is the main payload.
+
+Now, the question is about whether the Bisonal variant will use HTTP POST to communicate with its C2 addresses for command and control after this setup. From the outline, under Defense Evasion, it says that the Bisonal malware uses RC4 with key "78563412" for encrypting C2 addresses. It communicates with two hard-coded C2s: kted56erhg.dynssl[.]com and euiro8966.organiccrap[.]com, which resolve to the same IP, 116.193.155.38. The initial POST request includes "ks8d" and "akspbu.txt" as static strings and the compromised machine's IP. The User Agent header is incomplete, which is a potential indicator.
+
+So, the key point is whether the communication after persistence setup uses HTTP POST. The outline mentions that the initial POST request uses HTTP POST on port 443 to these C2s. It doesn't explicitly say whether this is the only method used or if it's the primary method. However, since the question is about whether it's likely to use HTTP POST after persistence, and the outline specifies that the initial communication uses POST, it's reasonable to infer that this is the method they use for command and control.
+
+Therefore, the answer should be Yes, the Bisonal variant communicates via HTTP POST for C2 operations.
+</think>
+
+The analysis indicates that the Bisonal variant communicates with its C2 addresses using HTTP POST, as detailed in the CTI outline. The initial POST request is part of the communication process, and it's reasonable to conclude that this method is used for command and control after persistence is established.
+
+Final Answer: A: Yes

@@ -1,0 +1,63 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- Weaponized exploit documents were used to gain initial access.
+- Exploited the Microsoft Office vulnerability CVE-2012-0158.
+- A spear-phishing email was sent with a malicious document.
+
+**Execution:**
+- BBSRAT malware execution process:
+  - Generates a path in the %TEMP% directory.
+  - Writes an embedded cab file.
+  - Creates directories based on the Windows version.
+  - Uses expand.exe to write three files: aclmain.sdb, pnipcn.dll, and ssonsvr.exe.
+  - Sideloads the malicious pnipcn.dll using the legitimate Citrix executable ssonsvr.exe.
+  - Performs process hollowing on a suspended instance of msiexec.exe.
+
+**Persistence:**
+- Writes a registry key to run ssonsvr.exe on startup.
+- Deploys a DLL to either %SYSTEMROOT%\web\srvcl32.dll or %APPDATA%\web\srvcl32.dll.
+- Sets corresponding registry keys to ensure the DLL loads on Windows startup.
+
+**Exfiltration:**
+- Exfiltrates data to the C2 server using POST requests with a custom binary structure.
+- Compresses data using ZLIB.
+- Applies additional encryption if sent via HTTP.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After ensuring persistence by setting registry keys for the malicious ssonsvr.exe file and deploying a DLL to load on Windows startup, which ATT&CK tactic most likely occurred to enable communication with the adversary's infrastructure using HTTP or HTTPS requests?
+
+**Answer Choices:**
+- A: Discovery
+- B: Persistence
+- C: Command and Control
+- D: Execution
+
+#### 3. Compare and Evaluate
+
+**Persistence:**
+- The report clearly states that the malware ensures persistence by writing registry keys and deploying a DLL to load on Windows startup.
+
+**Exfiltration:**
+- The report mentions that the malware exfiltrates data to the C2 server using HTTP or HTTPS requests.
+
+**Command and Control (C2):**
+- The exfiltration of data to the C2 server using HTTP or HTTPS requests is a clear indication of the Command and Control tactic. This tactic involves the adversary establishing and maintaining control over the compromised system to execute commands and exfiltrate data.
+
+**Discovery:**
+- Discovery involves the adversary attempting to map the network, identify system configurations, and gather information about the environment. This is not directly related to the communication with the C2 server.
+
+**Execution:**
+- Execution involves the initial running of the malware and subsequent actions to maintain its presence. While the initial execution is described, the question is about the communication with the C2 server, which is more aligned with Command and Control.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The malware ensures persistence by setting registry keys and deploying a DLL.
+- After ensuring persistence, the malware exfiltrates data to the C2 server using HTTP or HTTPS requests.
+- The exfiltration of data to the C2 server is a clear indication of the Command and Control tactic.
+
+**Final Answer: C: Command and Control**

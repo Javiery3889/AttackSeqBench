@@ -1,0 +1,65 @@
+Alright, I've got this CTI outline and a question to answer. Let's see what it's all about.
+
+So, the CTI outline describes a cyber attack where the adversary starts by getting usernames and passwords from previous breaches. They use these creds to try and log in to the victim's remote services like webmail or VPNs. Once they get access, they use that to get into the network through services like VPN or Citrix.
+
+They use something called Cobalt Strike, which is a tool meant for ethical hacking but is also used by bad guys. They install it on the victim's system using PowerShell, and they use different versions of it. They rely a lot on scheduled tasks to run batch files for their activities.
+
+For persistence, they keep the Cobalt Strike beacon in memory, which means if the system reboots, they lose access. But they compensate for that by targeting systems that are always on, like servers. They also look for VPN and firewall configs to have backup access.
+
+Then, they try to escalate their privileges. They do password spraying attacks against domain admin accounts and manage to get a valid domain admin account. They use tools like NtdsAudit to dump password hashes of domain users.
+
+To avoid getting caught, they try to clean up their tracks by clearing event logs, deleting files, and timestomping, which is modifying file timestamps to make it look like nothing out of the ordinary happened.
+
+They get credentials through brute force methods, specifically credential stuffing or password spraying. They look for specific patterns in login attempts to figure out valid usernames.
+
+In the discovery phase, they use various tools to gather information. They use PsLogList to export security event logs, probably to find out when privileged users are active. If they find such users, they use Mimikatz to dump credentials or password hashes.
+
+For lateral movement, they use Cobalt Strike's built-in methods like SMB, named pipes, PsExec, and WinRM to move across the network. They try to get to domain controllers as soon as possible and continue moving laterally to find data of interest, like PII from memory or IP from file servers.
+
+For command and control, they use Cobalt Strike to manage their compromised systems. They switched from using DNS to HTTPS for C2 traffic over time. Interestingly, they used a cracked or patched trial version of Cobalt Strike, which has limited functionalities and doesn't support encryption for C2 traffic unless it's encapsulated in protocols like HTTPS.
+
+When it comes to exfiltration, they use the C2 channel for small amounts of data like account details. For larger data, like mailboxes and network shares containing intellectual property, they compress, encrypt, and stage the data before exfiltrating it using a custom tool that uploads to cloud storage services like Dropbox, Google Drive, or OneDrive.
+
+Now, the question is: After using Cobalt Strike's built-in Mimikatz to dump credentials found during the discovery phase, is it likely that the adversary will use WinRAR to archive data prior to exfiltration in preparation for exfiltration?
+
+Answer choices are A: Yes and B: No.
+
+Okay, so I need to decide between Yes and No based on the information provided in the CTI outline.
+
+First, let's recall what Mimikatz does. Mimikatz is a tool that can extract plaintext passwords, hashes, and other credentials from memory. So, when the adversary uses Mimikatz via Cobalt Strike, they're likely grabbing credentials from memory.
+
+The question is about what happens after they dump these credentials. Specifically, whether they'll use WinRAR to archive data before exfiltration.
+
+From the CTI outline, I see that for exfiltration, they use a custom tool to upload data to cloud storage services like Dropbox, Google Drive, or OneDrive. For larger amounts of data, they compress, encrypt, and stage it before exfiltration.
+
+Now, the key here is to see if WinRAR is mentioned or implied in the exfiltration process.
+
+Looking back at the outline, under Exfiltration, it says: "Once the larger chunks of data are compressed, encrypted, and staged, the data is exfiltrated using a custom built tool. This tool exfiltrates specified files to cloud storage web services. The following cloud storage web services are supported by the malware: Dropbox, Google Drive, OneDrive."
+
+It mentions that data is compressed, but it doesn't specify which tool is used for compression. WinRAR is a popular archiving tool, but it's not the only one. There are others like 7-Zip, Zip, etc.
+
+In the CTI outline, there's no explicit mention of WinRAR being used by the adversary. In fact, the only tools mentioned specifically are Cobalt Strike, Mimikatz, PsLogList, NtdsAudit, and the custom exfiltration tool.
+
+So, based on the information provided, there's no direct evidence to suggest that WinRAR is being used for archiving data prior to exfiltration.
+
+Moreover, the adversary is using a custom tool for exfiltration, which suggests that they might have their own methods for compressing and encrypting data, possibly without relying on external tools like WinRAR.
+
+Therefore, it doesn't seem likely that they would use WinRAR for archiving data prior to exfiltration, especially since it's not mentioned in the CTI outline.
+
+Hence, the answer should be B: No.
+
+But let me double-check.
+
+Is there any indirect indication that WinRAR is used? Well, the outline mentions that larger chunks of data are compressed, encrypted, and staged before exfiltration. But it doesn't specify the tool used for compression.
+
+WinRAR is a common archiving tool, but its use isn't confirmed in the outline. In fact, using a custom exfiltration tool suggests that they might have integrated compression capabilities within that tool.
+
+Additionally, in the Tactics section, under Defense Evasion, it mentions that the adversary uses a Windows version of the Linux touch command from the UnxUtils repository to perform timestomping. This indicates that they use tools from UnxUtils, but WinRAR isn't mentioned.
+
+Furthermore, in the Execution section, they use PowerShell one-liners to install Cobalt Strike and use scheduled tasks with batch files. But again, no mention of WinRAR.
+
+So, based on the information provided, there's no basis to conclude that WinRAR is used for archiving data prior to exfiltration.
+
+Therefore, the most appropriate answer is B: No.
+
+**Final Answer: B**

@@ -1,0 +1,40 @@
+Okay, so I'm trying to figure out whether the adversary in the CTI report is likely to use custom-built malware to exfiltrate data to cloud storage services like Dropbox after collecting data from SharePoint Online. Let me break this down step by step.
+
+First, I'll look at the CTI report to understand the attack sequence. The report outlines several MITRE ATT&CK tactics, so I'll go through each one to see what the adversary does.
+
+Starting with Initial Access, the adversary uses credential stuffing or password spraying to get into remote services. Once they have a valid account, they access the network through VPNs or Citrix. They gather info from mailboxes and cloud resources.
+
+Next, Execution: They install Cobalt Strike using PowerShell, specifically versions 3.8, 3.12, and 3.14. They use scheduled tasks with batch files. So, they're using Cobalt Strike beacons in memory without persistence, but they target systems with high uptime for persistent access.
+
+Persistence: They don't use persistence mechanisms on the compromised systems, relying instead on high-uptime servers. They also look for VPN and firewall configs as backup access.
+
+Privilege Escalation: They password spray for domain admin accounts and use tools like NtdsAudit and msadcs.exe to dump hashes. They also move laterally to systems with domain admins logged in.
+
+Defense Evasion: They clean up traces by clearing logs, deleting files, and timestomping using UnxUtils. This shows they're trying to avoid detection.
+
+Credential Access: They use brute force, specifically credential stuffing or password spraying, targeting email-formatted usernames.
+
+Discovery: They use tools like PsLogList to export Security Event logs, possibly to find privileged users. If they find such users, they use Mimikatz to dump credentials.
+
+Lateral Movement: They use Cobalt Strike's built-in methods like SMB, named pipes, PsExec, and WinRM. They aim to get to domain controllers quickly and continue moving laterally to find data of interest.
+
+Collection: They collect data from SharePoint Online, copy discovery results, and collect emails from local and remote systems. They prepare data for exfiltration by compressing and encrypting large chunks.
+
+Command and Control: They use Cobalt Strike's C2, initially via DNS and then switched to HTTPS in 2019. They used a cracked trial version, which has limited functionality and doesn't support encrypted traffic unless the protocol itself is encrypted.
+
+Now, the question is about whether they'll use custom-built malware to exfiltrate data to cloud storage after collecting from SharePoint. The answer choices are Yes or No.
+
+Looking at the report, during the Collection phase, they collect data from SharePoint and stage it for exfiltration. The report mentions that they compress and encrypt the data. But it doesn't explicitly say how they exfiltrate it. However, the Command and Control section says they use Cobalt Strike's C2, which can handle exfiltration through its own channels, like DNS or HTTPS.
+
+Cobalt Strike is a well-known tool that includes functionality for data exfiltration. It's possible that they use Cobalt Strike's built-in capabilities rather than developing custom malware. The report doesn't mention any custom tools for exfiltration, only that they use Cobalt Strike extensively.
+
+Additionally, the adversary is using a cracked trial version of Cobalt Strike, which might limit some features, but it's still a powerful tool for exfiltration. They might not need custom malware if Cobalt Strike can handle it, especially since they're already using it for C2.
+
+Moreover, using custom malware could introduce more risk, as it might be detected. The adversary is already employing defense evasion techniques, so sticking with a known tool like Cobalt Strike might be safer.
+
+Therefore, it's less likely they'd use custom-built malware for exfiltration when they have Cobalt Strike available. They might use Cobalt Strike's built-in methods or other standard techniques instead.
+</think>
+
+The adversary in the CTI report uses Cobalt Strike extensively for command and control, including data exfiltration. They have used Cobalt Strike's C2 capabilities, which can handle exfiltration through DNS or HTTPS. The report does not mention the use of custom-built malware for this purpose. Instead, the adversary relies on Cobalt Strike's built-in functionalities, which are sufficient for their needs. Given their use of a cracked trial version, they might prefer existing tools over developing custom malware to minimize detection risks. 
+
+Final Answer: B: No

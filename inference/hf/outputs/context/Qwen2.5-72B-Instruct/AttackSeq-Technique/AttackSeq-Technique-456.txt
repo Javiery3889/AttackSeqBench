@@ -1,0 +1,74 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Persistence:**
+- The dropper extracts the driver from the file and saves it in the \Windows\Temp directory as houzi.sys.
+- The driver is registered and started.
+- The dropper sends the MAC address and user-id to the domain www[.]tj999[.]top.
+
+**Defense Evasion:**
+- The driver is a 32-bit kernel-mode driver launched during startup.
+- It employs tricks to evade and hide from endpoint security products.
+- The driver connects to one of two C&C hard-coded domains to download the homepage configuration to tamper with the browser.
+- The homepage is downloaded encrypted from the C&C server.
+
+**Collection:**
+- CEIDPageLock operators gather browsing data on victims, monitoring the sites users visit and the duration of their visits.
+
+**Command and Control:**
+- The driver connects to one of two C&C hard-coded domains to download the desired homepage configuration to tamper with the browser.
+
+**Others:**
+- CEIDPageLock targets Chinese victims specifically.
+- The malware adds a method of creating a registry key in safemon-360safe's security product, as part of the rootkit installation routine.
+- The rootkit sets the value 0 under the registry key: \Registry\Machine\Software\Wow6432Node\360Safe\safemon\ATHPJUMP
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK technique most likely occurred after the RIG Exploit kit distributed CEIDPageLock by exploiting a vulnerability and tampering with the victim's browser homepage, but before the dropper started the kernel-mode driver for persistence?
+
+**Answer Choices:**
+A: T1189-Drive-by Compromise
+B: T1189-Drive-by Compromise
+C: T1071-Application Layer Protocol
+D: T1219-Remote Access Software
+
+#### 3. Compare and Evaluate
+
+**Sequence of Events:**
+1. **Initial Compromise:**
+   - The RIG Exploit kit distributes CEIDPageLock by exploiting a vulnerability.
+   - The browser homepage is tampered with.
+
+2. **Before Persistence:**
+   - The dropper extracts the driver and saves it in the \Windows\Temp directory.
+   - The driver is registered and started.
+
+**Evaluation of Answer Choices:**
+- **A: T1189-Drive-by Compromise**
+  - This technique involves the initial infection through a drive-by download, which aligns with the RIG Exploit kit distributing CEIDPageLock by exploiting a vulnerability.
+  - However, this technique is already part of the initial compromise and not what happens after the homepage tampering but before the persistence.
+
+- **B: T1189-Drive-by Compromise**
+  - Same as A, this is not the correct answer for the same reason.
+
+- **C: T1071-Application Layer Protocol**
+  - This technique involves using standard application layer protocols to communicate with a C&C server.
+  - The driver connects to the C&C server to download the homepage configuration, which fits this technique.
+  - This communication happens after the homepage tampering and before the persistence mechanism is set up.
+
+- **D: T1219-Remote Access Software**
+  - This technique involves the use of remote access tools to maintain access to a victim's system.
+  - The report does not mention the use of remote access software, and this technique does not fit the sequence of events described.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The initial compromise involves the RIG Exploit kit distributing CEIDPageLock by exploiting a vulnerability and tampering with the browser homepage.
+- After the homepage tampering, the dropper extracts and registers the driver.
+- The driver then connects to the C&C server to download the homepage configuration, which is a form of communication using standard application layer protocols (T1071).
+- This communication happens before the persistence mechanism is set up by starting the kernel-mode driver.
+
+**Final Answer: C: T1071-Application Layer Protocol**

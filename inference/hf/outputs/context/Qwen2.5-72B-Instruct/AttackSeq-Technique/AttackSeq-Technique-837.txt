@@ -1,0 +1,76 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- WinDealer executes by reading its configuration from a file under `C:\ProgramData`.
+- It loads a DLL module into memory.
+- Steals information from the victim's PC, including network configuration and SNS application details.
+- Saves stolen data with a ".a" extension in the `%TEMP%` directory.
+- Sends this data to a C2 server.
+
+**Defense Evasion:**
+- Encodes configuration files using XOR with the key "b6a7%7486".
+- Communicates with C2 servers using encrypted channels.
+- Encrypts an AES key with RSA and sends it to the C2 server.
+- Encrypts stolen information using AES128bit ECB mode before transmission.
+
+**Discovery:**
+- Discovers information about the infected PC and network configuration.
+- Collects data from SNS applications.
+- Stages stolen data in a folder under `%TEMP%`, encrypting it with AES before sending it to a C2 server.
+
+**Collection:**
+- Collects data from the victim's PC, including files from USB memory, documents, desktop items, and recycle bin contents.
+- Targets folders related to SNS applications.
+- Processes collected data into ".a" files and categorizes them into different directories based on data type.
+
+**Exfiltration:**
+- Exfiltrates stolen data to a C2 server after processing and encrypting it.
+- Sends data from the `%TEMP%` directory where it is staged as ".a" files.
+
+**Others:**
+- LuoYu Attack Group targets Korean and Japanese organizations.
+- WinDealer operates on various platforms.
+- Uses a hardcoded RSA1024bit public key for encryption.
+- Communicates with C2 servers, including sending an encrypted AES key and receiving commands.
+- Monitors and processes data from USB memory and SNS application folders.
+- Configuration stored in several folders under `C:\ProgramData`.
+- DLL module named "MozillaDll.dll" with export functions for stealing data, setting configuration, and initiating commands.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After WinDealer processes and encrypts the staged data with AES before exfiltration, which ATT&CK technique most likely occurred to maintain communication with the C2 server using UDP port 6999 or TCP port 55556?
+
+**Answer Choices:**
+- A: T1571-Non-Standard Port
+- B: T1573-Encrypted Channel
+- C: T1518-Software Discovery
+- D: T1587.003-Digital Certificates
+
+#### 3. Compare and Evaluate
+
+**T1571-Non-Standard Port:**
+- This technique involves using non-standard ports for communication to evade detection.
+- The report mentions that WinDealer communicates with C2 servers using UDP port 6999 or TCP port 55556, which are non-standard ports.
+
+**T1573-Encrypted Channel:**
+- This technique involves using encrypted channels to protect the confidentiality of data in transit.
+- The report states that WinDealer uses encrypted channels for communication with C2 servers, encrypting an AES key with RSA and sending it to the C2 server.
+
+**T1518-Software Discovery:**
+- This technique involves discovering software and applications on the victim's system.
+- The report does not mention any specific techniques related to software discovery after data exfiltration.
+
+**T1587.003-Digital Certificates:**
+- This technique involves using digital certificates to establish trust and secure communications.
+- The report does not mention the use of digital certificates for communication with C2 servers.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- **T1571-Non-Standard Port** is the most relevant technique because the report explicitly mentions that WinDealer uses non-standard ports (UDP 6999 and TCP 55556) for communication with the C2 server.
+- **T1573-Encrypted Channel** is also relevant because the report mentions encrypted communication, but the question specifically asks about maintaining communication using non-standard ports.
+- **T1518-Software Discovery** and **T1587.003-Digital Certificates** are not relevant to the specific context of maintaining communication with the C2 server using non-standard ports.
+
+**Final Answer: A: T1571-Non-Standard Port**

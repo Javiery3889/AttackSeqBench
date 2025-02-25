@@ -1,0 +1,74 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The OceanLotus backdoor is distributed via a zip file, delivered through an email attachment.
+- The zip file contains a file disguised as a Microsoft Word document icon, which is actually an application bundle containing executable code.
+- When the user attempts to open the decoy Word document, the Trojan executes and displays a decoy document to mask its execution.
+
+**Execution:**
+- The backdoor opens a hidden file named .CFUserEncoding from the application bundle's Resources folder.
+- It copies this file to the executable path, replacing the application bundle after persistence is established.
+
+**Persistence:**
+- The backdoor creates a Launch Agent that runs when the victim's host starts up.
+- It copies itself to a location and filename based on the user's UID, using a segmented MD5 hash as a directory.
+- The malware deletes the original application bundle, leaving the decoy document, and launches itself as a service from the new location.
+
+**Defense Evasion:**
+- The backdoor avoids the use of command line utilities and suspicious strings.
+- It employs a robust string encoding mechanism to obfuscate its functions.
+- The malware uses a custom binary protocol with encryption to communicate with its command and control server.
+
+**Command and Control:**
+- The backdoor communicates with the command and control server using a custom binary protocol on TCP port 443.
+- The communication sequence involves initiating a session, receiving an ephemeral encryption key and command from the server, executing the command, and sending back the results encrypted with AES in CBC mode.
+- The server uses ephemeral keys for each session, enhancing the security of the communication.
+
+**Others:**
+- The OceanLotus backdoor is an advanced threat targeting victims in Vietnam with low AV detection.
+- It has been active for over a year with recent communication with the command and control server as of early June 2017.
+- The backdoor includes improvements such as a decoy document, custom binary protocol traffic with encryption, and a modularized structure.
+- Apple has updated macOS protection systems to address this variant, and Palo Alto Networks customers are protected with classified samples, malicious domain and IP classifications, and IPS signatures.
+- Indicators of compromise include various hashes, C2 server domains, and dropped files with specific paths based on the user's UID.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK tactic most likely occurred after the OceanLotus backdoor evaded defenses using robust string encoding and custom encryption to communicate with its command and control server?
+
+**Answer Choices:**
+A: Command and Control
+B: Resource Development
+C: Discovery
+D: Execution
+
+#### 3. Compare and Evaluate
+
+- **Defense Evasion:**
+  - The backdoor uses robust string encoding and custom encryption to communicate with its command and control server.
+  - This is a clear indication of the Defense Evasion tactic.
+
+- **Command and Control:**
+  - After evading defenses, the backdoor communicates with the command and control server using a custom binary protocol on TCP port 443.
+  - The communication involves initiating a session, receiving an ephemeral encryption key and command from the server, executing the command, and sending back the results encrypted with AES in CBC mode.
+
+- **Resource Development:**
+  - This tactic involves establishing and maintaining the infrastructure necessary to support operations.
+  - It is not directly mentioned in the report after the defense evasion.
+
+- **Discovery:**
+  - This tactic involves the adversary attempting to understand the environment they are operating in.
+  - It is not directly mentioned in the report after the defense evasion.
+
+- **Execution:**
+  - This tactic involves the adversary running malicious code.
+  - While the backdoor does execute commands, this is part of the Command and Control process, not a separate tactic that occurs after defense evasion.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The report clearly states that after the backdoor evades defenses using robust string encoding and custom encryption, it communicates with the command and control server.
+- The communication sequence involves initiating a session, receiving commands, and sending back results, which are all part of the Command and Control tactic.
+
+**Final Answer: A: Command and Control**

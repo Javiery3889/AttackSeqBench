@@ -1,0 +1,71 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The adversary obtained SSH access to the target system.
+- Used the GNU utility wget to fetch malware samples from the IP address 175.45.250.xxx.
+- The malware binary had a date string in its naming convention, suggesting it was compiled on the day it was downloaded.
+
+**Persistence:**
+- The Turbo Linux Kernel Module (LKM) provides persistence by hiding processes.
+
+**Defense Evasion:**
+- The Derusbi malware and Turbo kernel module employ cloaking and anti-analysis techniques.
+- The Turbo LKM is loaded into kernel space to modify the system's global call table, particularly pertaining to process IDs (PIDs).
+- The LKM disables the CPU's control register zero's (CR0) write protection to modify the system call table.
+
+**Discovery:**
+- The Derusbi malware gathers information about the victim host, including the local host name, GCC version, and system information.
+- This information is transferred back to the command and control infrastructure via network beacons.
+
+**Command and Control:**
+- The malware binds to a raw socket on a random source port between 31800 and 31900 and beacons to the preconfigured destination port 443.
+- A backup communication method with HTTP beacon is used, with content obfuscated using variable 4-byte XOR keys.
+- C2 interactions include HTTP POST requests to /photos/photo.asp and responses from the server.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After the adversary gained SSH access and fetched malware samples using wget, and before achieving persistence via the Turbo Linux Kernel Module, which ATT&CK technique most likely occurred?
+
+**Answer Choices:**
+- A: T1648-Serverless Execution
+- B: T1129-Shared Modules
+- C: T1082-System Information Discovery
+- D: T1583.003-Virtual Private Server
+
+#### 3. Compare and Evaluate
+
+**Sequence of Events:**
+1. **Initial Access:**
+   - SSH access obtained.
+   - Malware samples fetched using wget.
+
+2. **Discovery:**
+   - Malware gathers system information (local host name, GCC version, system information).
+
+3. **Persistence:**
+   - Turbo Linux Kernel Module provides persistence.
+
+**Evaluation of Answer Choices:**
+- **A: T1648-Serverless Execution**
+  - This technique involves executing code without the need for a server. It does not fit the context of the report, which describes downloading and running malware.
+
+- **B: T1129-Shared Modules**
+  - This technique involves using shared libraries or modules to execute code. While the Turbo LKM is a module, the report does not indicate that shared modules were used before persistence.
+
+- **C: T1082-System Information Discovery**
+  - This technique involves gathering system information, which aligns with the report's description of the Derusbi malware gathering information about the victim host.
+
+- **D: T1583.003-Virtual Private Server**
+  - This technique involves using a virtual private server for command and control. The report mentions C2 interactions but does not indicate the use of a VPS before achieving persistence.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The report clearly states that the Derusbi malware gathers system information (local host name, GCC version, system information) before achieving persistence.
+- This aligns with the T1082-System Information Discovery technique.
+
+**Final Answer:**
+C: T1082-System Information Discovery

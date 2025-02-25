@@ -1,0 +1,77 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Reconnaissance:**
+- The attack targets user credentials of Mexican banking institutions.
+- Linked to a campaign targeting Brazilian banking institutions.
+- Final phase executable contains Portuguese comments, suggesting a link with Banload malware.
+
+**Initial Access:**
+- Begins with a phishing email impersonating Mexico's tax department (SAT).
+- The email includes a link to download a malicious attachment, COMPROBANTE FISCAL.zip.
+- The attachment contains a malicious .bat file and a legitimate file (GoogleUpdate.exe).
+
+**Execution:**
+- The .bat file executes a PowerShell script to download and run a malicious file (md.zip) containing the main malware library DLL and other services.
+- The script creates a random variable, a folder in %Public%, extracts files, renames them, and creates a file with specific contents.
+
+**Persistence:**
+- The PowerShell script includes base64 coded text strings for startup persistence, such as creating shortcuts in the startup folder and manipulating scheduled tasks.
+
+**Defense Evasion:**
+- The main malicious file (12.dll) is protected with VMProtect packer to make static analysis difficult.
+- The malware uses VMProtect to make analysis harder.
+
+**Credential Access:**
+- The malware aims to steal bank credentials by displaying a data update request.
+- It accesses Outlook info to collect email accounts from the contacts list for BEC attacks.
+
+**Collection:**
+- The malware accesses Microsoft Outlook MAPI to try to access contacts' email accounts and sends them to the cyber actors through a POST web request.
+
+**Command and Control:**
+- The PowerShell script communicates with domains (h1m2en.ddns.net and dgi1b2n3m4.ddns.net) to download malware and send collected data.
+
+**Others:**
+- SCILabs created a YARA rule to identify files related to the Cosmic Banker campaign.
+- Additional malware was found using the YARA rule.
+- Malware detection rate is low (9 to 27 antivirus engines).
+
+#### 2. Analyze the Question
+
+**Question:**
+- After collecting email accounts using Microsoft Outlook MAPI, which ATT&CK tactic most likely occurred as the malware actors sent the collected data to their infrastructure through a POST web request?
+
+**Answer Choices:**
+- A: Initial Access
+- B: Command and Control
+- C: Exfiltration
+- D: Collection
+
+#### 3. Compare and Evaluate
+
+**Relevant Information from the CTI Report:**
+- The malware accesses Microsoft Outlook MAPI to collect email accounts.
+- The collected data is sent to the cyber actors through a POST web request.
+
+**ATT&CK Tactics:**
+- **Initial Access:** Techniques used to gain an initial foothold in a network.
+- **Command and Control (C2):** Techniques used to communicate with compromised systems.
+- **Exfiltration:** Techniques used to steal data from a network.
+- **Collection:** Techniques used to gather data from a network.
+
+**Evaluation:**
+- **Initial Access:** This tactic is about gaining the initial foothold, which is already done through the phishing email and malicious attachment.
+- **Command and Control (C2):** This tactic involves communication with the compromised system, which is mentioned in the report but is not the primary action after collecting email accounts.
+- **Exfiltration:** This tactic involves stealing data from the network, which aligns with sending the collected email accounts to the cyber actors through a POST web request.
+- **Collection:** This tactic involves gathering data, which is already done by accessing Microsoft Outlook MAPI.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The malware accesses Microsoft Outlook MAPI to collect email accounts, which is part of the **Collection** tactic.
+- After collecting the email accounts, the malware sends the data to the cyber actors through a POST web request, which is part of the **Exfiltration** tactic.
+
+**Final Answer:**
+C: Exfiltration

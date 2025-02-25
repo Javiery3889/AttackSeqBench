@@ -1,0 +1,34 @@
+Okay, so I need to figure out whether the Bandook campaign uses Process Hollowing in Internet Explorer to inject a payload before using AES encryption for C&C communication. Let me break this down step by step.
+
+First, I'll look at the CTI report provided. The report details the attack sequence using MITRE ATT&CK tactics. Let's go through each phase.
+
+**Initial Access**: The campaign starts with a malicious Word document in a ZIP file. The document has encrypted scripts and an external template that points to another document with VBA macros. The external template is downloaded via URL shorteners, leading to an attacker-controlled domain. The VBA code decrypts data into two files: 'fmx.ps1' (PowerShell) and 'sdmc.jpg' (base64 encoded PowerShell). The lure documents are themed around cloud services like Office365, OneDrive, and Azure, with images suggesting more documents upon enabling macros.
+
+**Execution**: The 'fmx.ps1' script decodes and executes the script in 'sdmc.jpg'. This script downloads a zip file from a cloud service, containing 'a.png', 'b.png', and 'untitled.png'. 'untitled.png' has a hidden RC4 function. The payload is made from decrypted 'a.png' and 'b.png', then executed. It also opens a benign document and cleans up.
+
+**Defense Evasion**: They switch the external template to benign after some time. The malware uses image files to hide components. The payload is signed with valid Certum certificates to look trustworthy.
+
+**Others**: The malware is old, developed by PrinceAli, and now a slimmed-down version with limited commands. Targets various sectors, possibly linked to Dark Caracal.
+
+Now, the question is about whether they use Process Hollowing in IE before AES encryption for C&C.
+
+Looking at the report, during Defense Evasion, they use image files to hide components. The payload is generated from images, but there's no mention of Process Hollowing. Process Hollowing is a technique where attackers replace a legitimate process's memory with malicious code, often used to evade detection.
+
+The report mentions that the payload is signed with valid certificates, which is a different evasion technique. It also talks about using image files to hide the payload, which is another evasion method.
+
+The question is about the sequence: after using image files for concealment, do they use Process Hollowing in IE before AES encryption for C&C.
+
+From the report, the execution phase involves PowerShell scripts and image files to generate the payload. The payload is then executed. There's no indication that they use Process Hollowing. Instead, they use image steganography and valid certificates.
+
+Additionally, the report doesn't mention any use of Internet Explorer for injection. The execution is through PowerShell scripts, which is a common method but doesn't involve Process Hollowing in IE.
+
+AES encryption for C&C is a common practice, but the report doesn't specify the encryption method used. However, the question is about the sequence of TTPs, specifically Process Hollowing after image concealment.
+
+Since the report doesn't mention Process Hollowing or IE injection, it's unlikely that the campaign uses this technique. The evasion methods listed are image-based and certificate spoofing, not process injection techniques like Process Hollowing.
+
+Therefore, the answer is likely No.
+</think>
+
+The Bandook campaign employs image files to conceal malicious components and uses valid certificates for evasion, but there is no evidence of Process Hollowing in Internet Explorer. The sequence of TTPs does not include this technique.
+
+Final Answer: B: No

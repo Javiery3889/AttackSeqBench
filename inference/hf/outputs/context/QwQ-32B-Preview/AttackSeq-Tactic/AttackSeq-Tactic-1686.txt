@@ -1,0 +1,75 @@
+Alright, I've got this CTI outline to analyze, and there's a question about the sequence of tactics used by the adversary. I need to figure out which tactic happened before the data collection from SharePoint and network shares. The answer choices are Execution, Credential Access, Discovery, and Privilege Escalation. Let's break this down step by step.
+
+First, I need to understand the sequence of events described in the CTI outline. The adversary starts with obtaining usernames and passwords from previous breaches and uses them in credential stuffing or password spraying attacks against the victim's remote services like webmail. Once they get a valid account, they access the victim's VPN or Citrix services to get into the network. So, that's Initial Access.
+
+Next, they execute code on the network by installing Cobalt Strike, a tool used for penetration testing but also abused by attackers. They use PowerShell to install the Cobalt Strike beacon in memory and rely on scheduled tasks to execute batch files.
+
+For persistence, they load the Cobalt Strike beacon in memory without leaving any persistent mechanisms on the system, but they target systems with high uptime like servers to maintain access. They also look for VPN and firewall configs as backup access points.
+
+Then, there's Privilege Escalation. The adversary conducts a password spraying attack against domain admin accounts and successfully gains access to a domain admin account. In some cases, they move laterally to a system where a domain admin is logged in and use a tool called NtdsAudit to dump password hashes of domain users.
+
+Defense Evasion is mentioned next. The adversary tries to clean up their tracks by clearing Windows event logs, deleting files, and using timestomping to alter file timestamps to avoid detection.
+
+Credential Access is another tactic where the adversary uses brute force, specifically credential stuffing or password spraying, to get more credentials. They observe unusual login attempts with email-formatted usernames compared to the standard domain\username format.
+
+Lateral Movement is performed using Cobalt Strike's built-in methods like SMB, named pipes, PsExec, and WinRM. They aim to move to domain controllers as soon as possible and continue lateral movement and discovery to identify data of interest.
+
+Collection involves gathering data in preparation for exfiltration. They collect data from SharePoint Online, copy file and directory lists from local and remote systems, and collect emails from user mailboxes.
+
+Command and Control is managed through Cobalt Strike, which they use to control compromised systems. Initially, they used DNS for C2 communication but switched to HTTPS in 2019. They used a cracked trial version of Cobalt Strike, which has limitations, including not supporting encryption for C2 traffic in some protocols.
+
+Finally, Exfiltration: for small amounts of data like account details, they use the C2 channel, but for larger data like mailboxes and IP, they use a custom tool to upload to cloud storage services like Dropbox, Google Drive, and OneDrive.
+
+Now, the question is: After exploiting privileged user credentials to move laterally using methods like SMB and WinRM, which ATT&CK tactic most likely occurred before the adversary began collecting data from Microsoft SharePoint Online and network shared drives?
+
+So, I need to identify what happened right before the data collection from SharePoint and network shares.
+
+Looking at the outline, after lateral movement, the adversary continues with discovery and collection. Specifically, they collect data from SharePoint Online and network shared drives.
+
+So, the tactic that likely occurred before collection is Discovery. In the discovery phase, adversaries gather information about the network, identify valuable data locations, and prepare for data exfiltration.
+
+Let's look at the answer choices:
+
+A: Execution - This is earlier in the chain. Execution refers to running malicious code on the target system, which happens after initial access.
+
+B: Credential Access - This is also earlier. They access credentials to facilitate lateral movement and privilege escalation.
+
+C: Discovery - This seems plausible as it's the phase where they identify what data to collect and where it's located.
+
+D: Privilege Escalation - This is another early tactic used to gain higher-level access.
+
+Given that collection follows discovery, where they identify what to collect, I think Discovery is the most likely tactic before collection.
+
+But let's think deeper. After lateral movement, they would need to know what data to collect, which involves discovery. So, it makes sense that discovery occurs right before collection.
+
+Wait, but the question says "before the adversary began collecting data from Microsoft SharePoint Online and network shared drives?" So, it's specifically about collecting data from these sources.
+
+Looking back at the outline, under Collection, it says: "They collect data from an information repository, Microsoft SharePoint Online in this case. This document was exfiltrated and used to continue the intrusion via a company portal and VPN. In all cases, we've seen the adversary copying results of the discovery phase, like file- and directory lists from local systems, network shared drives, and file shares on remote systems. But email collection is also important for this adversary: with every intrusion, we saw the mailbox of some users being copied, from both local and remote systems."
+
+So, it seems that discovery is part of the collection process, or at least closely related.
+
+Wait, in ATT&CK, Discovery is a tactic where adversaries try to understand the environment, identify valuable data, and so on. Collection is about gathering that data for exfiltration.
+
+So, logically, discovery happens before collection. You need to know what to collect and where it is before you can collect it.
+
+Given that, Discovery seems like the most logical choice.
+
+But let's consider the other options.
+
+Execution: This is about running malicious code on the target system. That happens early on, after initial access, to establish a foothold. It's not directly related to data collection.
+
+Credential Access: This is about obtaining credentials to facilitate lateral movement and privilege escalation. Again, this happens earlier in the intrusion process.
+
+Privilege Escalation: This is about gaining higher-level permissions to access more sensitive parts of the network. This also occurs relatively early.
+
+So, compared to these, Discovery is more closely aligned with identifying and collecting specific data.
+
+Moreover, in the outline, under Lateral Movement, it says: "They continue lateral movement and discovery in an attempt to identify the data of interest." This directly links lateral movement with discovery for identifying data of interest.
+
+Therefore, after exploiting privileged credentials to move laterally, the next step would be discovery to identify what data to collect, followed by actual data collection.
+
+Hence, the answer should be C: Discovery.
+
+Wait, but Discovery is not listed in the answer choices. Wait, yes, it is option C.
+
+So, Final Answer: C: Discovery

@@ -1,0 +1,62 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- APT Sidewinder exploited CVE-2017-11882 using an RTF document to download an HTA file from the domain webserv-redir.net.
+
+**Execution:**
+- The HTA file contained within the RTF document executed a script that stopped if certain antivirus software was detected. If not detected, it proceeded to run a backdoor named FinalBot.exe, which was extracted from a zip file and renamed to Srvstr.exe in the directory. The backdoor was developed in VB and utilized a modified msvbvm60.dll, renamed to 8EBECD7C.dll.
+
+**Persistence:**
+- The backdoor established persistence by creating a Run key in the registry: HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run\WinSrv.
+
+**Defense Evasion:**
+- Sidewinder's HTA file avoided using PowerShell, which is commonly monitored, and instead used VBS. The backdoor also employed a technique called DLL sideloading, using cmpbk32.dll to execute Srvstr.exe.
+
+**Command and Control:**
+- The HTA file communicated with the C2 server to send information about the installed antivirus software. The domain used for C2 communication was webserv-redir.net.
+
+**Others:**
+- Indicators of compromise (IOCs) associated with the Sidewinder campaign include various hashes for files such as Test.Zip, FinalBot.exe, hj1.txt, hj.txt, and the domain webserv-redir.net with its associated IP address 185.106.120.43. Additional related domains include heartissuehigh.win, mail.webserv-redir.net, and www.webserv-redir.net. An RTF document was also identified as an IOC with the URL hxxp://www.webserv-redir.net/images/67381F0B/-1/5272/3cdc4fcb/main.RTF.
+
+#### 2. Analyze the Question
+
+**Question:**
+- Which ATT&CK tactic most likely occurred before Sidewinder's HTA file used WMI to check for installed antivirus software on the victim's system?
+
+**Answer Choices:**
+- A: Impact
+- B: Command and Control
+- C: Discovery
+- D: Persistence
+
+#### 3. Compare and Evaluate
+
+**Initial Access:**
+- The attack starts with the exploitation of CVE-2017-11882 using an RTF document to download an HTA file.
+
+**Execution:**
+- The HTA file is executed, and it checks for installed antivirus software using WMI.
+
+**Persistence:**
+- The backdoor establishes persistence by creating a Run key in the registry.
+
+**Defense Evasion:**
+- The HTA file avoids using PowerShell and uses VBS. The backdoor employs DLL sideloading.
+
+**Command and Control:**
+- The HTA file communicates with the C2 server to send information about the installed antivirus software.
+
+**Discovery:**
+- The HTA file uses WMI to check for installed antivirus software, which is a discovery technique.
+
+**Reasoning:**
+- The question asks which tactic occurred before the HTA file used WMI to check for installed antivirus software.
+- The WMI check is a discovery technique, which is part of the Discovery tactic.
+- Before the discovery, the HTA file must have been executed, which is part of the Execution tactic.
+- The Execution tactic is the most immediate and necessary step before the discovery.
+
+#### 4. Final Answer
+
+**Final Answer: C: Discovery**

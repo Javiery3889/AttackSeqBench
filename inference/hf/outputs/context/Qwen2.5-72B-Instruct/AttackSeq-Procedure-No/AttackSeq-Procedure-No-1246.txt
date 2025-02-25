@@ -1,0 +1,59 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- SUNSPOT malware was used to insert the SUNBURST backdoor into SolarWinds Orion IT management product builds.
+- The malware was designed to monitor processes involved in the compilation of the Orion product and replace a source file to include the SUNBURST backdoor code.
+- The malware was identified on disk with the filename taskhostsvc.exe and internally named taskhostw.exe by its developers.
+- It was built on February 20, 2020, and maintained persistence through a scheduled task set to execute at host boot.
+
+**Persistence:**
+- SUNSPOT maintains persistence through a scheduled task set to execute when the host boots.
+
+**Privilege Escalation:**
+- SUNSPOT grants itself debugging privileges by modifying its security token to add SeDebugPrivilege.
+
+**Defense Evasion:**
+- SUNSPOT employs several defense evasion techniques, including:
+  - AES128-CBC encryption to protect targeted source code files and the backdoored source code file in the binary.
+  - RC4 encryption with a hard-coded key to protect log file entries.
+  - Masquerading as a legitimate Windows binary.
+  - Writing logs in a fake VMWare log file.
+  - Inserting the backdoor code within #pragma statements to disable and restore warnings, preventing the backdoor code lines from appearing in build logs.
+
+**Discovery:**
+- SUNSPOT monitors running processes for instances of MsBuild.exe, which is part of Microsoft Visual Studio development tools, to detect the targeted Visual Studio solution build.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After monitoring running processes for instances of MsBuild.exe as part of the Discovery tactic, is it likely that SUNSPOT will engage in double-extortion ransomware, exfiltrating files then encrypting them, as part of the Impact tactic?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- SUNSPOT is primarily focused on inserting a backdoor into the SolarWinds Orion product.
+- It maintains persistence, escalates privileges, and evades detection.
+- It monitors processes for MsBuild.exe to detect the build process of the targeted solution.
+
+**Evaluation of Answer Choices:**
+- **A: Yes**
+  - This would imply that SUNSPOT is designed to exfiltrate and encrypt files as part of a double-extortion ransomware attack.
+  - However, the CTI report does not mention any activities related to file exfiltration or encryption. The primary focus is on inserting a backdoor and maintaining persistence.
+- **B: No**
+  - This aligns with the information provided in the CTI report. SUNSPOT's primary goal is to insert a backdoor and maintain persistence, not to engage in ransomware activities.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The CTI report clearly outlines the primary objectives of SUNSPOT, which are to insert a backdoor into the SolarWinds Orion product, maintain persistence, escalate privileges, and evade detection.
+- There is no mention of any activities related to file exfiltration or encryption, which are typical characteristics of double-extortion ransomware.
+- The focus on monitoring MsBuild.exe is to detect the build process of the targeted solution, not to prepare for a ransomware attack.
+
+**Final Answer:**
+B: No

@@ -1,0 +1,20 @@
+Okay, so I'm trying to figure out whether APT10 would connect to the IPC$ share on remote machines before establishing persistence through services or the Run registry key after using DLL Side-Loading. Let me break this down step by step.
+
+First, I remember that APT10 is known for using DLL Side-Loading as part of their initial access tactics. DLL Side-Loading involves loading malicious DLLs into legitimate executables, which allows them to gain access without being detected as easily. This method is often used in the initial stages of an attack to establish a foothold on a target system.
+
+Now, the question is about the sequence of actions APT10 takes after this initial access. The options are whether they connect to the IPC$ share before or after establishing persistence through services or the Run registry key.
+
+I think about how APT groups typically operate. After gaining initial access, they usually look to establish persistence so that their access isn't lost after a reboot or if someone logs off. Common persistence methods include creating startup entries in the registry (like HKLM\Software\Microsoft\Windows\CurrentVersion\Run), scheduling tasks with Task Scheduler, or using services like svchost.exe.
+
+But wait, I also recall that some APTs, especially ones that are more advanced, might use alternative persistence methods, especially if they're trying to avoid detection. One such method is abusing the IPC$ share, which is a hidden share in Windows that's not meant for regular use. By connecting to this share, they can load additional malicious content or modules without being noticed as easily.
+
+So, putting this together, after using DLL Side-Loading to gain initial access, APT10 might first connect to the IPC$ share to transfer more malicious files or modules. This makes sense because it's a less obvious method of lateral movement and can help in maintaining persistence without using the more commonly known registry or service-based persistence techniques. Therefore, it's likely that they connect to the IPC$ share before setting up services or registry entries for persistence.
+</think>
+
+The sequence of TTPs used by APT10 in this scenario is as follows:
+
+1. **DLL Side-Loading**: APT10 uses this technique to load malicious DLLs into legitimate executables for initial access.
+2. **Connecting to IPC$ Share**: After initial access, APT10 connects to the IPC$ share to transfer additional malicious modules or content, which helps in lateral movement and evading detection.
+3. **Establishing Persistence**: Finally, they establish persistence through services or registry keys as a secondary method, but the IPC$ share connection comes first.
+
+**Answer: A: Yes**

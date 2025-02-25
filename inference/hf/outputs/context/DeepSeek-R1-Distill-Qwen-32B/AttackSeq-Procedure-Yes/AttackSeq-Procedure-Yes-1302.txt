@@ -1,0 +1,18 @@
+Okay, so I'm trying to figure out whether SWEED's malware, educrety.exe, will drop a PE file before using credential dumping techniques. Let me go through the CTI report step by step to understand the attack sequence.
+
+First, the report mentions that the attack started with an Initial Access via Spearphishing Attachment (T1193). The email had an Excel document that looked legitimate. When the victim opened it, there was no macro code, but it had a hidden object exploiting CVE-2017-11882, which is T1204 - User Execution. So, the execution happened silently without user interaction.
+
+Next, for Defense Evasion, the report lists T1107 (File Deletion), T1158 (Hidden Files and Directories), and T1045 (Software Packing). So, the malware used software packing to obfuscate the payload and deleted the original file after infection. That makes sense as common evasion techniques.
+
+Then, under Collection, it says the malware collected data from the local system (T1005). This likely includes credential dumping, as that's a common collection method. The Command and Control section mentions that stolen credentials were sent to a server, using T1043 and T1071, which are about using common ports and standard protocols. Exfiltration involved encrypting data before sending it out (T1002).
+
+The "Others" section adds that the malware includes a dropped PE file with a specific hash and a malicious document. It also mentions the dropping URL for educrety.exe. Additionally, the attack used a Microsoft Office exploit and LokiBot, which is known for credential theft.
+
+So, putting it all together: the attack starts with a spearphishing email, executes via an exploit, uses software packing and file deletion for evasion, collects data (including credentials), and exfiltrates it. The fact that a PE file was dropped (educrety.exe) suggests that after the initial execution, the malware would drop this file. Credential dumping is part of the collection phase, which comes after the malware is executed and possibly after dropping additional files.
+
+Therefore, the sequence would be: Spearphishing Attachment (T1193) → Execution via exploit (T1204) → Defense Evasion (T1045, T1107, T1158) → dropping PE file → Collection (T1005, which includes credential dumping). So, yes, the PE file is dropped before credential dumping.
+</think>
+
+The attack sequence involves the malware educrety.exe being dropped after initial execution and before credential dumping. The report confirms the dropping of a PE file and the use of credential dumping as part of the collection phase. 
+
+Final Answer: A: Yes

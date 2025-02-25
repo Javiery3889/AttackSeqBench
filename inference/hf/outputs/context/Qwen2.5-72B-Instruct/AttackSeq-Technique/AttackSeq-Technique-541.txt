@@ -1,0 +1,59 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The RAT Poison Ivy (PIVY) variant, SPIVY, uses DLL sideloading.
+- It drops a decoy document, a DLL named ActiveUpdate.dll, and the PIVY shellcode file as Active.dat in a directory named ActiveUpdate_[0-9]{3}.
+- It copies rundll32.exe to ActiveFlash.exe and executes the new file with the path to the DLL.
+- It installs itself for automatic startup via a .lnk in the Windows Startup folder.
+
+**Execution:**
+- The PIVY variant copies rundll32.exe to ActiveFlash.exe and executes the new file with the path to the DLL to perform its malicious actions.
+
+**Persistence:**
+- The PIVY variant installs itself for automatic startup via a .lnk in the Windows Startup folder.
+
+**Defense Evasion:**
+- The PIVY variant uses DLL sideloading to load the dropped DLL and perform its malicious actions.
+- The malware's configuration has been modified to confuse some publicly available tools that parse the configuration data.
+- The C2s are no longer null-padded, and each hostname ends with a null-byte followed by a string that changes slightly with each Command & Control (C2) server.
+
+**Others:**
+- PIVY samples were observed targeting Myanmar and several other countries in Asia.
+- The targeting of post-election Myanmar appears to be following the same style as what was mentioned in the "Uncovering the Seven Pointed Dagger" paper by ASERT.
+- A possible connection exists given that the C2 for these samples resolved to an IP contained within 103.240.203.0/22, as did a 9002 RAT sample in the Seven Pointed Dagger exploitation campaign.
+- A "LURK0" Gh0strat and another PIVY domain were also observed to have resolved to IPs contained within this range, making this subnet more suspicious from a targeted attack perspective.
+
+#### 2. Analyze the Question
+
+**Question:**
+After the RAT Poison Ivy variant uses DLL sideloading to evade defenses and prepares its malicious actions, which ATT&CK technique most likely occurs as it starts communicating with its C2 servers using modified configurations?
+
+**Answer Choices:**
+A: T1574-Hijack Execution Flow
+B: T1001.002-Steganography
+C: T1111-Multi-Factor Authentication Interception
+D: T1071-Application Layer Protocol
+
+#### 3. Compare and Evaluate
+
+**T1574-Hijack Execution Flow:**
+- This technique involves modifying the way programs are loaded or executed to run malicious code. While the report mentions DLL sideloading, which is a form of hijacking execution flow, this technique is more about the initial execution and persistence, not communication with C2 servers.
+
+**T1001.002-Steganography:**
+- This technique involves hiding data within other data to evade detection. The report does not mention any use of steganography.
+
+**T1111-Multi-Factor Authentication Interception:**
+- This technique involves intercepting multi-factor authentication (MFA) credentials. The report does not mention any MFA interception.
+
+**T1071-Application Layer Protocol:**
+- This technique involves using standard application layer protocols to communicate with C2 servers. The report mentions that the C2s are no longer null-padded and each hostname ends with a null-byte followed by a string that changes slightly with each C2 server. This indicates that the malware is using a modified configuration to communicate with its C2 servers, which aligns with the use of application layer protocols to evade detection.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The report clearly states that the PIVY variant uses DLL sideloading for defense evasion and then prepares its malicious actions.
+- After this, the malware starts communicating with its C2 servers using modified configurations.
+- The modified configurations and the use of application layer protocols to communicate with C2 servers align with the T1071-Application Layer Protocol technique.
+
+**Final Answer: D: T1071-Application Layer Protocol**

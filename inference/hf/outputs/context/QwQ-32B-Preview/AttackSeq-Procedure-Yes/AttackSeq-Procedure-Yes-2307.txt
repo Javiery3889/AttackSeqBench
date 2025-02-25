@@ -1,0 +1,71 @@
+Alright, I've got this CTI outline to analyze, and there's a specific question about the adversary's actions after using Cobalt Strike for lateral movement. I need to determine whether it's likely that the adversary will copy the results of their discovery phase, like file and directory lists from network shared drives, before exfiltrating this data using cloud storage web services.
+
+First, I need to understand the attack sequence as described in the CTI outline. The adversary starts with initial access by obtaining credentials from previous breaches and uses them for credential stuffing or password spraying attacks against remote services like webmail. Once they gain access, they use this account to get into the victim's VPN or Citrix services, which allows them to reach the internal network.
+
+Next, they execute their tools, primarily Cobalt Strike, which is a powerful framework used by both red teams and attackers. They install the Cobalt Strike beacon in memory using PowerShell, and they use scheduled tasks to run batch files for their activities. It's mentioned that they use multiple versions of Cobalt Strike, which suggests they are adaptive and keep updating their tools.
+
+For persistence, they don't leave any mechanisms on the compromised system beyond keeping the Cobalt Strike beacon in memory. However, since servers have high uptimes, they can maintain access through these systems. They also look for VPN and firewall configs possibly to ensure they have backup access routes.
+
+In terms of privilege escalation, they perform password spraying attacks against domain admin accounts and manage to get valid domain admin credentials. They also use tools like NtdsAudit to dump password hashes of domain users, which is a common tactic for moving laterally within a network.
+
+Defense evasion is another key aspect; they attempt to clean up their traces by clearing Windows event logs, deleting files, and using timestomping to alter file timestamps to avoid detection.
+
+Credential access is achieved through brute force methods, specifically credential stuffing and password spraying. They target usernames formatted as email addresses, which is different from the victim's usual username format, suggesting they are using credentials obtained from other breaches.
+
+Discovery tactics are extensive; they use tools like PsLogList to export security event logs, likely to identify active privileged users. They also use Cobalt Strike's built-in Mimikatz to dump credentials or password hashes from memory.
+
+Lateral movement is performed using Cobalt Strike's built-in methods such as SMB, named pipes, PsExec, and WinRM. Their goal seems to be to quickly move towards domain controllers and continue lateral movement and discovery to identify data of interest, such as PII from webserver memory or IP from file servers.
+
+Command and control communications are managed through Cobalt Strike, with a shift from DNS to HTTPS encapsulation over time. They used a cracked or patched trial version of Cobalt Strike, which has limitations, particularly in encryption for C2 traffic unless using protocols like HTTPS.
+
+Exfiltration is done in two ways: small amounts of data like account details through the C2 channel and larger amounts like mailboxes and network shares through custom tools that upload data to cloud storage services like Dropbox, Google Drive, and OneDrive.
+
+Now, looking at the question: "After leveraging built-in lateral movement capabilities in Cobalt Strike to identify target systems and data of interest, is it likely that the adversary will copy results of the discovery phase, such as file and directory lists from network shared drives, before exfiltrating this data using cloud storage web services?"
+
+So, the question is asking whether, after moving laterally and identifying what they want, they would copy the discovery phase results before exfiltrating data via cloud services.
+
+Let's break this down:
+
+1. The adversary uses Cobalt Strike for lateral movement and discovery.
+
+2. They identify target systems and data of interest.
+
+3. The question is about whether they would copy the results of the discovery phase, specifically file and directory lists from network shared drives, before exfiltrating data using cloud storage services.
+
+First, we need to understand what the discovery phase entails. From the CTI outline, the discovery phase involves using various tools to map the network, identify active users, and gather information about the environment. This includes using PsLogList to export security event logs, likely to find out which users are active and what their privileges are.
+
+They also use Mimikatz to dump credentials from memory, which is another discovery activity to get more credentials for lateral movement.
+
+Given that they are performing extensive discovery, it's reasonable to assume that they would collect file and directory lists from network shared drives as part of understanding what data is available and where it's stored.
+
+Now, the question is whether they would copy these discovery results before exfiltrating the actual data using cloud storage services.
+
+Let's consider why they might copy these results:
+
+- To have a local cache of the directory structure, making it easier to navigate and select files for exfiltration without repeatedly querying the network shares.
+
+- To reduce network noise and avoid detection by limiting the number of times they access the network shares.
+
+- To speed up the exfiltration process by having a list readily available.
+
+On the other hand, perhaps they don't need to copy the lists because they can access the network shares directly when needed.
+
+But considering that they are using cloud storage services for exfiltration, which might involve some preparation of the data (compressing, encrypting, staging), it makes sense that they would first compile a list of what they want to exfiltrate.
+
+Moreover, the CTI outline mentions that they exfiltrate "large amounts of data, such as mailboxes and network shares with intellectual property, [by] using a custom built tool. This tool exfiltrates specified files to cloud storage web services."
+
+The phrase "specified files" suggests that they have a list of files they want to exfiltrate, which implies that they have already compiled a list of targets.
+
+Therefore, it's likely that they copy the results of the discovery phase, including file and directory lists from network shared drives, before exfiltrating the data using cloud storage web services.
+
+This would help them in organizing and selecting what to exfiltrate efficiently.
+
+Additionally, considering that they use scheduled tasks and batch files, having a list of files to exfiltrate would make it easier to automate the process.
+
+Furthermore, the fact that they use a custom tool for exfiltration suggests that this tool might be designed to take a list of files as input and handle the uploading to cloud services.
+
+Therefore, based on the information provided in the CTI outline, it is plausible that the adversary would copy the discovery phase results before exfiltrating the data.
+
+Hence, the answer should be "Yes."
+
+**Final Answer: A**

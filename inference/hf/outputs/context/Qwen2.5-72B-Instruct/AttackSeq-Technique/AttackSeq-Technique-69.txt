@@ -1,0 +1,78 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The campaign uses the Adwind RAT, targeting the petroleum industry in the US.
+- The RAT is hosted on a compromised Westnet user account at 'members[.]westnet[.]com[.]au/~joeven/'.
+- The payload involves multiple levels of JAR extractions.
+
+**Execution:**
+- The Adwind RAT executes a dropped JAR payload.
+- It creates a parent Java process and copies itself into the %User% directory.
+- It performs three actions:
+  - Executes the copy.
+  - Creates a registry entry in HKCU/CurrentVersion/Run for persistence.
+  - Creates WMI scripts in %temp% to disable firewall and antivirus services.
+- Subsequent JARs perform AES decryption routines and execute as new Java threads, leading to the loading of the JRAT class responsible for major RAT functionality.
+
+**Persistence:**
+- The Adwind RAT achieves persistence through registry modifications, specifically by creating a registry entry in HKCU/CurrentVersion/Run.
+
+**Collection:**
+- The RAT captures webcam images, scans the hard-drive for files based on extensions defined in the RAT's config, spins up multiple process threads, and performs injection into known legitimate Windows processes.
+
+**Command and Control:**
+- The JRAT class within the Adwind RAT tries connecting to its command and control server at the IP address 185[.]205[.]210[.]48.
+- It encrypts and exfiltrates data to this server.
+
+**Exfiltration:**
+- The Adwind RAT encrypts and exfiltrates data to its command and control server.
+
+**Others:**
+- The URLs hosting the Adwind RAT were reported to Westnet on September 9th, 2019.
+- The VirusTotal detection ratio for the top-level JAR was 5/56, while that of the final decrypted JAR was 49/58.
+- The campaign has been active over the last couple of years, with the RAT supporting cross-platform functionality for Windows, Linux, and Mac.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After achieving persistence through registry modifications, which ATT&CK technique most likely occurred to hinder detection by disabling firewall and antivirus services?
+
+**Answer Choices:**
+- A: T1562-Impair Defenses
+- B: T1562-Impair Defenses
+- C: T1078-Valid Accounts
+- D: T1657-Financial Theft
+
+#### 3. Compare and Evaluate
+
+**Extracted Attack Sequence:**
+1. Initial Access: Hosting the RAT on a compromised Westnet user account.
+2. Execution: Executing the JAR payload, creating a parent Java process, and performing actions including creating a registry entry and WMI scripts to disable firewall and antivirus services.
+3. Persistence: Creating a registry entry in HKCU/CurrentVersion/Run.
+4. Collection: Capturing webcam images, scanning the hard-drive, and performing process injection.
+5. Command and Control: Connecting to the C2 server and exfiltrating data.
+6. Exfiltration: Encrypting and exfiltrating data to the C2 server.
+
+**Key Action:**
+- After achieving persistence, the RAT creates WMI scripts in %temp% to disable firewall and antivirus services.
+
+**ATT&CK Technique:**
+- T1562-Impair Defenses: This technique involves adversaries modifying or manipulating system settings or files to disable or reduce the effectiveness of security products, such as firewalls and antivirus services.
+
+**Evaluation of Answer Choices:**
+- A: T1562-Impair Defenses - This matches the action of creating WMI scripts to disable firewall and antivirus services.
+- B: T1562-Impair Defenses - This is the same as A.
+- C: T1078-Valid Accounts - This technique involves using legitimate user accounts to gain access, which is not relevant to the action of disabling security services.
+- D: T1657-Financial Theft - This technique involves stealing financial information, which is not relevant to the action of disabling security services.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The CTI report clearly states that after achieving persistence, the RAT creates WMI scripts to disable firewall and antivirus services.
+- The ATT&CK technique T1562-Impair Defenses directly corresponds to this action.
+- Both answer choices A and B are the same and correct.
+
+**Final Answer:**
+- Final Answer: A: T1562-Impair Defenses

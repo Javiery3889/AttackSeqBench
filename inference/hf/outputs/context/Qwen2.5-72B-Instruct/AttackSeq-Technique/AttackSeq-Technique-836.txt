@@ -1,0 +1,73 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- WinDealer executes by reading its configuration from a file under `C:\ProgramData`.
+- It loads a DLL module into memory.
+- The malware steals information from the victim's PC, including network configuration and SNS application details.
+- Stolen data is saved with a ".a" extension in the `%TEMP%` directory.
+- Data is sent to a C2 server.
+
+**Defense Evasion:**
+- Configuration files are encoded using XOR with the key "b6a7%7486".
+- Communication with C2 servers is encrypted using AES and RSA.
+- Stolen information is encrypted using AES128bit ECB mode before transmission.
+
+**Discovery:**
+- WinDealer discovers information about the infected PC and network configuration.
+- It processes and stages stolen data in a folder under `%TEMP%`, encrypting it with AES before sending it to a C2 server.
+
+**Collection:**
+- The malware collects data from the victim's PC, including files from USB memory, documents, desktop items, and recycle bin contents.
+- It also targets folders related to SNS applications.
+- Collected data is processed into ".a" files and categorized into different directories based on the data type.
+
+**Exfiltration:**
+- Stolen data is exfiltrated to a C2 server after processing and encrypting it.
+- Data is sent from the `%TEMP%` directory where it is staged as ".a" files.
+
+**Others:**
+- The LuoYu Attack Group targets Korean and Japanese organizations.
+- WinDealer operates on various platforms.
+- The malware uses a hardcoded RSA1024bit public key for encryption.
+- Communication with C2 servers includes sending an encrypted AES key and receiving commands.
+- The DLL module, named "MozillaDll.dll", has export functions for stealing data, setting configuration, and initiating commands.
+- The malware monitors and processes data from USB memory and SNS application folders.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After processing and staging stolen data in the `%TEMP%` directory with AES encryption for exfiltration, which ATT&CK technique most likely enabled WinDealer to initiate communications with its C2 server using UDP port 6999 or TCP port 55556?
+
+**Answer Choices:**
+- A: T1571-Non-Standard Port
+- B: T1102.003-One-Way Communication
+- C: T1037.005-Startup Items
+- D: T1518-Software Discovery
+
+#### 3. Compare and Evaluate
+
+**T1571-Non-Standard Port:**
+- This technique involves using non-standard ports for communication to avoid detection by network security devices.
+- The report mentions that WinDealer communicates with C2 servers using UDP port 6999 or TCP port 55556, which are non-standard ports.
+
+**T1102.003-One-Way Communication:**
+- This technique involves sending data to a C2 server without receiving any response.
+- The report does not specify that the communication is one-way; it mentions sending and receiving commands.
+
+**T1037.005-Startup Items:**
+- This technique involves adding a program to the system's startup to ensure it runs automatically.
+- The report does not mention any startup items or persistence mechanisms.
+
+**T1518-Software Discovery:**
+- This technique involves discovering software installed on the victim's system.
+- The report mentions discovery of information about the infected PC and network configuration, but not specifically software discovery.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The report clearly states that WinDealer communicates with C2 servers using non-standard ports (UDP 6999 and TCP 55556).
+- The technique T1571-Non-Standard Port aligns with this behavior, as it involves using non-standard ports to avoid detection.
+- The other techniques (T1102.003-One-Way Communication, T1037.005-Startup Items, and T1518-Software Discovery) do not match the specific communication method described in the report.
+
+**Final Answer: A: T1571-Non-Standard Port**

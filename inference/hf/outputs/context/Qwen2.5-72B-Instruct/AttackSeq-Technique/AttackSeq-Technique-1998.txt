@@ -1,0 +1,74 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- Creates an unnamed event object and two new threads.
+- Uses GetMessage to process messages and breaks the loop if the message is WM_ENDSESSION.
+- Creates an anonymous pipe and uses GetStartupInfoA to retrieve the STARTUPINFO structure.
+- Creates a new process to run the systeminfo command and reads the output via ReadFile.
+- Retrieves the list of processes by running the tasklist command and reading the output.
+
+**Defense Evasion:**
+- Uses GetTempPathW to retrieve the %TEMP% directory.
+- Initializes WinINet functions with InternetOpenW, setting the user agent to "Opera".
+- Sets send and receive timeouts to 600 seconds using InternetSetOptionW.
+- Establishes a connection to the C2 server updaterweb[.]com on port 443 (or port 80 if it fails).
+- Uses HttpOpenRequestW to create an HTTP POST request handle and adds an HTTP request header.
+
+**Collection:**
+- Base64 encodes the output of the systeminfo and tasklist commands, along with the list of targeted directories and their content, using CryptBinaryToStringA.
+
+**Command and Control:**
+- Communicates with the C2 server updaterweb[.]com, sending exfiltrated data in a POST request.
+- Downloads a DLL file from the C2 server, loads it using LoadLibraryW, and executes the first ordinal function.
+
+**Exfiltration:**
+- Exfiltrates collected information to the C2 server updaterweb[.]com using an HTTP POST request.
+
+**Others:**
+- Uses CryptAcquireContextA and CryptCreateHash to create a hash object and verify the hash value of a downloaded DLL file.
+- Creates a file called fvjoik.dll in the %TEMP% directory, populates it with the DLL, and executes an exported function with ordinal 1.
+- Uses WinExec to delete the DLL file after execution.
+- Retrieves the termination status of the two threads using GetExitCodeThread.
+
+#### 2. Analyze the Question
+
+**Question:**
+After creating an HTTP POST request to establish connection with updaterweb[.]com and attempting to retrieve files from directories such as 'C:\Program Files' using FindFirstFileW and FindNextFileW, which ATT&CK technique most likely occurred before SkinnyBoy encoded collected system information for transmission?
+
+**Answer Choices:**
+A: T1057-Process Discovery
+B: T1033-System Owner/User Discovery
+C: T1484.001-Group Policy Modification
+D: T1071-Application Layer Protocol
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- The malware establishes a connection to the C2 server using HTTP POST.
+- It retrieves the list of processes by running the tasklist command.
+- It collects data by base64 encoding the output of the systeminfo and tasklist commands, along with the list of targeted directories and their content.
+
+**Sequence of Events:**
+1. **Establish Connection:**
+   - Establishes a connection to the C2 server using HTTP POST.
+2. **Retrieve Files:**
+   - Attempts to retrieve files from directories such as 'C:\Program Files' using FindFirstFileW and FindNextFileW.
+3. **Collect Data:**
+   - Collects data by base64 encoding the output of the systeminfo and tasklist commands, along with the list of targeted directories and their content.
+
+**Evaluation of Answer Choices:**
+- **A: T1057-Process Discovery:**
+  - The malware retrieves the list of processes by running the tasklist command, which aligns with process discovery.
+- **B: T1033-System Owner/User Discovery:**
+  - The report does not mention any specific techniques for discovering the system owner or user.
+- **C: T1484.001-Group Policy Modification:**
+  - The report does not mention any techniques related to group policy modification.
+- **D: T1071-Application Layer Protocol:**
+  - The malware uses HTTP POST to communicate with the C2 server, which is an application layer protocol, but this is not the step that occurs before encoding the collected data.
+
+**Conclusion:**
+The most likely technique that occurred before SkinnyBoy encoded collected system information for transmission is **T1057-Process Discovery**. The malware retrieves the list of processes using the tasklist command, which is a key step in the data collection process before encoding and exfiltration.
+
+### Final Answer: A: T1057-Process Discovery

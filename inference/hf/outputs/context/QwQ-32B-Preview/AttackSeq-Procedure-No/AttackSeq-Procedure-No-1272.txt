@@ -1,0 +1,87 @@
+Alright, I have this CTI outline from Symantec about a series of attacks involving WastedLocker ransomware, attributed to the group Evil Corp. The outline goes through different stages of the MITRE ATT&CK framework, detailing how the attack progresses from reconnaissance to impact. My task is to answer a specific question based on this outline, choosing between "Yes" or "No" for whether the ransomware is likely to delete system volume shadow copies via PowerShell commands in the impact phase.
+
+First, I need to understand the sequence of events as described in the CTI outline. Let's break it down step by step.
+
+**Reconnaissance:**
+- Symantec identified attacks against U.S. organizations aimed at deploying WastedLocker ransomware.
+- The attackers are linked to Evil Corp and used a malicious JavaScript-based framework called SocGholish on over 150 compromised websites.
+- The SocGholish framework masqueraded as a software update to initiate the attack.
+
+**Initial Access:**
+- The initial compromise involved the SocGholish framework delivered via compromised legitimate websites.
+- Victims received a zipped file containing malicious JavaScript disguised as a browser update.
+- This led to the execution of a second JavaScript file by wscript.exe, which profiled the computer and downloaded additional discovery-related PowerShell scripts.
+
+**Execution:**
+- Attackers deployed Cobalt Strike using PowerShell to download and execute a loader.
+- The loader contained a .NET injector from an open-source project called Donut, used to execute the Cobalt Strike Beacon payload.
+- The Beacon payload could execute commands, inject processes, escalate privileges, and upload/download files.
+
+**Privilege Escalation:**
+- Privilege escalation was achieved using a publicly documented technique involving slui.exe (Software Licensing User Interface tool).
+- Wmic.exe was also used to execute commands on remote computers.
+
+**Defense Evasion:**
+- To deploy the ransomware, attackers used PsExec to manage Windows Defender, disabling scanning, removing definitions, and sometimes disabling real-time monitoring.
+- PsExec was also used to stop services across the organization before launching WastedLocker.
+
+**Credential Access:**
+- Cobalt Strike was used for credential dumping using ProcDump and to empty log files to conceal activities.
+
+**Discovery:**
+- The discovery phase involved using commands like whoami, net user, net group, and Get-NetComputer from PowerView to search for computer objects in the Active Directory.
+
+**Lateral Movement:**
+- Cobalt Strike Beacon was used for lateral movement, executing commands and injecting processes on remote computers.
+
+**Command and Control:**
+- The Cobalt Strike Beacon payload communicated with a C&C domain associated with WastedLocker infrastructure.
+
+**Others:**
+- Symantec's Targeted Attack Cloud Analytics proactively detected the attacks.
+- The Threat Hunter team verified the activity and alerted customer organizations, mostly major U.S. corporations, including Fortune 500 companies.
+- Symantec implemented protections and reported IoCs to relevant parties.
+
+Now, the question is: After the WastedLocker ransomware is deployed using PsExec to stop services and disable Windows Defender during the Defense Evasion phase, is it likely that the ransomware will delete system volume shadow copies via PowerShell commands in the Impact phase?
+
+Let's analyze this.
+
+First, I need to understand what the impact phase entails. In the MITRE ATT&CK framework, the impact stage includes actions that affect the availability of resources to users, such as data or systems, often through ransomware or wipers.
+
+In this case, the deployment of WastedLocker ransomware is the primary action in the impact phase. The outline mentions that PsExec is used to stop services and disable Windows Defender as part of defense evasion before launching the ransomware.
+
+The question is asking whether, in addition to these actions, it's likely that the ransomware will delete system volume shadow copies via PowerShell commands during the impact phase.
+
+Volume shadow copies are backups created by Windows System Restore and File History features. Ransomware actors often delete these shadows to prevent victims from restoring their files to a state before the encryption.
+
+So, is it likely that WastedLocker would delete shadow copies?
+
+Well, from what's provided in the outline, we know that:
+
+- The defense evasion phase includes using PsExec to manage Windows Defender and stop services.
+
+- The impact phase involves deploying the ransomware.
+
+However, the outline doesn't explicitly mention the deletion of shadow copies as part of the impact phase or any other phase.
+
+But, given that it's a common tactic for ransomware to delete shadow copies to prevent data recovery, it's reasonable to infer that WastedLocker might do the same, even if it's not explicitly stated in the outline.
+
+Moreover, since the outline mentions that PsExec is used to manage Windows Defender and stop services, it's possible that PowerShell commands are used for various tasks, including deleting shadow copies.
+
+But to answer the question, I need to determine if it's likely based on the information provided.
+
+Looking back at the outline, there's no direct mention of deleting shadow copies. However, the defense evasion phase includes actions to disable defenses and stop services, which could plausibly include deleting shadow copies to prevent recovery.
+
+Given that, and considering that it's a standard practice for many ransomware operators to delete shadow copies, I would lean towards saying "Yes, it is likely."
+
+But let's consider the other option.
+
+If I choose "No," that means it's not likely that WastedLocker deletes shadow copies via PowerShell in the impact phase. However, this seems less plausible because deleting shadow copies is a common tactic in ransomware attacks to prevent data recovery without paying the ransom.
+
+Furthermore, the outline mentions that PsExec is used to manage Windows Defender and stop services, which suggests that the attackers have the capability to run commands on the system, possibly including PowerShell commands to delete shadow copies.
+
+Therefore, based on the information provided and the typical behavior of ransomware, it's more likely that WastedLocker deletes shadow copies as part of its impact activities.
+
+Hence, the answer should be "Yes."
+
+**Final Answer: A**

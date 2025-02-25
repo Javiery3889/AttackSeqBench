@@ -1,0 +1,56 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- APT Sidewinder exploited CVE-2017-11882 using an RTF document to download an HTA file from the domain webserv-redir.net.
+
+**Execution:**
+- The HTA file contained within the RTF document executed a script that stopped if certain antivirus software was detected.
+- If not detected, it proceeded to run a backdoor named FinalBot.exe, which was extracted from a zip file and renamed to Srvstr.exe in the directory.
+
+**Defense Evasion:**
+- Sidewinder's HTA file avoided using PowerShell and instead used VBS.
+- The backdoor employed a technique called DLL sideloading, using cmpbk32.dll to execute Srvstr.exe.
+
+**Discovery:**
+- The HTA file used WMI to discover installed antivirus products on the victim's system.
+
+**Command and Control:**
+- The HTA file communicated with the C2 server to send information about the installed antivirus software. The domain used for C2 communication was webserv-redir.net.
+
+#### 2. Analyze the Question
+
+**Question:**
+Which ATT&CK tactic most likely occurred after APT Sidewinder executed the FinalBot backdoor by renaming it to Srvstr.exe and before it used DLL sideloading with cmpbk32.dll to avoid detection?
+
+**Answer Choices:**
+A: Persistence
+B: Command and Control
+C: Execution
+D: Initial Access
+
+#### 3. Compare and Evaluate
+
+**Sequence of Events:**
+1. **Initial Access:** Exploited CVE-2017-11882 using an RTF document to download an HTA file.
+2. **Execution:** The HTA file executed a script to check for antivirus software and, if not detected, ran FinalBot.exe, which was renamed to Srvstr.exe.
+3. **Defense Evasion:** The backdoor used DLL sideloading with cmpbk32.dll to avoid detection.
+
+**Key Points:**
+- The question asks about the tactic that occurred after the execution of the backdoor (renaming FinalBot.exe to Srvstr.exe) and before the use of DLL sideloading.
+- The execution of the backdoor (Srvstr.exe) is part of the **Execution** phase.
+- The use of DLL sideloading is part of the **Defense Evasion** phase.
+
+**Possible Tactic:**
+- **Persistence:** This tactic involves maintaining access to the system over time. It is not mentioned in the report as occurring between the execution of the backdoor and the use of DLL sideloading.
+- **Command and Control:** This tactic involves communicating with the C2 server. The report mentions that the HTA file communicated with the C2 server to send information about the installed antivirus software, but this communication is not specifically tied to the execution of the backdoor or the use of DLL sideloading.
+- **Execution:** This tactic is already part of the sequence where the backdoor is executed.
+- **Initial Access:** This tactic is the initial entry point and occurs before the execution of the backdoor.
+
+**Evaluation:**
+- The most plausible tactic that fits the sequence is **Command and Control**. After the backdoor is executed and renamed, it is likely that the backdoor would communicate with the C2 server to establish a command and control channel before employing additional evasion techniques.
+
+#### 4. Final Answer
+
+Final Answer: B: Command and Control

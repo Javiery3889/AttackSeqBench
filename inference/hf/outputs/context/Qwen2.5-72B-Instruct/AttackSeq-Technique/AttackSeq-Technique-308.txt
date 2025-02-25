@@ -1,0 +1,60 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- Malicious email with a subject line "Wanna see the Game of Thrones in advance?"
+- Microsoft Word attachment "game of thrones preview.docx" containing an embedded .LNK object.
+- The .LNK object runs a PowerShell script to download and install the 9002 RAT.
+
+**Execution:**
+- The .LNK object executes a PowerShell command to download two files.
+- The first file contains the 9002 RAT shellcode, which is injected into wabmig.exe.
+- The second file is a .LNK file for persistence, stored in the Startup directory as UpdateCheck.lnk.
+
+**Persistence:**
+- The persistence .LNK file (UpdateCheck.lnk) contains a PowerShell script that decodes and injects the 9002 RAT shellcode into a newly created wabmig.exe process.
+
+**Defense Evasion:**
+- The 9002 RAT communicates over HTTP and fake SSL.
+- It uses hardcoded packets for Client_Hello and Client_Key_Exchange.
+- Data sent to the C&C is encoded using a custom algorithm followed by base64-encoding.
+- The malware mimics SSL traffic to login.live[.]com by sending that domain in the SNI field.
+- If the same URI is requested with any User-Agent, a legitimate JPG is returned to avoid detection.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After the 9002 RAT leverages Defense Evasion techniques by mimicking SSL traffic and encoding C&C data, which ATT&CK technique is most likely utilized next to enable communication with the C&C server using HTTP POST requests with encoded data?
+
+**Answer Choices:**
+- A: T1071.001-Web Protocols
+- B: T1590.006-Network Security Appliances
+- C: T1071-Application Layer Protocol
+- D: T1059-Command and Scripting Interpreter
+
+#### 3. Compare and Evaluate
+
+**Defense Evasion Techniques:**
+- The 9002 RAT uses HTTP and fake SSL to communicate with the C&C server.
+- It encodes data using a custom algorithm and base64-encoding.
+- It mimics SSL traffic to avoid detection.
+
+**Next Step:**
+- The question asks about the technique used to enable communication with the C&C server using HTTP POST requests with encoded data.
+
+**Evaluating Answer Choices:**
+- **A: T1071.001-Web Protocols**: This technique involves using web protocols (HTTP, HTTPS) for C&C communication. This aligns with the use of HTTP and fake SSL.
+- **B: T1590.006-Network Security Appliances**: This technique involves targeting network security appliances, which is not relevant to the communication method.
+- **C: T1071-Application Layer Protocol**: This is a broader category that includes web protocols, but it is less specific than T1071.001.
+- **D: T1059-Command and Scripting Interpreter**: This technique involves using command-line interfaces and scripts, which is not directly related to C&C communication.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The 9002 RAT uses HTTP and fake SSL to communicate with the C&C server.
+- The data is encoded using a custom algorithm and base64-encoding.
+- The most specific and relevant technique for this communication method is T1071.001-Web Protocols, which involves using web protocols (HTTP, HTTPS) for C&C communication.
+
+**Final Answer:**
+A: T1071.001-Web Protocols

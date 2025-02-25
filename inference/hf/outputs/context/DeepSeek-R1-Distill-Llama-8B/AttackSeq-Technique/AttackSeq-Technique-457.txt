@@ -1,0 +1,28 @@
+Okay, so I'm trying to figure out which ATT&CK technique the CEIDPageLock rootkit uses to communicate with its C&C domains after it gathers browsing data. Let me break this down step by step.
+
+First, I'll look at the CTI outline provided. The rootkit is called CEIDPageLock, which is part of the RIG Exploit kit. It's a rootkit that's been detected tampering with the homepage of a victim's browser, redirecting it to a fake site. The main function of the dropper is to extract a driver named houzi.sys, which is saved in the Windows Temp directory. This driver is signed by Thawte Code Signing CA. Once the driver is registered and started, it sends the MAC address and user ID to the domain www.tj999.top.
+
+Looking at the Persistence section, the driver is a 32-bit kernel-mode driver that's launched during startup. It's designed to evade endpoint security products. It connects to one of two hard-coded C&C domains to download the homepage configuration, which is then used to tamper with the browser. The homepage is encrypted when downloaded from the C&C server.
+
+In the Collection section, the rootkit collects browsing data, like the websites visited and the time spent on each, which is then used for ad campaigns or sold. The Others section mentions that the malware targets Chinese victims specifically and adds a registry key related to 360Safe's security product.
+
+Now, the question is about the ATT&CK technique used for communication after gathering data. The options are A: T1213, B: T1205, C: T1071, D: T1189.
+
+I need to map the described behavior to the corresponding ATT&CK technique. Let's go through each option:
+
+- T1213.004 is Customer Relationship Management (CRM) Software. This usually involves using legitimate CRM systems to communicate, which doesn't fit here because the communication is via a hard-coded C&C domain, not through a CRM system.
+
+- T1205-Traffic Signaling refers to using legitimate traffic signaling protocols like DNS or HTTP for communication. The rootkit uses a hard-coded domain, which might involve DNS queries, but I'm not sure if that's the primary technique here.
+
+- T1071-Application Layer Protocol involves using protocols like HTTP or HTTPS for command and control. The C&C communication is done via a domain, which could involve DNS or HTTP, but the primary technique might be something else.
+
+- T1189-Drive-by Compromise is about exploiting vulnerabilities during a drive-by, which isn't directly related here since the rootkit is already installed.
+
+Wait, the rootkit uses a hard-coded domain to download the homepage configuration. This suggests that it's using a specific protocol or method to communicate with the C&C. Since the communication is via a domain, it's likely using DNS to resolve the domain name to a server, which is a form of traffic signaling. So T1205-Traffic Signaling makes sense because it involves the use of protocols like DNS to establish communication.
+
+Alternatively, T1071 could be considered if it's using HTTP, but the description doesn't specify HTTP traffic, just that the homepage is downloaded encrypted. The primary method here is the use of a hard-coded domain, which would involve DNS queries to resolve the domain, thus T1205.
+</think>
+
+The CEIDPageLock rootkit communicates with its C&C domains using a hard-coded domain, which involves DNS queries to establish contact. This aligns with the ATT&CK technique T1205-Traffic Signaling, which encompasses the use of protocols like DNS for communication.
+
+Final Answer: B: T1205-Traffic Signaling

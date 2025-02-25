@@ -1,0 +1,22 @@
+Okay, so I'm trying to figure out whether the adversaries would use reflective code loading before establishing persistence by hijacking COM references. Let me break this down step by step.
+
+First, the question is about the attack sequence: after using PowerShell to execute an Empire stager, would the attackers hide malicious payloads through reflective code loading before setting up persistence using a hijacked COM object with CLSID D9144DCD-E998-4ECA-AB6A-DCD83CCBA16D.
+
+I remember that the MITRE ATT&CK framework categorizes tactics and techniques. The related TTPs given are T1620 (Reflective Code Loading) under Defense Evasion and T1546.015 (Component Object Model Hijacking) under Persistence.
+
+Reflective code loading is a technique where an adversary injects malicious code into a running process without writing to disk. This is a common evasion technique because it's hard to detect since it doesn't leave a trace on the disk. It's often used during the initial stages of an attack to execute malicious payloads.
+
+On the other hand, persistence techniques ensure that the adversary's presence continues even after a system restart. T1546.015 involves hijacking a legitimate COM object, like a DLL, to execute malicious code. This would allow the adversary to maintain access to the system.
+
+So, the question is about the order: would they use reflective loading first to execute the payload and then use COM hijacking for persistence, or the other way around?
+
+I think the typical sequence is that attackers would first use a method to execute their payload, which would likely involve techniques like reflective loading to avoid detection. Once the payload is delivered, they would then work on establishing persistence, perhaps by hijacking a legitimate process or object to ensure their access remains after reboots or system restarts.
+
+In this case, using PowerShell to execute the Empire stager is the initial step. Empire is a tool used by the APT29 group, known for using PowerShell for various stages of their attacks. After executing the stager, the next step would be to run malicious code, which would probably be done via reflective loading to stay under the radar. Once the malicious code is running, the next logical step would be to set up persistence, which could be done through COM hijacking.
+
+So, the sequence would be: Reflective Code Loading (T1620) to execute the payload, followed by Component Object Model Hijacking (T1546.015) to establish persistence. Therefore, the answer should be Yes, they would use reflective loading before hijacking COM objects for persistence.
+</think>
+
+The adversaries would first use Reflective Code Loading (T1620) to execute malicious payloads without detection, then establish persistence via Component Object Model Hijacking (T1546.015).
+
+Final Answer: A: Yes

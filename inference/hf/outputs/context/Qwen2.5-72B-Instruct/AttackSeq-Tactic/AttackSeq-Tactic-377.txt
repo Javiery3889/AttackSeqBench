@@ -1,0 +1,68 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The PIVY variant uses DLL sideloading.
+- It drops a decoy document, a DLL named ActiveUpdate.dll, and the PIVY shellcode file as Active.dat in a directory named ActiveUpdate_[0-9]{3}.
+- It copies rundll32.exe to ActiveFlash.exe and executes the new file with the path to the DLL.
+
+**Persistence:**
+- The PIVY variant installs itself for automatic startup via a .lnk in the Windows Startup folder.
+
+**Defense Evasion:**
+- The PIVY variant uses DLL sideloading to load the dropped DLL and perform its malicious actions.
+- The malware's configuration has been modified to confuse some publicly available tools that parse the configuration data.
+- The C2s are no longer null-padded, and each hostname ends with a null-byte followed by a string that changes slightly with each C2 server.
+
+**Command and Control:**
+- The PIVY samples communicate with C2 servers such as webserver.servehttp[.]com and admin.nslookupdns[.]com.
+- The IP resolved to by these hostnames overlapped with fileshare.serveftp[.]com, which was used in an earlier PIVY sample.
+
+**Others:**
+- PIVY samples were observed targeting Myanmar and several other countries in Asia.
+- The targeting of post-election Myanmar appears to be following the same style as what was mentioned in the "Uncovering the Seven Pointed Dagger" paper by ASERT.
+- A possible connection exists given that the C2 for these samples resolved to an IP contained within 103.240.203.0/22, as did a 9002 RAT sample in the Seven Pointed Dagger exploitation campaign.
+- A "LURK0" Gh0strat and another PIVY domain were also observed to have resolved to IPs contained within this range, making this subnet more suspicious from a targeted attack perspective.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After gaining initial access using DLL sideloading and preparing the payload by dropping files such as ActiveUpdate.dll and Active.dat, which ATT&CK tactic most likely occurred before the malware established persistence through a .lnk file in the Windows Startup folder?
+
+**Answer Choices:**
+- A: Defense Evasion
+- B: Execution
+- C: Discovery
+- D: Persistence
+
+#### 3. Compare and Evaluate
+
+**Initial Access:**
+- The malware gains initial access using DLL sideloading and drops the necessary files (ActiveUpdate.dll and Active.dat).
+
+**Execution:**
+- The malware copies rundll32.exe to ActiveFlash.exe and executes the new file with the path to the DLL. This step is crucial for the malware to run and perform its actions.
+
+**Persistence:**
+- The malware installs itself for automatic startup via a .lnk in the Windows Startup folder.
+
+**Defense Evasion:**
+- The malware uses DLL sideloading to load the dropped DLL and perform its malicious actions. It also modifies its configuration to confuse detection tools and changes the C2 server format to avoid detection.
+
+**Sequence Analysis:**
+1. **Initial Access:** The malware gains access using DLL sideloading and drops the necessary files.
+2. **Execution:** The malware copies rundll32.exe to ActiveFlash.exe and executes the new file with the path to the DLL.
+3. **Defense Evasion:** The malware uses DLL sideloading to load the dropped DLL and performs actions to evade detection.
+4. **Persistence:** The malware installs itself for automatic startup via a .lnk in the Windows Startup folder.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- **Initial Access** is the first step where the malware gains entry into the system.
+- **Execution** is the next step where the malware runs the necessary files to start its operations.
+- **Defense Evasion** occurs to avoid detection and maintain stealth.
+- **Persistence** is established to ensure the malware remains active on the system.
+
+Given the sequence, the most likely tactic that occurred before the malware established persistence is **Execution**. The malware needs to execute the dropped files to perform its actions and then establish persistence.
+
+**Final Answer: B: Execution**

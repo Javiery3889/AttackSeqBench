@@ -1,0 +1,40 @@
+### Step-by-Step Analysis
+
+1. **Analyze the CTI Report:**
+   - **Initial Access:**
+     - The attack involved a supply chain compromise where the download servers of Avast were compromised to distribute a malicious version of CCleaner (version 5.33).
+     - The malicious binary was signed with a valid certificate and hosted on CCleaner's download server.
+   - **Execution:**
+     - The 32-bit CCleaner binary was modified to call to the code at `CC_InfectionBase(0x0040102C)`, which redirected execution to the malicious code.
+     - The malicious code decrypted two stages of the payload: a Position Independent Code (PIC) PE loader and a DLL file.
+     - The malware attempted to evade detection by zeroing out the `IMAGE_DOS_HEADER`.
+     - The binary created an executable heap, copied the decrypted malware to it, and called the PE loader to begin its operation.
+     - After initiating the infection process, the binary erased the memory regions containing the PE loader and the DLL file, destroyed the heap, and continued with normal CCleaner operations.
+   - **Command and Control:**
+     - The malware established a C2 channel by encrypting and encoding system information using modified Base64 and transmitting it via an HTTPS POST request to `216[.]126[.]225[.]148`.
+     - The communications leveraged a hardcoded HTTP Host header set to `speccy[.]piriform[.]com` and ignored security errors from the server's self-signed SSL certificate.
+     - If no response was received from the C2 server, the malware fell back to a Domain Generation Algorithm (DGA).
+     - The C2 IP address and the current system time plus two days were stored in the registry.
+
+2. **Analyze the Question:**
+   - The question asks if it is likely that the malware payload attempted to evade detection by zeroing out the `IMAGE_DOS_HEADER` and modifying `CBkdr.dll` to avoid detection before establishing a Command and Control channel using an HTTPS POST request with system information.
+
+3. **Compare and Evaluate:**
+   - **Zeroing out the `IMAGE_DOS_HEADER`:**
+     - The CTI report explicitly states that the malware attempted to evade detection by zeroing out the `IMAGE_DOS_HEADER`.
+   - **Modifying `CBkdr.dll`:**
+     - The CTI report does not mention any modification to `CBkdr.dll`. The report only mentions the decryption of a DLL file as part of the payload, but it does not specify that this DLL was `CBkdr.dll`.
+   - **Establishing a Command and Control channel:**
+     - The CTI report confirms that the malware established a C2 channel by encrypting and encoding system information and transmitting it via an HTTPS POST request.
+
+4. **Step-by-Step Reasoning:**
+   - The malware did attempt to evade detection by zeroing out the `IMAGE_DOS_HEADER`.
+   - The report does not provide any information about modifying `CBkdr.dll`.
+   - The malware did establish a C2 channel using an HTTPS POST request with system information.
+
+### Final Answer
+Given the information provided in the CTI report, the answer choice that forms the most plausible sequence of TTPs is:
+
+**Final Answer: B: No**
+
+The malware did attempt to evade detection by zeroing out the `IMAGE_DOS_HEADER` and did establish a C2 channel using an HTTPS POST request with system information. However, the report does not mention any modification to `CBkdr.dll`, which is a critical part of the question. Therefore, the sequence described in the question is not fully supported by the CTI report.

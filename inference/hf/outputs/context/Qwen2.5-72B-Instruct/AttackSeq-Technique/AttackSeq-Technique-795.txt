@@ -1,0 +1,51 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- A new variant of the Disttrack malware was submitted to VirusTotal.
+- The dropper installs a communications and wiper module.
+- The dropper has a hardcoded kill time, after which it starts wiping files.
+- It contains three resources: a communications module, a wiper module, and an x64 variant of the dropper.
+- The dropper extracts these modules using an XOR cipher and a specific base64 encoded string as the key.
+
+**Command and Control:**
+- The communications module uses two supporting files to set a wipe date and mark successful wiping.
+- It is designed to reach out to hardcoded URLs to communicate with the C2 server.
+- The module can handle two commands from the C2 server: one to read a base64 encoded file and execute it, and another to write a supplied date to a file used by another module responsible for wiping the system.
+
+**Impact:**
+- The wiper module is responsible for overwriting the MBR, partitions, and files on the system.
+
+#### 2. Analyze the Question
+
+**Question:**
+- Which ATT&CK technique most likely occurred before the wiper module employed RawDisk to overwrite the MBR, partitions, and files on the system under the Impact tactic?
+
+**Answer Choices:**
+- A: T1132-Data Encoding
+- B: T1561-Disk Wipe
+- C: T1557.002-ARP Cache Poisoning
+- D: T1499.002-Service Exhaustion Flood
+
+#### 3. Compare and Evaluate
+
+**T1132-Data Encoding:**
+- This technique involves encoding data to make it less recognizable to defenders. The report mentions that the dropper uses an XOR cipher and a base64 encoded string to extract modules. This encoding is part of the execution phase, not directly related to the wiper module's impact.
+
+**T1561-Disk Wipe:**
+- This technique involves wiping data from the disk, which is exactly what the wiper module does. However, the question asks for the technique that occurred before the wiper module employed RawDisk to overwrite the MBR, partitions, and files. The wiper module itself is the final step in the Impact tactic.
+
+**T1557.002-ARP Cache Poisoning:**
+- This technique involves manipulating the ARP cache to redirect traffic. The report does not mention any ARP cache manipulation, and this technique is not related to the wiper module's impact.
+
+**T1499.002-Service Exhaustion Flood:**
+- This technique involves overwhelming services to cause denial of service. The report does not mention any service exhaustion or flood attacks, and this technique is not related to the wiper module's impact.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+- The wiper module is responsible for overwriting the MBR, partitions, and files on the system, which is the final step in the Impact tactic.
+- Before the wiper module can execute its task, it needs to be activated or triggered. The report mentions that the communications module can write a supplied date to a file used by the wiper module to set the wipe date.
+- The communications module uses base64 encoding to read and execute files, which is part of the data encoding technique (T1132).
+
+**Final Answer: A: T1132-Data Encoding**

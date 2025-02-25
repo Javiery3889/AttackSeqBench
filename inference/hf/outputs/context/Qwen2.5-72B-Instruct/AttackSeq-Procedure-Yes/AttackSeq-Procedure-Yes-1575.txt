@@ -1,0 +1,63 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Execution:**
+- Turla uses PowerShell to run malware directly in memory.
+- Malware is loaded into memory without writing to disk.
+
+**Persistence:**
+- Turla employs WMI event subscriptions and modifies the PowerShell profile (profile.ps1) to ensure persistence.
+- WMI event filters and consumers execute base64-encoded PowerShell commands.
+- The PowerShell profile is modified to run a script on startup.
+
+**Defense Evasion:**
+- Payloads are encrypted and scripts are obfuscated.
+- AMSI bypass technique is used to patch the AmsiScanBuffer function.
+
+**Collection:**
+- RPC backdoor plugins collect recent files from the local file system and files from USB drives.
+- PowerStallion uses OneDrive for command and control and can execute additional PowerShell scripts.
+
+**Command and Control:**
+- RPC backdoor uses the RPC protocol.
+- PowerStallion uses OneDrive via SMB.
+
+**Exfiltration:**
+- PowerStallion exfiltrates information through OneDrive, encrypting data with XOR key 0xAA.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After leveraging persistence methods like modifying the PowerShell profile to load scripts on PowerShell startup, is it likely that Turla's RPC backdoor will perform lateral movement to facilitate file and directory discovery before utilizing plugins to gather file and directory information?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Persistence:**
+- Turla modifies the PowerShell profile to ensure that scripts are loaded on PowerShell startup. This ensures that the malware is active and can execute further commands.
+
+**Lateral Movement:**
+- The report does not explicitly mention lateral movement. However, it is a common tactic in advanced persistent threat (APT) operations to move laterally within a network to gain access to more systems and data.
+
+**File and Directory Discovery:**
+- The report mentions that Turla's RPC backdoor plugins are capable of collecting recent files from the local file system and files from USB drives. This indicates that the backdoor is designed to discover and collect files and directories.
+
+**Sequence of Actions:**
+- Given the persistence mechanism (modifying the PowerShell profile), it is logical that the next step would be to perform file and directory discovery to gather information.
+- Lateral movement is a common next step after establishing persistence and initial file discovery, but it is not explicitly mentioned in the report.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- Turla's persistence methods ensure that the malware is active and can execute further commands.
+- The RPC backdoor is designed to collect files and directories, which suggests that file and directory discovery is a key part of the attack.
+- While lateral movement is not explicitly mentioned, it is a common tactic in APT operations and would logically follow after establishing persistence and initial file discovery.
+
+**Final Answer:**
+- A: Yes
+
+The most plausible sequence of TTPs based on the CTI report is that Turla's RPC backdoor will perform file and directory discovery after leveraging persistence methods, and lateral movement is a likely subsequent step in the attack.

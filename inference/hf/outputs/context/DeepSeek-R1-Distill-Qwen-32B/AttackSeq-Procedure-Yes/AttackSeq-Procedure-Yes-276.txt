@@ -1,0 +1,22 @@
+Okay, so I'm trying to figure out whether the 'fmx.ps1' PowerShell script will decode and execute the base64 encoded script in 'sdmc.jpg' before downloading the zip file for the malware payload. Let me break this down step by step.
+
+First, I'll look at the CTI report provided. The initial access vector is a malicious Word document inside a ZIP file. The document has encrypted script data and an external template that points to another document with VBA macros. The external template is downloaded via URL shorteners like TinyURL or Bitly, which redirect to an attacker-controlled domain.
+
+Once the VBA macros are enabled, they decrypt the embedded data and drop two files: 'fmx.ps1' (a PowerShell script) and 'sdmc.jpg' (which is base64 encoded PowerShell code). So, the VBA code is responsible for decrypting and creating these two files.
+
+Now, the question is about the sequence of actions after these files are dropped. Specifically, does 'fmx.ps1' decode 'sdmc.jpg' before downloading the malware payload?
+
+Looking at the report, it says that the VBA code decrypts the embedded data and drops both files. Then, the themes of the lure documents suggest that enabling macros will show additional documents, which might be a social engineering tactic to trick the user into enabling them.
+
+In the Defense Evasion section, it mentions that the payload is generated using image files to conceal components, and the final payload is signed with valid certificates. The Command and Control section talks about the Bandook loader using Process Hollowing to inject into Internet Explorer and communicate with the C&C server using AES encryption.
+
+So, the sequence seems to be: the VBA macros drop 'fmx.ps1' and 'sdmc.jpg'. Then, the PowerShell script 'fmx.ps1' is likely executed next. Since 'sdmc.jpg' is base64 encoded, the PowerShell script would need to decode it. Once decoded, it would execute the script, which might then proceed to download the malware payload from the C&C server.
+
+Therefore, the 'fmx.ps1' script would first decode 'sdmc.jpg', execute its contents, and then proceed to download the necessary components for the malware. This makes sense because the script needs to execute the base64 code before it can perform any further actions like downloading additional files.
+
+So, putting it all together, the answer should be yes, the 'fmx.ps1' script decodes and executes 'sdmc.jpg' before downloading the payload.
+</think>
+
+The analysis of the CTI report indicates that after the VBA macros drop the 'fmx.ps1' and 'sdmc.jpg' files, the PowerShell script 'fmx.ps1' decodes the base64 encoded script in 'sdmc.jpg'. This execution is necessary before the script proceeds to download the malware payload. 
+
+Final Answer: A

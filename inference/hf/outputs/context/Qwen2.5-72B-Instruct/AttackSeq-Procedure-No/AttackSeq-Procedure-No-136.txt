@@ -1,0 +1,64 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attackers used a watering hole attack to compromise a website.
+- They added code to redirect visitors to the infecting code, exploiting CVE-2018-8174 (VBScript engine vulnerability).
+
+**Execution:**
+- The malware exploits the VBScript engine vulnerability to download a DLL.
+- The DLL is run in PowerShell.
+- The downloader checks for antivirus software processes and exits if any are found.
+- It exploits CVE-2015-1701 for Local Privilege Escalation.
+- The second stage involves downloading and executing a backdoor named SLUB.
+
+**Persistence:**
+- The SLUB backdoor achieves persistence by copying itself to ProgramData\update\ and creating a Run registry key with a typo in the ValueName, 'Microsoft Setup Initializazion', to call the export function UpdateMPUnits with rundll32.exe.
+
+**Privilege Escalation:**
+- The downloader exploits CVE-2015-1701 to acquire Local Privilege Escalation.
+
+**Discovery:**
+- The SLUB backdoor performs discovery by downloading a 'gist' snippet from GitHub and parsing it for commands.
+- It retrieves the username and computer name.
+
+**Collection:**
+- The backdoor supports various commands for data collection, including taking screenshots, listing files, copying files, and uploading files to the file.io website.
+- It collects information from registry keys and creates archives of user's Desktop folders for exfiltration.
+
+**Command and Control:**
+- The backdoor communicates with the attackers via Slack, using two hardcoded authentication tokens to post messages and command results to a private Slack channel.
+
+**Exfiltration:**
+- The attackers exfiltrate data by uploading files to the file.io website and posting download links to the Slack channel.
+- They create archive files of user's Desktop folders and build CAB files containing the file tree for exfiltration.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After exploiting the VBScript engine vulnerability to gain initial access through a watering hole attack, is it likely that the attackers would attempt to disable security tools by modifying EDR-related services to disable auto-start on system reboot before downloading and executing a backdoor for further operations?
+
+**Answer Choices:**
+- A: Yes
+- B: No
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- The downloader checks for antivirus software processes and exits if any are found.
+- The backdoor achieves persistence by creating a Run registry key.
+- The backdoor performs various data collection and exfiltration activities.
+
+**Evaluation:**
+- The report mentions that the downloader checks for antivirus software processes and exits if any are found. This indicates that the attackers are aware of the presence of security tools and are cautious about them.
+- However, the report does not mention any specific actions to disable EDR-related services or modify their auto-start settings.
+- The primary focus of the attackers seems to be on achieving persistence and performing data collection and exfiltration.
+
+**Reasoning:**
+- While the attackers are cautious about security tools, the report does not provide evidence that they attempt to disable EDR-related services to prevent auto-start on system reboot.
+- The sequence described in the question (disabling EDR-related services before downloading and executing a backdoor) is not supported by the information in the CTI report.
+
+#### 4. Final Answer
+
+**Final Answer: B: No**

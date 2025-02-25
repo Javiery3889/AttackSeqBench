@@ -1,0 +1,66 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- APT Sidewinder exploited CVE-2017-11882 using an RTF document.
+- The RTF document downloaded an HTA file from the domain webserv-redir.net.
+
+**Execution:**
+- The HTA file contained a script that checked for installed antivirus software using WMI.
+- If no specific antivirus software was detected, it proceeded to run a backdoor named FinalBot.exe, which was extracted from a zip file and renamed to Srvstr.exe.
+
+**Persistence:**
+- The backdoor established persistence by creating a Run key in the registry: HKEY_CURRENT_USER\Software\Microsoft\Windows\CurrentVersion\Run\WinSrv.
+
+**Defense Evasion:**
+- The HTA file avoided using PowerShell and instead used VBS.
+- The backdoor employed DLL sideloading using cmpbk32.dll to execute Srvstr.exe.
+
+**Discovery:**
+- The HTA file used WMI to discover installed antivirus products on the victim's system.
+
+**Others:**
+- Various IOCs were identified, including hashes for files and the domain webserv-redir.net.
+
+#### 2. Analyze the Question
+
+**Question:**
+- After using WMI to check for installed antivirus software and avoiding PowerShell execution during defense evasion, which ATT&CK technique most likely occurred to send information about detected antivirus software to the C2 server using webserv-redir.net?
+
+**Answer Choices:**
+- A: T1090.003-Multi-hop Proxy
+- B: T1082-System Information Discovery
+- C: T1071-Application Layer Protocol
+- D: T1556.007-Hybrid Identity
+
+#### 3. Compare and Evaluate
+
+**Key Points from the CTI Report:**
+- The HTA file used WMI to check for installed antivirus software.
+- The HTA file avoided using PowerShell and instead used VBS.
+- The backdoor communicated with the C2 server.
+
+**Evaluating the Answer Choices:**
+
+- **A: T1090.003-Multi-hop Proxy**
+  - This technique involves using multiple proxies to obfuscate the origin of the communication. The report does not mention any multi-hop proxy setup.
+
+- **B: T1082-System Information Discovery**
+  - This technique involves gathering system information, which the HTA file did using WMI to check for antivirus software. However, this does not specifically address sending information to the C2 server.
+
+- **C: T1071-Application Layer Protocol**
+  - This technique involves using standard application layer protocols to communicate with the C2 server. The report mentions that the backdoor communicated with the C2 server, which aligns with this technique.
+
+- **D: T1556.007-Hybrid Identity**
+  - This technique involves using hybrid identity to gain access to resources. The report does not mention any hybrid identity techniques.
+
+#### 4. Provide a Step-by-Step Reasoning and Final Answer
+
+**Reasoning:**
+- The HTA file used WMI to check for installed antivirus software.
+- The backdoor communicated with the C2 server using the domain webserv-redir.net.
+- The most likely technique for sending information about detected antivirus software to the C2 server is using a standard application layer protocol, which is described by T1071-Application Layer Protocol.
+
+**Final Answer:**
+C: T1071-Application Layer Protocol

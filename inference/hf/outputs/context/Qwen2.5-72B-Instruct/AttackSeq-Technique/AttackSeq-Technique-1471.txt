@@ -1,0 +1,67 @@
+### Step-by-Step Analysis
+
+#### 1. Analyze the CTI Report
+
+**Initial Access:**
+- The attackers used a watering hole attack to compromise a website.
+- They added code to redirect visitors to the infecting code, exploiting CVE-2018-8174 (VBScript engine vulnerability).
+
+**Execution:**
+- The malware exploits the VBScript engine vulnerability to download a DLL and run it in PowerShell.
+- The downloader checks for antivirus software processes and exits if any are found.
+- It exploits CVE-2015-1701 for Local Privilege Escalation.
+- The second stage involves downloading and executing a backdoor named SLUB.
+
+**Persistence:**
+- The SLUB backdoor achieves persistence by copying itself to ProgramData\update\ and creating a Run registry key with a typo in the ValueName, 'Microsoft Setup Initializazion', to call the export function UpdateMPUnits with rundll32.exe.
+
+**Privilege Escalation:**
+- The downloader exploits CVE-2015-1701 to acquire Local Privilege Escalation.
+
+**Defense Evasion:**
+- The first stage downloader exits if it detects any antivirus software processes.
+
+**Discovery:**
+- The SLUB backdoor performs discovery by downloading a 'gist' snippet from GitHub and parsing it for commands.
+- It retrieves the username and computer name as part of its discovery process.
+
+**Command and Control:**
+- The backdoor communicates with the attackers via Slack, using hardcoded authentication tokens to post messages and command results to a private Slack channel.
+
+**Exfiltration:**
+- The attackers exfiltrate data by uploading files to the file.io website and posting download links to the Slack channel.
+- They create archive files of user's Desktop folders and build CAB files containing the file tree for exfiltration.
+
+#### 2. Analyze the Question
+
+**Question:**
+After performing discovery by retrieving a gist snippet from GitHub to parse commands and gathering system information, which ATT&CK technique most likely occurred once the SLUB backdoor was used to collect data from the victim's system?
+
+**Answer Choices:**
+A: T1056.004-Credential API Hooking
+B: T1557.001-LLMNR/NBT-NS Poisoning and SMB Relay
+C: T1562-Impair Defenses
+D: T1113-Screen Capture
+
+#### 3. Compare and Evaluate
+
+**Discovery:**
+- The SLUB backdoor retrieves a 'gist' snippet from GitHub and parses it for commands.
+- It retrieves the username and computer name.
+
+**Exfiltration:**
+- The attackers exfiltrate data by uploading files to the file.io website and posting download links to the Slack channel.
+- They create archive files of user's Desktop folders and build CAB files containing the file tree for exfiltration.
+
+**Evaluating Answer Choices:**
+- **A: T1056.004-Credential API Hooking** - This technique involves intercepting and capturing credentials by hooking into API functions. The report does not mention any credential harvesting or API hooking.
+- **B: T1557.001-LLMNR/NBT-NS Poisoning and SMB Relay** - This technique involves manipulating network protocols to redirect traffic. The report does not mention any network poisoning or relay attacks.
+- **C: T1562-Impair Defenses** - This technique involves degrading or disabling security software. The report mentions that the downloader exits if it detects any antivirus software processes, but it does not describe any active impairment of defenses.
+- **D: T1113-Screen Capture** - This technique involves capturing the contents of the screen. The report does not mention any screen capture activities, but it does describe data exfiltration, which could include capturing and exfiltrating files from the Desktop.
+
+**Final Evaluation:**
+- The most plausible sequence of TTPs based on the report is that after performing discovery and gathering system information, the SLUB backdoor was used to exfiltrate data. The exfiltration process involves uploading files to the file.io website and posting download links to the Slack channel, which aligns with the exfiltration of files from the Desktop.
+
+### Final Answer: D: T1113-Screen Capture
+
+While the report does not explicitly mention screen capture, the exfiltration of files from the Desktop and the creation of archive files suggest that the backdoor was collecting and exfiltrating data, which could include screen captures. Therefore, the most plausible answer is D: T1113-Screen Capture.
