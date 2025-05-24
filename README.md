@@ -7,7 +7,7 @@ a diverse set of fast-thinking and slow-thinking LLMs, while highlighting the st
 ## Dataset Construction Pipeline
 The dataset comprises of three benchmarking tasks follows the three-level structure of adversarial behavior, i.e. Tactics, Techniques, and Procedures (TTPs) as outlined in the MITRE ATT&CK knowledge base. The three QA tasks are as follow: AttackSeq-Tactic, which tests the LLM’s ability to infer a high-level ATT&CK tactic found in attack sequence; AttackSeq-Technique, which evaluates the LLM’s capability to identify a specific technique that logically fits into the attack sequence; AttackSeq-Procedure, which requires the LLM to assess the plausibility of a specific procedure based on the attack sequence. We leverage the Self-Refine framework to iteratively improve the quality of the generated questions, while adopting a hybrid approach when evaluating the questions. More specifically, we utilize G-Eval to automatically evaluate the dataset and perform human evaluation on a random sample of our dataset.
 
-![dataset](https://github.com/Javiery3889/AttackSeqBench/blob/main/images/construction.jpg?raw=true)
+![dataset](https://raw.githubusercontent.com/Javiery3889/AttackSeqBench/refs/heads/main/images/overall_structure.jpg)
 The code for the dataset construction pipeline is divided into two directories: 
 - `/question_generation` generates and construct each benchmark task using LLMs to form the initial QA dataset.
 - `/question_refinement` filters and refines the QA pairs in the initial dataset.
@@ -22,7 +22,7 @@ The code for the dataset construction pipeline is divided into two directories:
 ## LLM Benchmarking
 ### Benchmark Settings
 We design three benchmark settings to extensively evaluate the LLMs with varying amounts of contextual knowledge given to them as illustrated below.
-![benchmark settings](https://github.com/Javiery3889/AttackSeqBench/blob/main/images/benchmark_settings.jpg?raw=true)
+![benchmark settings](https://raw.githubusercontent.com/Javiery3889/AttackSeqBench/refs/heads/main/images/benchmark_settings.jpg)
 ### Benchmark Results
 Based on the three benchmark settings above, we perform extensive investigation on a diverse set of fast-thinking and slow-thinking reasoning LLMs. The benchmark results are shown in the table below.
 ![benchmark](https://github.com/Javiery3889/AttackSeqBench/blob/main/images/benchmark.png?raw=true)
