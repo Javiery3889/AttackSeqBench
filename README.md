@@ -27,4 +27,4 @@ We design three benchmark settings to extensively evaluate the LLMs with varying
 Based on the three benchmark settings above, we perform extensive investigation on a diverse set of fast-thinking and slow-thinking reasoning LLMs. The benchmark results are shown in the table below.
 ![benchmark](https://github.com/Javiery3889/AttackSeqBench/blob/main/images/benchmark.png?raw=true)
 
-The inference results for all LLMs can be found in the `/inference` directory, we further split into two sub-directories: `/inference/hf` for all open-source models on HuggingFace, and `/openai` for OpenAI models. Note that due to space constraints, the outputs for HuggingFace LLMs are not uploaded on Github.
+The inference results for all LLMs can be found in the `/inference` directory, we further split into two sub-directories: `/inference/hf` for all open-source models on HuggingFace, and `/openai` for OpenAI models. Note that due to space constraints on Github, the inference responses for all open-source LLMs can be found in this [Google Drive link](https://drive.google.com/drive/folders/1KuQu0Dcy21_cxEW5wHl4XLLLaGeSljIQ?usp=sharing).
